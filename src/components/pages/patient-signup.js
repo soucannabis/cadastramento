@@ -124,12 +124,14 @@ const AssociateSignUp = () => {
     for (let key in formData) {
       if (formData.hasOwnProperty(key)) {
         if (formData[key] == null || formData[key] == undefined || formData[key] == "" || formData[key] == []) {
-          emptyFields.push(key);
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "mobile_number") {
+          if (key != "complement") {
+            emptyFields.push(key);
+          }
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "complement" && key != "mobile_number") {
             document.querySelector("#" + key).className = "form-input input-login input-empty";
           }
         } else {
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "mobile_number") {
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "mobile_number" && key != "complement") {
             document.querySelector("#" + key).className = "form-input input-login";
           }
         }
@@ -236,8 +238,9 @@ const AssociateSignUp = () => {
 
       <form onSubmit={updateUser} className="form-container ">
         <h1 className="sub-title">Cadastro do Paciente</h1>
-        <br></br>
-
+        <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} >
+          Informe abaixo os dados do paciente no qual você é responsável
+        </p>
         <br></br>
         <div>
           <div className="mb-3">

@@ -22,10 +22,10 @@ const FileUploadComponent = () => {
 
   var userData = {};
 
-  setTimeout(async () => {
-    userData = await User();
-    setUser(userData);
-  }, 4000);
+  /* setTimeout(async () => {
+     userData = await User();
+     setUser(userData);
+   }, 4000);*/
 
   if (user.associate_status == 4) {
     window.location.assign("/consulta");
@@ -87,13 +87,12 @@ const FileUploadComponent = () => {
       if (fileName[1] == "jpg" || fileName[1] == "jpeg" || fileName[1] == "png" || fileName[1] == "gif" || fileName[1] == "pdf") {
         setIsLoading(true);
 
-        var formData = new FormData();
-        formData.append("folder", userFolder);
-        formData.append("file", file, nameFile);
+        const formData = new FormData();
+        formData.append("file", file);
 
         var fileId = "não-carregou-o-arquivo";
 
-        await directusRequestUpload("/files", formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
+        await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
           if (response) {
             fileId = response.id;
 
@@ -101,7 +100,7 @@ const FileUploadComponent = () => {
               setButtonMsg(true);
               return fileId;
             }
-            
+
           } else {
             setdocError(true);
             setTimeout(() => {
@@ -242,13 +241,12 @@ const FileUploadComponent = () => {
       if (fileName[1] == "jpg" || fileName[1] == "jpeg" || fileName[1] == "png" || fileName[1] == "gif" || fileName[1] == "pdf") {
         setIsLoadingC(true);
 
-        var formData = new FormData();
-        formData.append("folder", userFolder);
-        formData.append("file", file, nameFile);
+        const formData = new FormData();
+        formData.append("file", file);
 
         var fileId = "não-carregou-o-arquivo";
 
-        await directusRequestUpload("/files", formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
+        await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
           if (response) {
             fileId = response.id;
             setButtonMsg(true);
@@ -279,7 +277,7 @@ const FileUploadComponent = () => {
 
   return (
     <div class="justify-content-center">
-      <h1 style={{ paddingTop: "60px" }}>Envie seu Documento de Identidade</h1>
+      <h1 style={{ paddingTop: "10px" }}>Envie seu Documento de Identidade</h1>
       <h2 style={{ textAlign: "center" }}>Clique no botão para enviar uma foto de seu comprovante de identidade.</h2>
       <h2 style={{ textAlign: "center" }}>Você pode enviar a parte de trás do seu RG ou seu CNH.</h2>
       <br></br>
@@ -291,7 +289,9 @@ const FileUploadComponent = () => {
                 {isLoading && (
                   <span className="loading-text">
                     <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
-                    {!buttonMsg ? <span>Carregando documento...</span> : <span class="gernerate-term">Gerando termo para assinatura</span>}
+                    {!buttonMsg ? <span>Carregando documento...</span> : (<span class="gernerate-term">Gerando termo para assinatura</span>
+
+                    )}
                     <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
@@ -331,10 +331,29 @@ const FileUploadComponent = () => {
           </div>
         )}
         <br></br>
-
+        <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} hidden={!rgProof}>
+          Após assinar o seu termo, recarregue esta página
+        </p>
         <a className="label-upload assign-term" target="_blank" href={generateContract || user.contract} hidden={!rgProof}>
           Assinar Termo de Responsabilidade
         </a>
+        <br></br>
+        <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} hidden={!rgProof}>
+          <a
+            style={{ textDecoration: 'none', color: 'white', fontWeight: 'bold', fontSize: '20px' }}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.reload();
+            }}
+          >
+            Recarregar Página
+          </a>
+
+        </p>
+        <br></br>
+        <br></br>
+        <br></br>
       </div>
       {docError && (
         <div class="alert1">

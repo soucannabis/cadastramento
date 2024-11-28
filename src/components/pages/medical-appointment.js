@@ -53,45 +53,23 @@ function MedicalAppointment() {
     if (fileName[1] == "jpg" || fileName[1] == "jpeg" || fileName[1] == "png" || fileName[1] == "gif" || fileName[1] == "pdf") {
       setIsLoading(true);
 
-      if (fileName[1] != "pdf") {
-        const compressedImage = await new Promise(resolve => {
-          Resizer.imageFileResizer(
-            file,
-            800,
-            600,
-            fileName[1],
-            70,
-            0,
-            uri => {
-              resolve(uri);
-            },
-            "file"
-          );
-        });
+      const formData = new FormData();
+      formData.append("file", file);
 
-        var formData = new FormData();
-        formData.append("folder", userFolder);
-        formData.append("file", compressedImage, nameFile);
-      } else {
-        var formData = new FormData();
-        formData.append("folder", userFolder);
-        formData.append("file", file, nameFile);
-      }
+      var fileId = "não-carregou-o-arquivo";
 
-      var fileId = "";
-
-      await directusRequestUpload("/files", formData, "POST", { "Content-Type": "multipart/form-data" })
+      await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" })
         .then(response => {
           fileId = response.id;
           return fileId;
         })
         .catch(error => {
           console.error(error);
-        });    
+        });
 
       await apiRequest("/api/directus/upload-files", { userId: user.id, fileId: fileId }, "POST");
 
-        await apiRequest("/api/directus/update", { userId: user.id, formData: { medical_prescription: fileId, status: "prescription" } }, "POST")
+      await apiRequest("/api/directus/update", { userId: user.id, formData: { medical_prescription: fileId, status: "prescription" } }, "POST")
         .then(response => {
           setIsLoading(false);
         })
@@ -112,8 +90,8 @@ function MedicalAppointment() {
     setPrescription(true);
   };
 
-  const medicalAppointmentNo = async () => {
-    setSignupMessage(true);
+  const appointment = async () => {
+    window.location.assign("https://api.whatsapp.com/send/?phone=" + import.meta.env.VITE_ASSOCIATION_PHONE);
   };
 
   async function aprove() {
@@ -121,21 +99,22 @@ function MedicalAppointment() {
     window.location.assign("/cadastro");
   }
 
+
+
   return (
     <div>
       <form className="form-container">
-        <h1>Você ja tem uma Prescrição?</h1>
+        <h1>Você já tem uma Prescrição?</h1>
         <br></br>
-        <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 10%" }}>Você pode se associar a import.meta.env.VITE_ASSOCIATION_NAME sem ter uma receita e usufruir de diversos serviços oferecidos pela associação.  <br></br>Porém, para ter acesso aos remédios é necessário que você tenha uma receita. <br></br> <br></br> Qual é a sua situação neste momento?</p>
+        <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 10%" }}>Você pode se associar a conosco sem ter uma receita e usufruir de diversos serviços oferecidos pela associação.  <br></br>Porém, para ter acesso aos remédios é necessário que você tenha uma receita. <br></br> <br></br> Qual é a sua situação neste momento?</p>
         <br></br>
         <div className="form-control options-container">
           <input type="radio" className="btn-check" onClick={medicalAppointmentYes} name="resposable" id="btnradio1" value="yes"></input>
           <label className="btn btn-outline-primary radio-input" htmlFor="btnradio1">
             ENVIAR UMA RECEITA
           </label>
-          <ContactModal redirect="/cadastro" type="appointment" />
-          <label className="btn btn-outline-primary radio-input" onClick={medicalAppointmentNo} htmlFor="btnradio2">
-           AGENDAR UMA CONSULTA
+          <label className="btn btn-outline-primary radio-input" onClick={appointment}>
+            AGENDAR UM ATENDIMENTO
           </label>
           <label className="btn btn-outline-primary radio-input" onClick={aprove} htmlFor="btnradio3">
             CONCLUIR O CADASTRO SEM RECEITA
