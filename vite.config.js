@@ -12,16 +12,19 @@ export default defineConfig({
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        return html.replace('%VITE_APP_TITLE%', process.env.VITE_APP_TITLE);
-      }
+        return html
+        .replace('%VITE_APP_TITLE%', process.env.VITE_APP_TITLE)
+        .replace('%VITE_NEWRELIC_APPLICATIONID%', process.env.VITE_NEWRELIC_APPLICATIONID || '')
+        .replace('%VITE_NEWRELIC_LICENSEKEY%', process.env.VITE_NEWRELIC_LICENSEKEY || '');
+    }
     },
   ],
   server: {
-    host: true, // Escuta em 0.0.0.0, permitindo conexões externas
-    port: 5173, // Porta padrão
+    host: true, 
+    port: 5173, 
   },
   esbuild: {
-    loader: 'jsx', // Trata arquivos .js como JSX
-    include: /src\/.*\.js$/, // Inclui arquivos .js dentro da pasta src
+    loader: 'jsx',
+    include: /src\/.*\.js$/, 
   },
 });
