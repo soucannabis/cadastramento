@@ -331,6 +331,11 @@ const FileUploadComponent = () => {
           </div>
         )}
         <br></br>
+        <div style={{ textAlign: 'center', color: '#fff' }}>
+          <a target="_blank" style={{textDecoration:'none', color:'#fff'}} href={`https://enviararquivos.soucannabis.ong.br?u=${user.user_code}`}>
+            Algum problema em enviar seus documentos? Clique aqui
+          </a>
+        </div>
         <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} hidden={!rgProof}>
           Após assinar o seu termo, recarregue esta página
         </p>

@@ -114,7 +114,6 @@ function App() {
               <div class="text-center">
                 <img
                   src={import.meta.env.VITE_ASSOCIATION_LOGO}
-                  width="50%"
                 />
                 <h1 class="sub-title">Cadastramento {import.meta.env.VITE_ASSOCIATION_NAME}</h1>
                 <div class="row">                  
