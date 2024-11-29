@@ -90,7 +90,7 @@ function App() {
                 <img
                   src={import.meta.env.VITE_ASSOCIATION_LOGO}
                 />
-                <h1 class="sub-title"><b>Cadastramento {import.meta.env.VITE_ASSOCIATION_NAME}</b></h1>
+                <h1 class="sub-title"><b>Cadastramento <br></br>{import.meta.env.VITE_ASSOCIATION_NAME}</b></h1>
                 <br></br>
                 <div class="row">                
                   <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
@@ -115,7 +115,7 @@ function App() {
                 <img
                   src={import.meta.env.VITE_ASSOCIATION_LOGO}
                 />
-                <h1 class="sub-title">Cadastramento {import.meta.env.VITE_ASSOCIATION_NAME}</h1>
+                <h1 class="sub-title">Cadastramento <br></br> {import.meta.env.VITE_ASSOCIATION_NAME}</h1>
                 <div class="row">                  
                   <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
                     Criar minha conta
