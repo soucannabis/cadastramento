@@ -36,7 +36,7 @@ function MultipleFiles() {
 
       if (file) {
 
-        file.storage = "local";
+        
 
         var fileName = file.name
         fileName = fileName.split(".")

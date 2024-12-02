@@ -3,8 +3,9 @@ import User from "../../../modules/User";
 import Products from "../../../modules/Products";
 import Cart from "../elements/cart";
 import Modal from "react-bootstrap/Modal";
+import apiRequest from "../../../modules/apiRequest";
 
-function Contact() {
+function Shop() {
   const [user, setUser] = useState({});
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,8 +13,14 @@ function Contact() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [cart, setCart] = useState([]);
   const [popupContent, setPopupContent] = useState([]);
-
+  const [productQnt, setProductQnt] = useState(1);
+  const [coupon, setCoupon] = useState(false);
+  const [userProducts, setUsersProducts] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [prescriptionPopup, setPrescriptionPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
 
@@ -22,10 +29,29 @@ function Contact() {
       const userData = await User();
       setUser(userData);
 
-      const productsData = await Products();
-      setProducts(productsData);
+      const productsUser = JSON.parse(userData.products)
+      setUsersProducts(productsUser)
 
-      console.log(productsData);
+      const productsData = await Products();
+      const codProducts = productsUser.map(item => item.product);
+      const filteredArray2 = productsData.filter(item => codProducts.includes(item.cod));
+
+      setProducts(filteredArray2);
+
+      /* const coupon = await apiRequest("/api/directus/coupons?couponSearchId=" + userData.id, "", "GET");
+       setCoupon(coupon)*/
+
+      var date = new Date();
+      var date_prescription = new Date(userData.date_prescription);
+      var diferencaEmMilissegundos = date - date_prescription;
+      var dateDiffDays = Math.floor(
+        diferencaEmMilissegundos / (1000 * 60 * 60 * 24),
+      );
+
+      if (dateDiffDays > 365) {
+        setPrescriptionPopup(true)
+      }
+
     })();
   }, [cart]);
 
@@ -39,18 +65,29 @@ function Contact() {
     });
   };
 
+  const dateUser = new Date(user.date_prescription);
+  const datePrescription = dateUser.toLocaleDateString("pt-BR");
+
   const tableHeaders = [
-    { key: "photo", label: "" },
-    { key: "name", label: "Nome" },
-    { key: "description", label: "Descrição" },
-    { key: "price", label: "Preço" },
-    { key: "checkout", label: "Add Carrinho" },
+    { key: "name", label: "Nome do Produto" },
+    { key: "price", label: "Valor" },
+    { key: "qnt", label: "Quantidade" },
+    { key: "checkout", label: "+ Carrinho" },
   ];
 
   const filteredProducts = sortProducts().filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   function addCart(product) {
-    setCart([...cart, product]);
+    const productCart = cart.some(item => item.id === product.id);
+    var productQnt = parseInt(document.getElementById(product.cod).value)
+
+    product.qntProductCart = productQnt
+    product.price = product.price * productQnt
+
+    if (!productCart) {
+      setCart([...cart, product]);
+    }
+
   }
 
   function deleteItem(product) {
@@ -59,13 +96,53 @@ function Contact() {
 
   function info(event) {
     const productCod = event.target.getAttribute("cod");
-    console.log("Valor da propriedade cod:", productCod);
     setPopupContent(productCod);
     setShowPopup(true);
   }
 
+  function productQntHandle(id, value, el) {
+    setProductQnt(prevState => ({
+      ...prevState,
+      [id]: value
+    }));
+  }
+
   return (
     <div>
+        {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            zIndex: 99999999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "24px",
+            fontWeight: "bold",
+            color: "#000",
+          }}
+        >
+          Carregando loja...
+        </div>
+      )}
+      <Modal show={prescriptionPopup}>
+        <Modal.Header>
+          <Modal.Title><h4>Acesso Negado</h4></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>Sua Prescrição está fora da validade.</h5>
+          <h5>O prazo de validade de uma Prescrição é de um ano.</h5>
+          <h5>Sua prescrição é do dia: {datePrescription}.</h5>
+          <br />
+          <h5>Por favor, entre em contato com nossa equipe de acolhimento para renovar sua prescrição.</h5>
+        </Modal.Body>
+      </Modal>
+
       <Modal show={showPopup} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{popupContent}</Modal.Title>
@@ -74,60 +151,107 @@ function Contact() {
           <h5></h5>
         </Modal.Body>
       </Modal>
-      <div>
+
+      {prescriptionPopup && (
+        <style>
+          {`
+         .fade.modal.show {
+           background-color: #000000cc;
+         }
+         .modal-dialog {
+          max-width: 50%;
+          margin-top: 10%;
+      }
+       `}
+        </style>
+      )}
+
+
+      {!prescriptionPopup && (
         <div>
-          <div class="sidebar" style={{ padding: "30px" }}>
-            <h4 style={{ textAlign: "center", marginBottom: "30px" }}>Carrinho de compras</h4>
-            <Cart items={cart} onDeleteItem={deleteItem} />
+          <div>
+            <div>
+              <div class="sidebar" >
+                <h4 style={{ textAlign: "center", marginBottom: "30px" }}>Carrinho de compras</h4>
+                {coupon ? (
+                  coupon.type === "percentage" ? (
+                    <p>Você tem um cupom com {coupon.discount}% de desconto</p>
+                  ) : (
+                    <p>Você tem um cupom com R${coupon.discount} reais de desconto</p>
+                  )
+                ) : (
+                  <></>
+                )}
+
+
+                <Cart items={cart} coupon={coupon} onDeleteItem={deleteItem} />
+              </div>
+            </div>
           </div>
+          <div className="search-bar">
+            <input type="text" placeholder="Pesquisar por nome..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}>Ordenar {sortOrder === "asc" ? "A-Z" : "Z-A"}</button>
+          </div>
+          {filteredProducts.length > 0 ? (
+            <div className="container">
+              <table className="table" style={{ width: "63%", backgroundColor: "#fff", marginLeft: "auto", marginRight: "0", paddingLeft: "20px" }}>
+                <thead style={{ backgroundColor: "#4e774d", color: "#fff" }}>
+                  <tr>
+                    {tableHeaders.map(header => (
+                      <th
+                        key={header.key}
+                        onClick={() => {
+                          setSortColumn(header.key);
+                          setSortOrder(header.key === sortColumn && sortOrder === "asc" ? "desc" : "asc");
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {header.label}
+                        {header.key === sortColumn && <span> {sortOrder === "asc" ? "▲" : "▼"}</span>}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {filteredProducts.map(product => (
+                    <tr key={product.cod}>
+                      <td onClick={info} style={{ cursor: "pointer", paddingLeft: "45px", fontSize: "18px", fontWeight: 600 }} cod={product.cod}>{product.cod + " - " + product.concentration + "%"}</td>
+                      <td style={{ fontSize: "16px", fontWeight: 600 }}>R${String(product.price)}</td>
+                      <td>
+                        <select onChange={(e) => productQntHandle(product.cod, e.target.value, e)} id={product.cod} style={{ marginLeft: "25px" }}>
+                          {userProducts
+                            .filter(prod => prod.product === product.cod)
+                            .map(userProd => {
+                              const loop = userProd.qnt;
+                              return Array.from({ length: loop }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                  {i + 1}
+                                </option>
+                              ));
+                            })}
+                        </select>
+                      </td>
+                      <td>
+                        <button width="38" height="38" alt="checkout" onClick={() => addCart(product)}>
+                          + Carrinho
+                        </button>
+                      </td>
+                    </tr>
+                  )
+
+                  )}
+                </tbody>
+              </table>
+
+            </div>
+          ) : (
+            <p>Nenhum resultado encontrado.</p>
+          )}
         </div>
-      </div>
-      <div className="search-bar">
-        <input type="text" placeholder="Pesquisar por nome..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-        <button onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}>Ordenar {sortOrder === "asc" ? "A-Z" : "Z-A"}</button>
-      </div>
-      {filteredProducts.length > 0 ? (
-        <table className="table" style={{ color: "#fff", marginLeft: "410px", width: "73%" }}>
-          <thead>
-            <tr>
-              {tableHeaders.map(header => (
-                <th
-                  key={header.key}
-                  onClick={() => {
-                    setSortColumn(header.key);
-                    setSortOrder(header.key === sortColumn && sortOrder === "asc" ? "desc" : "asc");
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  {header.label}
-                  {header.key === sortColumn && <span> {sortOrder === "asc" ? "▲" : "▼"}</span>}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody >
-            {filteredProducts.map(product => (
-                <tr key={product.cod} >
-                  <td>
-                    <img src={import.meta.env.VITE_DIRECTUS_API_URL + "/assets/" + product.photo} width="50" height="50" onClick={() => addCart(product)} />
-                  </td>
-                  <td onClick={info} style={{ cursor: "pointer" }} cod={product.cod}>{product.name + " - " + product.concentration + "%"}</td>
-                  <td>{product.description}</td>
-                  <td>{String(product.price)}</td>
-                  <td>
-                    <button width="38" height="38" alt="checkout" onClick={() => addCart(product)}>
-                      Add Cart
-                    </button>
-                  </td>
-                </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p>Nenhum resultado encontrado.</p>
       )}
     </div>
   );
 }
 
-export default Contact;
+export default Shop;

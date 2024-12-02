@@ -158,7 +158,7 @@ function Contact() {
           {errorConn && (
             <div class="alert alert-warning" role="alert">
               Houve um erro na conexão, entre em contato{" "}
-              <a href={"https://api.whatsapp.com/send/?phone=" + process.env.REACT_CHATWOOT_NUMBER_PHONE} target="_blank">
+              <a href={"https://api.whatsapp.com/send/?phone=" + process.env.VITE_ASSOCIATION_PHONE} target="_blank">
                 por aqui
               </a>
               .

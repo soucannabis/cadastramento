@@ -26,7 +26,7 @@ function Prescription() {
 
     const file = event.target.files[0];
 
-    file.storage = "local";
+    
     file.filename_download = file.name;
 
     var formData = new FormData();

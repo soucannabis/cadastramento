@@ -322,7 +322,6 @@ const AssociateSignUp = () => {
 
   return (
     <div>
-      {console.log(counterTratmentOptions)}
       {counterTratmentOptions &&
         <div class="fixed-div" style={!counterCheck ? ({ backgroundColor: "" }) : ({ backgroundColor: "red", color: "white" })}>
           <div style={{ textAlign: "center" }}>Você pode selecionar até <b>10</b> motivos
