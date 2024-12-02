@@ -26,7 +26,7 @@ function Prescription() {
 
     const file = event.target.files[0];
 
-    file.storage = "local";
+    
     file.filename_download = file.name;
 
     var formData = new FormData();
@@ -58,12 +58,12 @@ function Prescription() {
   return (
     <div className="form-container">
       <h1 className="title">Sua consulta foi agendada com sucesso! </h1>
-      <h1 className="sub-title">Após realizar a consulta com o médico, ele enviará o arquivo da sua receita médica, para dar andamento em seu cadastro, envie o arquivo pelo botão abaixo: </h1>
+      <h1 className="sub-title">Após realizar a consulta, ele enviará o arquivo da sua receita, para dar andamento em seu cadastro, envie o arquivo pelo botão abaixo: </h1>
       <br></br>
       <br></br>
       <Form>
         <Form.Group controlId="formFile1">
-          <Form.Label className="label-upload">Enviar receita Médica</Form.Label>
+          <Form.Label className="label-upload">Enviar receita</Form.Label>
           <Form.Control className="input-upload" type="file" onChange={handleFileChange} />
         </Form.Group>
       </Form>

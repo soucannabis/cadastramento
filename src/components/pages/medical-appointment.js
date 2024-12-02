@@ -40,7 +40,7 @@ function MedicalAppointment() {
 
     const file = event.target.files[0];
 
-    file.storage = "local";
+    
     file.filename_download = file.name;
 
     var fileName = file.name;
@@ -133,15 +133,15 @@ function MedicalAppointment() {
                     <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
-                {!isLoading && !medicalPrescrption && <span>Enviar receita médica</span>}
+                {!isLoading && !medicalPrescrption && <span>Enviar receita</span>}
               </Form.Label>
 
-              {medicalPrescrption && <Form.Label className="label-upload send-ok prescription-button">Receita Médica Enviada</Form.Label>}
+              {medicalPrescrption && <Form.Label className="label-upload send-ok prescription-button">Receita Enviada</Form.Label>}
               <Form.Control className="input-upload" type="file" onChange={handleFileChange} />
             </Form.Group>
           </Form>
           <br></br>
-          <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 20%" }}>Após enviar sua receita médica você pode enviar arquivos que complementem a sua receita, como laudos médicos e exames.</p>
+          <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 20%" }}>Após enviar sua receita você pode enviar arquivos que complementem a sua receita, como laudos médicos e exames.</p>
           <MultipleFiles />
 
           <br></br>

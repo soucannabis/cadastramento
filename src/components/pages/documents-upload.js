@@ -75,8 +75,6 @@ const FileUploadComponent = () => {
 
       await apiRequest("/api/directus/update", { userId: user.id, formData: { user_path: userFolder } }, "POST");
 
-      file.storage = "local";
-
       var fileName = file.name;
       fileName = fileName.split(".");
       var nameFile = "doc-identidade-" + user.name_associate + "-" + user.lastname_associate + "-" + user.user_code + "." + fileName[1];
@@ -228,7 +226,7 @@ const FileUploadComponent = () => {
     var userFolder = localStorage.getItem("user_folder");
 
     if (file) {
-      file.storage = "local";
+      
       file.filename_download = file.name;
 
       var fileName = file.name;
