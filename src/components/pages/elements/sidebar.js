@@ -231,9 +231,6 @@ const Sidebar = () => {
           </ul>
         </div>
         <Cart />
-        <br></br>
-        <br></br>
-        <br></br>
          <Contact/>
       </div>
     </div>

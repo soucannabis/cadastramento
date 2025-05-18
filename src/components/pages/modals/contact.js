@@ -35,7 +35,7 @@ const Contact = ({ type }) => {
     name: null,
     phone: null,
     email: user.email_account,
-    message: type == "appointment" ? "Olá, gostaria de agendar uma consulta médica." : null,
+    message: type == "appointment" ? "Olá, gostaria de agendar uma consulta médica." : "Estou no formulário de cadastro e preciso de ajuda",
     type: type == "appointment" ? 1 : 0,
   };
 
@@ -96,23 +96,11 @@ const Contact = ({ type }) => {
   }
 
   function handleChangeInput(event) {
-    event.preventDefault();
-
-    if (event.target.name == 'name') {
-      setMessage((prevMessage) => ({
-        ...prevMessage,
-        name: event.target.value,
-        email:user.email_account
-      }));
-    } else {
-      setMessage((prevMessage) => ({
-        ...prevMessage,
-        message: event.target.value,
-        name: user.name_associate+" "+user.lastname_associate,
-        email:user.email_account,
-        phone:user.mobile_number
-      }));
-    }
+    const { name, value } = event.target;
+    setMessage((prevMessage) => ({
+      ...prevMessage,
+      [name]: value,
+    }));
   }
 
   function handleChangeInputPhone(data) {
@@ -121,7 +109,7 @@ const Contact = ({ type }) => {
       phone: data,
     }));
   }
-
+console.log(message)
   return (
     <div>
       <Modal show={showPopup} onHide={handleClose}>
