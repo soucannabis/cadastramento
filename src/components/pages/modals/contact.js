@@ -45,11 +45,37 @@ const Contact = ({ type }) => {
   const contact = async event => {
     event.preventDefault();
 
+    // Verificação dos campos obrigatórios
+    if (type === "appointment") {
+      if (
+        !user.name_associate ||
+        !user.lastname_associate ||
+        !user.email_account ||
+        !user.mobile_number
+      ) {
+        setInputError(true);
+        setTimeout(() => setInputError(false), 4000);
+        return;
+      }
+    } else {
+      if (
+        (!user.mobile_number && (!message.name || !message.phone)) ||
+        !message.message
+      ) {
+        setInputError(true);
+        setTimeout(() => setInputError(false), 4000);
+        return;
+      }
+    }
+
     if (type != "appointment") {
       await fetch("https://n8n.soucannabis.ong.br/webhook/da23155e-90a5-486e-9e74-9d1ece12e82d", {
         method: "POST",
         body: JSON.stringify({
-          message
+          username: message.name,
+          email: user.email_account,
+          phone: message.phone,
+          message:message.message
         }),
       });
       setTimeout(() => {
@@ -109,7 +135,7 @@ const Contact = ({ type }) => {
       phone: data,
     }));
   }
-console.log(message)
+
   return (
     <div>
       <Modal show={showPopup} onHide={handleClose}>
@@ -171,7 +197,7 @@ console.log(message)
                                 <stop offset=".699" stop-color="#fef4df"></stop>
                                 <stop offset="1" stop-color="#fff7e4"></stop>
                               </radialGradient>
-                              <path fill="url(#TGwjmZMm2W~B4yrgup6jda_119026_gr1)" d="M58,54c-1.1,0-2-0.9-2-2s0.9-2,2-2h2.5c1.9,0,3.5-1.6,3.5-3.5S62.4,43,60.5,43H50c-1.4,0-2.5-1.1-2.5-2.5	S48.6,38,50,38h8c1.7,0,3-1.3,3-3s-1.3-3-3-3H42v-6h18c2.3,0,4.2-2,4-4.4c-0.2-2.1-2.1-3.6-4.2-3.6H58c-1.1,0-2-0.9-2-2s0.9-2,2-2	h0.4c1.3,0,2.5-0.9,2.6-2.2c0.2-1.5-1-2.8-2.5-2.8h-14C43.7,9,43,8.3,43,7.5S43.7,6,44.5,6h3.9c1.3,0,2.5-0.9,2.6-2.2	C51.1,2.3,50,1,48.5,1H15.6c-1.3,0-2.5,0.9-2.6,2.2C12.9,4.7,14,6,15.5,6H19c1.1,0,2,0.9,2,2s-0.9,2-2,2H6.2c-2.1,0-4,1.5-4.2,3.6	C1.8,16,3.7,18,6,18h2.5c1.9,0,3.5,1.6,3.5,3.5S10.4,25,8.5,25H5.2c-2.1,0-4,1.5-4.2,3.6C0.8,31,2.7,33,5,33h17v11H6	c-1.7,0-3,1.3-3,3s1.3,3,3,3l0,0c1.1,0,2,0.9,2,2s-0.9,2-2,2H4.2c-2.1,0-4,1.5-4.2,3.6C-0.2,60,1.7,62,4,62h53.8	c2.1,0,4-1.5,4.2-3.6C62.2,56,60.3,54,58,54z"></path>
+                              <path fill="url(#TGwjmZMm2W~B4yrgup6jda_119026_gr1)" d="M58,54c-1.1,0-2-0.9-2-2s0.9-2,2-2h2.5c1.9,0,3.5-1.6,3.5-3.5S62.4,43,60.5,43H50c-1.4,0-2.5-1.1-2.5-2.5	S48.6,38,50,38h8c1.7,0,3-1.3,3-3s-1.3-3-3-3H42v-6h18c2.3,0,4.2-2,4-4.4c-0.2-2.1-2.1-3.6-4.2-3.6H58c-1.1,0-2-0.9-2-2s0.9-2,2-2	h0.4c1.3,0,2.5-0.9,2.6-2.2c0.2-1.5-1-2.8-2.5-2.8h-14C43.7,9,43,8.3,43,7.5S43.7,6,44.5,6h3.9c1.3,0,2.5-0.9,2.6-2.2	C51.1,2.3,50,1,48.5,1H15.6c-1.3,0-2.5,0.9-2.6,2.2C12.9,4.7,14,6,15.5,6H19c1.1,0,2,0.9,2,2s-0.9,2-2,2H6.2c-2.1,0-4,1.5-4.2,3.6C1.8,16,3.7,18,6,18h2.5c1.9,0,3.5,1.6,3.5,3.5S10.4,25,8.5,25H5.2c-2.1,0-4,1.5-4.2,3.6C0.8,31,2.7,33,5,33h17v11H6	c-1.7,0-3,1.3-3,3s1.3,3,3,3l0,0c1.1,0,2,0.9,2,2s-0.9,2-2,2H4.2c-2.1,0-4,1.5-4.2,3.6C-0.2,60,1.7,62,4,62h53.8	c2.1,0,4-1.5,4.2-3.6C62.2,56,60.3,54,58,54z"></path>
                               <radialGradient id="TGwjmZMm2W~B4yrgup6jdb_119026_gr2" cx="18.51" cy="66.293" r="69.648" gradientTransform="matrix(.6435 -.7654 .5056 .4251 -26.92 52.282)" gradientUnits="userSpaceOnUse">
                                 <stop offset=".073" stop-color="#eacc7b"></stop>
                                 <stop offset=".184" stop-color="#ecaa59"></stop>
