@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import User from "../../../modules/User";
 import Products from "../../../modules/Products";
-import Cart from "../elements/cart";
 import Modal from "react-bootstrap/Modal";
 import apiRequest from "../../../modules/apiRequest";
 
@@ -11,7 +10,6 @@ function Shop() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortColumn, setSortColumn] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [cart, setCart] = useState([]);
   const [popupContent, setPopupContent] = useState([]);
   const [productQnt, setProductQnt] = useState(1);
   const [coupon, setCoupon] = useState(false);
@@ -53,7 +51,7 @@ function Shop() {
       }
 
     })();
-  }, [cart]);
+  }, []);
 
   const sortProducts = () => {
     return products.slice().sort((a, b) => {
@@ -78,20 +76,13 @@ function Shop() {
   const filteredProducts = sortProducts().filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   function addCart(product) {
-    const productCart = cart.some(item => item.id === product.id);
-    var productQnt = parseInt(document.getElementById(product.cod).value)
-
-    product.qntProductCart = productQnt
-    product.price = product.price * productQnt
-
-    if (!productCart) {
-      setCart([...cart, product]);
-    }
-
+    // Função temporariamente desabilitada
+    console.log("Carrinho temporariamente indisponível");
   }
 
   function deleteItem(product) {
-    setCart(product);
+    // Função temporariamente desabilitada
+    console.log("Carrinho temporariamente indisponível");
   }
 
   function info(event) {
@@ -184,7 +175,9 @@ function Shop() {
                 )}
 
 
-                <Cart items={cart} coupon={coupon} onDeleteItem={deleteItem} />
+                <div className="cart-placeholder">
+                  <p>Carrinho temporariamente indisponível</p>
+                </div>
               </div>
             </div>
           </div>

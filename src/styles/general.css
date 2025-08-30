@@ -77,8 +77,15 @@ h1.sub-title {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  margin-left: 157px;
+  width: 50%;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
+
+
+
+
 
 .line-through {
   text-decoration: line-through;
@@ -86,7 +93,7 @@ h1.sub-title {
 
 .form-container {
   max-width: 600px;
-  padding: 2rem;
+  padding: 4rem;
   margin-left: 165px;
 }
 
@@ -94,6 +101,7 @@ h1.sub-title {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  margin:20px 0;
 }
 
 .form-container textarea {
@@ -142,6 +150,28 @@ h1.sub-title {
   width: 75%;
   padding: 100px 20px 80px 50px;
   float: right;
+  background: url("../images/background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #132712;
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.content > * {
+  position: relative;
+  z-index: 2;
 }
 
 
@@ -232,10 +262,6 @@ select#reason_treatment {
 }
 
 body {
-  background: url("../images/background.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-opacity: 0.1;
   opacity: 1;
 }
 
@@ -278,8 +304,10 @@ body {
 }
 
 .login-div {
-  margin: 0 144px 0 0;
-  width: 422px;
+  margin: 0;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 20px;
 }
 
 .btn-signup {
@@ -298,6 +326,12 @@ button.btn.btn-primary.btn-lg:disabled {
 .document-send {
   color: #fff;
 }
+
+label.label-upload.send-ok.form-label:hover {
+  color: #fff;
+  font-size: 20px;
+}
+
 
 .label-upload {
   display: block;
@@ -321,11 +355,9 @@ button.btn.btn-primary.btn-lg:disabled {
 }
 
 .label-upload:hover {
-  box-shadow: 0px 0px 0px #000;
+  box-shadow: 3px 3px 5px #000;
   cursor: pointer;
-  color: #180d46;
-  font-size: 22px;
-  width: 50%;
+  color: #fff;
 }
 
 a.label-upload {
@@ -752,8 +784,12 @@ input.option-checkbox {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    margin-left: 80px;
+    width: 100%;
+    position: relative;
+    margin-left: 0;
   }
+  
+
 
   .mobile-login {
     padding: 40px !important;
@@ -858,4 +894,196 @@ input.option-checkbox {
   .form-signup {
     border-radius: 30px;
   }
+}
+
+/* Novos estilos para formulários de login e signup que ocupam metade da página */
+.login-form-container,
+.signup-form-container {
+  width: 50%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #132712;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.login-form-content,
+.signup-form-content {
+  width: 100%;
+  max-width: 500px;
+  padding: 50px;
+  text-align: center;
+}
+
+.login-form-content h1.sub-title,
+.signup-form-content h1.sub-title {
+  margin-bottom: 40px;
+}
+
+.login-form-content .form-group,
+.signup-form-content .form-group {
+  text-align: left;
+}
+
+.signup-form-content .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.login-form-content .form-input,
+.signup-form-content .form-input {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.login-form-content .form-input::placeholder,
+.signup-form-content .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-form-content .label-login,
+.signup-form-content .label-login {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.login-form-content .btn,
+.signup-form-content .btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.signup-form-content .btn-signup {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.signup-form-content .btn-signup:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+.login-form-content .alert,
+.signup-form-content .alert {
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .vertical-center {
+    width: 100%;
+    position: relative;
+  }
+  
+  .content {
+    width: 100% !important;
+    padding: 20px !important;
+    float: none !important;
+    background: url("../images/background.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative !important;
+    min-height: 100vh !important;
+  }
+  
+  .content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #132712;
+    opacity: 0.9;
+    z-index: 1;
+  }
+  
+  .content > * {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .login-form-container,
+  .signup-container {
+    width: 100%;
+    position: relative;
+    height: auto;
+    background: none;
+  }
+  
+  .login-form-content,
+  .signup-form-content {
+    padding: 0;
+  }
+}
+
+/* Regra adicional para dispositivos muito pequenos */
+@media (max-width: 600px) {
+  .content {
+    background: url("../images/background.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Fallback para garantir que a imagem apareça */
+  body {
+    background: url("../images/background.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+  }
+  
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #132712;
+    opacity: 0.9;
+    z-index: -1;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+
+.form-container {
+    max-width: 700px;
+    padding: 4rem;
+    margin:0
+}
+
+li.item-selected, li.line-through {
+  font-size: 15px;
+}
+
+li.disabled, li.line-through {
+  font-size: 15px;
+}
+
+a.text-left.text-white.btn.btn-warning.btn-contact {
+  width: 80%;
+  font-size: 14px;
+}
 }

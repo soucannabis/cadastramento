@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import User from '../../../modules/User'
 import Contact from '../modals/contact'
-import { Dropdown } from 'react-bootstrap';
 
 const MenuTopo = () => {
 
@@ -14,36 +13,41 @@ const MenuTopo = () => {
     })();
   }, [])
 
-  const [logout, setLogout] = useState(false);
-
-  const logoutHandleChange = (event) => {
-    setLogout(true);
+  const logoutHandleChange = () => {
     localStorage.removeItem("user_code")
     window.location.assign("/login");
   };
 
   return (
-    <nav className="navbar  navbar-light fixed-top">
-      <img style={{width:"10%"}} src={import.meta.env.VITE_ASSOCIATION_LOGO}></img>
+    <nav className="navbar navbar-light fixed-top">
+      <img style={{width:"30%"}} src={import.meta.env.VITE_ASSOCIATION_LOGO} alt="Logo da Associação" />
       <Contact />
       <div className="">
-        <Dropdown>
-          <Dropdown.Toggle variant="primary" id="dropdown-basic" className="text-right">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
-              <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none"><g transform="scale(5.12,5.12)"><path d="M5,8c-0.72127,-0.0102 -1.39216,0.36875 -1.75578,0.99175c-0.36361,0.623 -0.36361,1.39351 0,2.01651c0.36361,0.623 1.0345,1.00195 1.75578,0.99175h40c0.72127,0.0102 1.39216,-0.36875 1.75578,-0.99175c0.36361,-0.623 0.36361,-1.39351 0,-2.01651c-0.36361,-0.623 -1.0345,-1.00195 -1.75578,-0.99175zM5,23c-0.72127,-0.0102 -1.39216,0.36875 -1.75578,0.99175c-0.36361,0.623 -0.36361,1.39351 0,2.01651c0.36361,0.623 1.0345,1.00195 1.75578,0.99175h40c0.72127,0.0102 1.39216,-0.36875 1.75578,-0.99175c0.36361,-0.623 0.36361,-1.39351 0,-2.01651c-0.36361,-0.623 -1.0345,-1.00195 -1.75578,-0.99175zM5,38c-0.72127,-0.0102 -1.39216,0.36875 -1.75578,0.99175c-0.36361,0.623 -0.36361,1.39351 0,2.01651c0.36361,0.623 1.0345,1.00195 1.75578,0.99175h40c0.72127,0.0102 1.39216,-0.36875 1.75578,-0.99175c0.36361,-0.623 0.36361,-1.39351 0,-2.01651c-0.36361,-0.623 -1.0345,-1.00195 -1.75578,-0.99175z"></path></g></g>
-            </svg>
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={logoutHandleChange} class="btn btn-primary">
-              Sair
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
+        <button 
+          onClick={logoutHandleChange}
+          className="btn btn-link p-0"
+          style={{ border: 'none', background: 'none' }}
+          title="Sair"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            style={{ color: 'white', marginRight: '10px' }}  
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16,17 21,12 16,7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
       </div>
     </nav>
-
-
   );
 }
 

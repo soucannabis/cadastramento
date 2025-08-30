@@ -88,9 +88,9 @@ function App() {
             <div class="container vertical-center" hidden={hiddenLogin}>
               <div class="text-center login-div">
                 <img
-                  src={import.meta.env.VITE_ASSOCIATION_LOGO}
+                  src="/logoSou.png"
+                  style={{width: "250px", height: "250px"}}
                 />
-                <h1 class="sub-title"><b>Cadastramento <br></br>{import.meta.env.VITE_ASSOCIATION_NAME}</b></h1>
                 <br></br>
                 <div class="row">                
                   <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
@@ -113,9 +113,9 @@ function App() {
             <div class="container mobile-login" hidden={hiddenLogin}>
               <div class="text-center">
                 <img
-                  src={import.meta.env.VITE_ASSOCIATION_LOGO}
+                  src="/logoSou.png"
+                  style={{width: "250px", height: "250px"}}
                 />
-                <h1 class="sub-title">Cadastramento <br></br> {import.meta.env.VITE_ASSOCIATION_NAME}</h1>
                 <div class="row">                  
                   <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
                     Criar minha conta

@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const SelectComponent = ({ handleChange, counterCheck, disableCheckbox }) => {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value }) => {
+  const [selectedOptions, setSelectedOptions] = useState(value || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isCatOpen, setIsCatOpen] = useState(false);
   const [isCatClose, setIsCatClose] = useState(false);
+
+  // Sincroniza com o valor recebido via props
+  useEffect(() => {
+    if (value && Array.isArray(value)) {
+      setSelectedOptions(value);
+    }
+  }, [value]);
 
   // Array de categorias e subcategorias
   const options = [

@@ -63,7 +63,7 @@ function Prescription() {
       <br></br>
       <Form>
         <Form.Group controlId="formFile1">
-          <Form.Label className="label-upload">Enviar receita Médica</Form.Label>
+          <Form.Label className="label-upload">📤 Enviar receita Médica</Form.Label>
           <Form.Control className="input-upload" type="file" onChange={handleFileChange} />
         </Form.Group>
       </Form>

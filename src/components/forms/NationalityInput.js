@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 
-const NationalityInput = ({ handleChangeInput }) => {
+const NationalityInput = ({ handleChangeInput, value, name }) => {
   const [hiddenInput, setHiddenInput] = useState(false);
+  const [currentValue, setCurrentValue] = useState(value || '');
+
+  // Sincroniza com o valor recebido via props
+  useEffect(() => {
+    setCurrentValue(value || '');
+    if (value && value !== 'outro') {
+      setHiddenInput(false);
+    } else if (value === 'outro') {
+      setHiddenInput(true);
+    }
+  }, [value]);
 
   function handleChange(e){
-    if (e.target.value === 'outro') {
+    const newValue = e.target.value;
+    setCurrentValue(newValue);
+    
+    if (newValue === 'outro') {
       setHiddenInput(true);
     } else {
       setHiddenInput(false);
     }
-
+    
+    // Chama a função de callback para atualizar o localStorage
+    handleChangeInput(e);
   }
 
   return (
@@ -20,10 +36,8 @@ const NationalityInput = ({ handleChangeInput }) => {
             as="select"
             id="nationality"
             name="nationality"
-            onChange={(e) => {
-              handleChange(e);
-              handleChangeInput(e);
-            }}
+            value={currentValue}
+            onChange={handleChange}
           >
             <option value="">Selecione...</option>
             <option value="brasileiro(a)">Brasileiro(a)</option>
@@ -32,10 +46,17 @@ const NationalityInput = ({ handleChangeInput }) => {
           <br></br>
           <br></br>
           {hiddenInput && (
-            <input placeholder='Digite sua nacionalidade'  className="form-input" type="text"  name="nationality" 
-            onChange={(e) => {
+            <input 
+              placeholder='Digite sua nacionalidade'  
+              className="form-input" 
+              type="text"  
+              name="nationality" 
+              value={currentValue === 'outro' ? '' : currentValue}
+              onChange={(e) => {
+                setCurrentValue(e.target.value);
                 handleChangeInput(e);
-              }}/>
+              }}
+            />
           )}
         </form>
   );

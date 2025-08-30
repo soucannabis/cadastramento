@@ -139,14 +139,14 @@ function MultipleFiles() {
                   <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
                 </span>
               )}
-              {!isLoadingButton && !attachment && <span>Anexar arquivo</span>}
-              {!isLoadingButton && attachment && !selectInfo && <span>Anexar mais um arquivo</span>}
+              {!isLoadingButton && !attachment && <span>📎 Anexar arquivo</span>}
+              {!isLoadingButton && attachment && !selectInfo && <span>📎 Anexar mais um arquivo</span>}
               {selectInfo && attachment && <span>Clique abaixo para continuar seu cadastro</span>}
             </Form.Label>
             <Form.Control className="input-upload" type="file" onChange={handleFile} />
           </Form.Group>
         </Form>
-        <div class="col-12 d-flex justify-content-center align-items-center" style={{ marginTop: "70px" }}><a onClick={(nextPage)} class="btn btn-success btn-lg btn-signup">CONCLUIR CADASTRO</a></div>
+        <div class="col-12 d-flex justify-content-center align-items-center" style={{ marginTop: "70px" }}><a onClick={(nextPage)} class="btn btn-success btn-lg btn-signup">✅ CONCLUIR CADASTRO</a></div>
 
       </div>
       {errorNamefile && (

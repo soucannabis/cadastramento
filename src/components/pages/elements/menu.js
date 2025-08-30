@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import User from '../../../modules/User'
 import Contact from '../modals/contact'
-import { Dropdown } from 'react-bootstrap';
 
 const MenuTopo = () => {
 
@@ -14,10 +13,7 @@ const MenuTopo = () => {
     })();
   },[])
 
-  const [logout, setLogout] = useState(false);
-
-  const logoutHandleChange = (event) => {
-    setLogout(true);
+  const logoutHandleChange = () => {
     localStorage.removeItem("user_code")
     window.location.assign("/login");
   };
@@ -31,20 +27,35 @@ const MenuTopo = () => {
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
               {user &&
-                <span className="nav-link" href="#">{user.email_account}</span>
+                <span style={{marginRight: '10px'}} className="nav-link" href="#">{user.email_account}</span>
               }
             </li>
        
-            <Dropdown>
-              <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                Menu
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu>
-                <Dropdown.Divider />
-                <Dropdown.Item onClick={logoutHandleChange} class="btn btn-primary">Sair</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <li className="nav-item">
+              <button 
+                onClick={logoutHandleChange}
+                className="btn btn-link p-0"
+                style={{ border: 'none', background: 'none' }}
+                title="Sair"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  style={{ color: 'white', marginRight: '10px' }}  
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16,17 21,12 16,7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
+            </li>
           </ul>
         </div>
       </div>

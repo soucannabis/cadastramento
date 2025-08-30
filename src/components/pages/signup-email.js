@@ -103,7 +103,7 @@ function SignupEmail() {
           <h1 class="sub-title">Preencha seu e-mail abaixo para iniciar seu cadastro de associado.</h1>
           <form onSubmit={signUp}>
             <div class="form-group">
-              <input type="email" class="form-input input-login" onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
+              <input type="email" class="form-input input-login"  onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
             </div>
             <br />
             <a href="/login" style={{color:"white", fontSize:"17px"}} className="btn">

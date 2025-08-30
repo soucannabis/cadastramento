@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import User from "../../../modules/User";
 import CheckIcon from "./checkIcon";
 import Contact from "../modals/contact";
-import Cart from "./cart";
 
 const Sidebar = () => {
   const [user, setUser] = useState({});
@@ -230,7 +229,6 @@ const Sidebar = () => {
             )}
           </ul>
         </div>
-        <Cart />
          <Contact/>
       </div>
     </div>

@@ -8,6 +8,7 @@ import AlertError from "../forms/AlertError";
 import MultiSelectField from "../forms/CIAPInput";
 import Modal from "react-bootstrap/Modal";
 import LabelInfo from "../pages/elements/labelInfo";
+import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
 const AssociateSignUp = () => {
   const [user, setUser] = useState({});
@@ -19,6 +20,9 @@ const AssociateSignUp = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [cpfNotValid, setCpfNotValid] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [emptyFields, setEmptyFields] = useState([]);
+  const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
 
@@ -38,7 +42,8 @@ const AssociateSignUp = () => {
     window.location.assign("/");
   }
 
-  const [formData, setFormData] = useState({
+  // Dados iniciais do formulário
+  const initialFormData = {
     status: "patient",
     responsable_type: "patient",
     name_associate: null,
@@ -62,23 +67,29 @@ const AssociateSignUp = () => {
     mobile_number: null,
     reason_treatment_text: null,
     associate_status: 9,
-  });
+  };
+
+  // Hook para gerenciar o localStorage do formulário
+  const [
+    formData, 
+    setFormData, 
+    updateField, 
+    updateMultipleFields, 
+    resetForm, 
+    clearFormData
+  ] = useFormLocalStorage("patient_signup", initialFormData);
 
   formData.email = user.email_account;
   formData.mobile_number = user.mobile_number;
 
   const handleChangeInput = event => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    });
+    // Atualiza o campo específico no localStorage
+    updateField(event.target.name, event.target.value);
   };
 
   const handleSelectionChange = event => {
-    setFormData({
-      ...formData,
-      ["reason_treatment"]: event,
-    });
+    // Atualiza o campo reason_treatment no localStorage
+    updateField("reason_treatment", event);
   };
 
   const handleChoice = choice => {
@@ -118,15 +129,16 @@ const AssociateSignUp = () => {
 
   const updateUser = async event => {
     event.preventDefault();
+    setIsSubmitting(true);
 
-    var emptyFields = [];
+    var emptyFieldsArray = [];
 
     for (let key in formData) {
       if (formData.hasOwnProperty(key)) {
         if (formData[key] == null || formData[key] == undefined || formData[key] == "" || formData[key] == []) {
-          if (key != "complement") {
-            emptyFields.push(key);
-          }
+                     if (key != "complement") {
+             emptyFieldsArray.push(key);
+           }
           if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "complement" && key != "mobile_number") {
             document.querySelector("#" + key).className = "form-input input-login input-empty";
           }
@@ -144,18 +156,18 @@ const AssociateSignUp = () => {
       }
     }
 
-    console.log(emptyFields)
+    console.log(emptyFieldsArray)
 
-    if (emptyFields.length == 2) {
-      if (emptyFields.includes("reason_treatment") || emptyFields.includes("reason_treatment_text")) {
-        emptyFields = [];
+    if (emptyFieldsArray.length == 2) {
+      if (emptyFieldsArray.includes("reason_treatment") || emptyFieldsArray.includes("reason_treatment_text")) {
+        emptyFieldsArray = [];
       }
 
     }
 
-    console.log(emptyFields)
+    console.log(emptyFieldsArray)
 
-    if (emptyFields != []) {
+    if (emptyFieldsArray != []) {
       setValidateForm(true);
     } else {
       setValidateForm(false);
@@ -193,61 +205,114 @@ const AssociateSignUp = () => {
         }
       }
 
+      // Validação matemática do CPF
+      if (!realCPF(validateCPF)) {
+        if (formData.cpf_associate) {
+          emptyFieldsArray.push("cpf");
+          setCpfNotValid(true);
+          setTimeout(() => {
+            setCpfNotValid(false);
+          }, 6000);
+        }
+      }
     }
 
-    setFieldsError(true);
-    setTimeout(() => {
-      setFieldsError(false);
-    }, 6000);
-    if (emptyFields == "" || emptyFields == []) {
-      setFieldsError(false);
-      formData.responsable_code = codeUser;
 
-      console.log(formData);
 
-      formData.reason_treatment = user.reason_treatment
-      formData.reason_treatment_text = user.reason_treatment_text
-
-      await apiRequest("/api/directus/create-user", formData, "POST")
-
-      const searchUser = await apiRequest("/api/directus/search", { query: "/items/Users?filter[responsable_code][_eq]=" + codeUser }, "POST")
-
-      await apiRequest("/api/directus/update", { userId: user.id, formData: { responsible_for: searchUser.user_code } }, "POST")
-      //await apiRequest("/api/directus/update", { userId: user.id, formData: { reason_treatment: null, reason_treatment_text: null } }, "POST")
+    // Se há campos vazios, mostra erro e move para o primeiro campo
+    if (emptyFieldsArray.length > 0) {
+      setEmptyFields(emptyFieldsArray);
       
-      window.location.assign("/documentos");
+      // Cria a mensagem traduzida dos campos vazios
+      const translations = {
+        name_associate: "primeiro nome",
+        lastname_associate: "sobrenome",
+        birthday_associate: "data de nascimento",
+        gender: "identidade de gênero",
+        nationality: "nacionalidade",
+        cpf_associate: "CPF",
+        rg_associate: "RG",
+        emiiter_rg_associate: "órgão emissor",
+        marital_status: "estado civil",
+        street: "rua",
+        number: "número",
+        neighborhood: "bairro",
+        city: "cidade",
+        state: "estado",
+        cep: "CEP"
+      };
+
+      let translatedFields = [];
+      emptyFieldsArray.map(field => {
+        if (translations[field]) {
+          translatedFields.push(translations[field]);
+        }
+      });
+
+      let translatedFieldsString = translatedFields.join(", ");
+      setEmptyFieldsMessage(translatedFieldsString);
+      
+      setFieldsError(true);
+      setTimeout(() => {
+        setFieldsError(false);
+      }, 6000);
+      
+      // Move a página para o primeiro campo vazio
+      const firstEmptyField = emptyFieldsArray[0];
+      const element = document.getElementById(firstEmptyField);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+      setIsSubmitting(false);
+      return; // Para a execução aqui
     }
+
+    // Se não há campos vazios, continua com o envio
+    setFieldsError(false);
+    formData.responsable_code = codeUser;
+
+    console.log(formData);
+
+    formData.reason_treatment = user.reason_treatment
+    formData.reason_treatment_text = user.reason_treatment_text
+
+    await apiRequest("/api/directus/create-user", formData, "POST")
+
+    const searchUser = await apiRequest("/api/directus/search", { query: "/items/Users?filter[responsable_code][_eq]=" + codeUser }, "POST")
+
+    await apiRequest("/api/directus/update", { userId: user.id, formData: { responsible_for: searchUser.user_code } }, "POST")
+    //await apiRequest("/api/directus/update", { userId: user.id, formData: { reason_treatment: null, reason_treatment_text: null } }, "POST"
+    
+    // Sempre desabilita o estado de envio no final
+    setIsSubmitting(false);
+    
+    window.location.assign("/documentos");
   };
 
   return (
-    <div>
-      <Modal show={showPopup} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Você é estrangeiro?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h5>Se seu número for de outro país clique SIM</h5>
-          <button class="btn btn-primary button-modal" variant="secondary" onClick={() => handleChoice(true)}>
-            Sim
-          </button>
-          <button class="btn btn-warning warning-button-modal  button-modal" variant="primary" onClick={() => handleChoice(false)}>
-            Não, digitei errado
-          </button>
-        </Modal.Body>
-      </Modal>
-
+    <div>  
       <form onSubmit={updateUser} className="form-container ">
         <h1 className="sub-title">Cadastro do Paciente</h1>
         <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} >
           Informe abaixo os dados do paciente no qual você é responsável
-        </p>
+        </p>       
         <br></br>
         <div>
           <div className="mb-3">
             <label className="form-label" htmlFor="name_associate">
               Primeiro nome
             </label>
-            <input placeholder="Digite o primeiro nome do paciente" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.name_associate} type="text" id="name_associate" name="name_associate"></input>
+            <input 
+              placeholder="Digite o primeiro nome do paciente" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.name_associate || ""} 
+              type="text" 
+              id="name_associate" 
+              name="name_associate"
+            />
           </div>
 
           <div className="mb-3">
@@ -261,7 +326,15 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="birthday_associate">
               Data de nascimento
             </label>
-            <InputMask mask="99/99/9999" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.birthday_associate} type="text" id="birthday_associate" name="birthday_associate">        
+            <InputMask 
+              mask="99/99/9999" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.birthday_associate || ""} 
+              type="text" 
+              id="birthday_associate" 
+              name="birthday_associate"
+            >        
               {inputProps =>  <input placeholder="__/__/____" class="form-input input-login" {...inputProps}  />}
             </InputMask>
           </div>
@@ -270,22 +343,36 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="gender">
               Identidade de gênero <LabelInfo message="Escolha o gênero ou digite com qual você se identifica" id="gen" />
             </label>
-            <GenderInput className="form-input" name="gender" handleChangeInput={handleChangeInput} />
+            <GenderInput 
+              className="form-input" 
+              name="gender" 
+              value={formData.gender}
+              handleChangeInput={handleChangeInput} 
+            />
           </div>
           <br></br>
           <div className="mb-3">
             <label className="form-label" htmlFor="nationality">
               Nacionalidade <LabelInfo message="Escolha o país onde nasceu" id="nac" />
             </label>
-            <NationalityInput name="nacionality" handleChangeInput={handleChangeInput} />
+            <NationalityInput 
+              name="nationality" 
+              value={formData.nationality}
+              handleChangeInput={handleChangeInput} 
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="cpf_associate">
               CPF <LabelInfo message="Necessário para a geração doo termo de responsabilidade do associado" id="cpf" />
             </label>
-            <InputMask mask="999.999.999-99" value={formData.cpf_associate} onChange={handleChangeInput} onBlur={handleChangeInput}>
-              {inputProps => <input placeholder="Digite o CPF do paciente" value={formData.cpf_associate} type="text" id="cpf_associate" name="cpf_associate" className="form-input" {...inputProps} />}
+            <InputMask 
+              mask="999.999.999-99" 
+              value={formData.cpf_associate || ""} 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput}
+            >
+              {inputProps => <input placeholder="Digite o CPF do paciente" type="text" id="cpf_associate" name="cpf_associate" className="form-input" {...inputProps} />}
             </InputMask>
           </div>
 
@@ -293,21 +380,46 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="rg_associate">
               RG <LabelInfo message="Necessário para a geração doo termo de responsabilidade do associado" id="rg" />
             </label>
-            <input placeholder="Digite seu RG" type="text" value={formData.rg_associate} id="rg_associate" name="rg_associate" className="form-input" onChange={handleChangeInput} />
+            <input 
+              placeholder="Digite seu RG" 
+              type="text" 
+              value={formData.rg_associate || ""} 
+              id="rg_associate" 
+              name="rg_associate" 
+              className="form-input" 
+              onChange={handleChangeInput} 
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="emiiter_rg_associate">
               Orgão emissor <LabelInfo message="Informe o orgão emissor do seu rg" id="org" />
             </label>
-            <input placeholder="Digite orgão emissor do documento" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.emiiter_rg_associate} type="text" id="emiiter_rg_associate" name="emiiter_rg_associate"></input>
+            <input 
+              placeholder="Digite orgão emissor do documento" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.emiiter_rg_associate || ""} 
+              type="text" 
+              id="emiiter_rg_associate" 
+              name="emiiter_rg_associate"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="marital_status">
               Estado civil
             </label>
-            <select class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.marital_status} type="text" id="marital_status" name="marital_status">
+            <select 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.marital_status || ""} 
+              type="text" 
+              id="marital_status" 
+              name="marital_status"
+            >
               <option value="">Selecione...</option>
               <option value="Solteiro">Solteiro(a)</option>
               <option value="Casado">Casado(a)</option>
@@ -321,42 +433,94 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="street">
               Rua
             </label>
-            <input placeholder="Digite a rua do endereço" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.street} type="text" id="street" name="street"></input>
+            <input 
+              placeholder="Digite a rua do endereço" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.street || ""} 
+              type="text" 
+              id="street" 
+              name="street"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="number">
               Número
             </label>
-            <input placeholder="Digite o número ou bloco" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.number} type="text" id="number" name="number"></input>
+            <input 
+              placeholder="Digite o número ou bloco" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.number || ""} 
+              type="text" 
+              id="number" 
+              name="number"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="complement">
               Complemento
             </label>
-            <input placeholder="Digite um complemento se necessário" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.complement} type="text" id="complement" name="complement"></input>
+            <input 
+              placeholder="Digite um complemento se necessário" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.complement || ""} 
+              type="text" 
+              id="complement" 
+              name="complement"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="neighborhood">
               Bairro
             </label>
-            <input placeholder="Digite o bairro" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.neighborhood} type="text" id="neighborhood" name="neighborhood"></input>
+            <input 
+              placeholder="Digite o bairro" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.neighborhood || ""} 
+              type="text" 
+              id="neighborhood" 
+              name="neighborhood"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="city">
               Cidade
             </label>
-            <input placeholder="Digite a cidade" class="form-input input-login" onChange={handleChangeInput} value={formData.city} type="text" id="city" name="city"></input>
+            <input 
+              placeholder="Digite a cidade" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              value={formData.city || ""} 
+              type="text" 
+              id="city" 
+              name="city"
+            />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="state">
               Estado
             </label>
-            <select class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.state} type="text" id="state" name="state">
+            <select 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.state || ""} 
+              type="text" 
+              id="state" 
+              name="state"
+            >
               <option value="">Selecione...</option>
               {statesData.map(state => (
                 <option key={state.value} value={state.value}>
@@ -370,33 +534,79 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="cep">
               CEP
             </label>
-            <input placeholder="Digie o CEP" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.cep} type="text" id="cep" name="cep"></input>
+            <input 
+              placeholder="Digite o CEP" 
+              class="form-input input-login" 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.cep || ""} 
+              type="text" 
+              id="cep" 
+              name="cep"
+            />
           </div>
           <div className="mb-3" style={{ display: "none" }}>
-            <MultiSelectField onChange={handleSelectionChange} value="hidden" name="reason_treatment" hidden />
-            <textarea onChange={handleChangeInput} onBlur={handleChangeInput} value="hidden" as="textarea" id="reason_treatment_text" name="reason_treatment_text" hidden />
+            <MultiSelectField 
+              onChange={handleSelectionChange} 
+              value={formData.reason_treatment} 
+              name="reason_treatment" 
+              hidden 
+            />
+            <textarea 
+              onChange={handleChangeInput} 
+              onBlur={handleChangeInput} 
+              value={formData.reason_treatment_text || ""} 
+              as="textarea" 
+              id="reason_treatment_text" 
+              name="reason_treatment_text" 
+              hidden 
+            />
           </div>
-          <button class="btn btn-success btn-lg btn-float-right" type="submit">
-            Enviar dados
+          
+          <button 
+            className="btn btn-success btn-lg btn-float-right" 
+            type="submit"
+            disabled={isSubmitting}
+            style={{
+              fontWeight: 'bold',
+              fontSize: '18px',
+              padding: '15px 30px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              transition: 'all 0.3s ease',
+              minWidth: '200px'
+            }}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Enviando...
+              </>
+            ) : (
+              <>
+             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" fill="#ffffff"><path fill="#ffffff" d="M5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 12.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 3a.5.5 0 0 0 0 1H8V3z"/><path fill="#ffffff" fill-rule="evenodd" d="M14 4.57a.5.5 0 0 0-.024-.235l-.013-.063a1.5 1.5 0 0 0-.18-.434c-.092-.15-.222-.28-.482-.54l-2.59-2.59c-.259-.26-.389-.39-.54-.483a1.5 1.5 0 0 0-.496-.193a.5.5 0 0 0-.235-.024C9.329.004 9.194.004 9.015.004h-2.21c-1.68 0-2.52 0-3.16.327a3.02 3.02 0 0 0-1.31 1.31c-.327.642-.327 1.48-.327 3.16v6.4c0 1.68 0 2.52.327 3.16a3.02 3.02 0 0 0 1.31 1.31c.642.327 1.48.327 3.16.327h2.4c1.68 0 2.52 0 3.16-.327a3.02 3.02 0 0 0 1.31-1.31c.327-.642.327-1.48.327-3.16V4.99c0-.178 0-.313-.005-.425zm-2.91 10.4c-.45.037-1.03.038-1.89.038H6.8c-.857 0-1.44-.001-1.89-.038c-.438-.036-.663-.101-.819-.18a2 2 0 0 1-.874-.874c-.08-.156-.145-.381-.18-.819c-.037-.45-.038-1.03-.038-1.89v-6.4c0-.857.001-1.44.038-1.89c.036-.438.101-.663.18-.819c.192-.376.498-.682.874-.874c.156-.08.381-.145.819-.18c.45-.037 1.03-.038 1.89-.038H9v3.5a.5.5 0 0 0 .5.5H13v6.2c0 .857 0 1.44-.038 1.89c-.035.438-.1.663-.18.82a2 2 0 0 1-.874.873c-.156.08-.38.145-.819.18zM10 1.47l2.59 2.59H10z" clip-rule="evenodd"/></svg>
+             <span style={{marginLeft: '10px'}}>Enviar dados</span>
+             </> 
+            )}
           </button>
 
           <br></br>
           <br></br>
         </div>
         
-        {fieldsError && <AlertError message="Você precisa preencher todos os campos" />}
+        {fieldsError && <AlertError message="Você precisa preencher os seguintes campos: " emptyFields={emptyFieldsMessage} />}
         {cpfError && (
           <div class="alert2">
             <AlertError message="O CPF precisa estar completo" />
           </div>
         )}
         {rgError && (
-          <div class="alert3">
+          <div class="alert2">
             <AlertError message="O RG precisa estar completo" />
           </div>
         )}
         {cpfNotValid && (
-          <div class="alert3">
+          <div class="alert2">
             <AlertError message="O CPF digitado não é válido" />
           </div>
         )}

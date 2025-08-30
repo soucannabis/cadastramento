@@ -19,22 +19,72 @@ const FileUploadComponent = () => {
   const [isLoadingC, setIsLoadingC] = useState(false);
   const [fileError, setFileError] = useState(false);
   const [buttonMsg, setButtonMsg] = useState(false);
+  const [isMonitoringStatus, setIsMonitoringStatus] = useState(false);
 
   var userData = {};
 
-  /* setTimeout(async () => {
+  // Função para verificar o status do associado
+  const checkAssociateStatus = async () => {
+    try {
+      const userData = await User();
+      if (userData.associate_status === 4) {
+        window.location.assign("/consulta");
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Erro ao verificar status do associado:", error);
+      return false;
+    }
+  };
+
+  // Função para iniciar o monitoramento do status
+  const startStatusMonitoring = () => {
+    setIsMonitoringStatus(true);
+    console.log("startStatusMonitoring")
+    // Verifica imediatamente
+    checkAssociateStatus();
+    
+    // Configura verificação a cada 10 segundos
+    const intervalId = setInterval(async () => {
+      const shouldRedirect = await checkAssociateStatus();
+      if (shouldRedirect) {
+        clearInterval(intervalId);
+        setIsMonitoringStatus(false);
+      }
+    }, 10000); // 10 segundos
+    
+    // Armazena o ID do intervalo para limpeza posterior
+    window.statusMonitoringInterval = intervalId;
+  };
+
+  // Função para parar o monitoramento
+  const stopStatusMonitoring = () => {
+    setIsMonitoringStatus(false);
+    if (window.statusMonitoringInterval) {
+      clearInterval(window.statusMonitoringInterval);
+      window.statusMonitoringInterval = null;
+    }
+  };
+
+ /* setTimeout(async () => {
      userData = await User();
      setUser(userData);
+     console.log("xxx")
    }, 4000);*/
 
-  if (user.associate_status == 4) {
-    window.location.assign("/consulta");
-  }
+
 
   useEffect(() => {
     (async function () {
       userData = await User();
       setUser(userData);
+
+      // Verifica se o status do associado é 4 e redireciona se necessário
+      if (userData.associate_status === 4) {
+        window.location.assign("/consulta");
+        return;
+      }
 
       if (userData.rg_proof == null) {
         setRgProof(false);
@@ -63,6 +113,14 @@ const FileUploadComponent = () => {
         setVisible(false);
       }
     })();
+
+    // Cleanup function para limpar o intervalo quando o componente for desmontado
+    return () => {
+      if (window.statusMonitoringInterval) {
+        clearInterval(window.statusMonitoringInterval);
+        window.statusMonitoringInterval = null;
+      }
+    };
   }, []);
 
   const handleFileAssociateChange = async event => {
@@ -95,7 +153,7 @@ const FileUploadComponent = () => {
             fileId = response.id;
 
             if (fileId != "não-carregou-o-arquivo" && fileId != "") {
-              setButtonMsg(true);
+           //   setButtonMsg(true);
               return fileId;
             }
 
@@ -247,7 +305,7 @@ const FileUploadComponent = () => {
         await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
           if (response) {
             fileId = response.id;
-            setButtonMsg(true);
+           // setButtonMsg(true);
             return fileId;
           } else {
             setdocError(true);
@@ -287,13 +345,21 @@ const FileUploadComponent = () => {
                 {isLoading && (
                   <span className="loading-text">
                     <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
-                    {!buttonMsg ? <span>Carregando documento...</span> : (<span class="gernerate-term">Gerando termo para assinatura</span>
-
-                    )}
+                    {!buttonMsg ? <span>Carregando documento...</span> : (
+                      <span className="gernerate-term" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '18px' }}>📄</span>
+                        Gerando termo para assinatura
+                      </span>
+                    )}                    
                     <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
-                {!isLoading && <span>Documento de identidade</span>}
+                {!isLoading && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', width: '100%' }}>
+                    <span style={{ fontSize: '18px' }}>📋</span>
+                    Documento de identidade
+                  </span>
+                )}
               </Form.Label>
               <Form.Control className="input-upload" type="file" onChange={handleFileAssociateChange} />
             </Form.Group>
@@ -301,7 +367,7 @@ const FileUploadComponent = () => {
         )}
         {rgProof && (
           <div class="document-send">
-            <Form.Label className="label-upload send-ok">Comprovante de identidade enviado</Form.Label>
+            <Form.Label className="label-upload send-ok">✅ Comprovante de identidade enviado</Form.Label>
           </div>
         )}
 
@@ -314,7 +380,12 @@ const FileUploadComponent = () => {
                     <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
-                {!isLoadingC && <span class="doc-patient">Documento de Identidade do paciente</span>}
+                {!isLoadingC && (
+                  <span className="doc-patient" style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', width: '100%' }}>
+                    <span style={{ fontSize: '18px' }}>📋</span>
+                    Documento de Identidade do paciente
+                  </span>
+                )}
               </Form.Label>
               <Form.Control className="input-upload" type="file" onChange={handlePatientFileChange} />
             </Form.Group>
@@ -331,29 +402,30 @@ const FileUploadComponent = () => {
         <br></br>
         <div style={{ textAlign: 'center', color: '#fff' }}>
           <a target="_blank" style={{textDecoration:'none', color:'#fff'}} href={`https://enviararquivos.soucannabis.ong.br?u=${user.user_code}`}>
-            Algum problema em enviar seus documentos? Clique aqui
+            Algum problema em enviar seus documentos? <strong>Clique aqui</strong>
           </a>
         </div>
-        <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} hidden={!rgProof}>
-          Após assinar o seu termo, recarregue esta página
-        </p>
-        <a className="label-upload assign-term" target="_blank" href={generateContract || user.contract} hidden={!rgProof}>
-          Assinar Termo de Responsabilidade
-        </a>
         <br></br>
-        <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} hidden={!rgProof}>
-          <a
-            style={{ textDecoration: 'none', color: 'white', fontWeight: 'bold', fontSize: '20px' }}
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.reload();
-            }}
-          >
-            Recarregar Página
-          </a>
-
-        </p>
+                 <a 
+           className="label-upload assign-term" 
+           target="_blank" 
+           href={generateContract || user.contract} 
+           hidden={!rgProof}
+           onClick={startStatusMonitoring}
+           style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
+         >
+           <span style={{ fontSize: '18px' }}>✍️</span>
+           Assinar Termo de Responsabilidade
+         </a>
+        {isMonitoringStatus && (
+          <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            <p style={{ color: '#4CAF50', fontSize: '16px', fontWeight: 'bold' }}>
+              🔄 Após assinatura do Termo de responsabilidade, está página será atualizada automaticamente.
+            </p>
+          </div>
+        )}
+        <br></br>
+   
         <br></br>
         <br></br>
         <br></br>

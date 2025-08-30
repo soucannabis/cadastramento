@@ -91,7 +91,7 @@ function MedicalAppointment() {
   };
 
   const medicalAppointmentNo = async () => {
-    setSignupMessage(true);
+    window.location.assign("http://soucannabis.ong.br/receba-nosso-suporte", "_blank");
   };
 
   async function aprove() {
@@ -109,14 +109,13 @@ function MedicalAppointment() {
         <div className="form-control options-container">
           <input type="radio" className="btn-check" onClick={medicalAppointmentYes} name="resposable" id="btnradio1" value="yes"></input>
           <label className="btn btn-outline-primary radio-input" htmlFor="btnradio1">
-            ENVIAR UMA RECEITA
+            📋 ENVIAR UMA RECEITA
           </label>
-          <ContactModal redirect="/cadastro" type="appointment" />
           <label className="btn btn-outline-primary radio-input" onClick={medicalAppointmentNo} htmlFor="btnradio2">
-           AGENDAR UMA CONSULTA
+           📅 AGENDAR UMA CONSULTA
           </label>
           <label className="btn btn-outline-primary radio-input" onClick={aprove} htmlFor="btnradio3">
-            CONCLUIR O CADASTRO SEM RECEITA
+            ✅ CONCLUIR O CADASTRO SEM RECEITA
           </label>
         </div>
       </form>
@@ -132,10 +131,10 @@ function MedicalAppointment() {
                     <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
-                {!isLoading && !medicalPrescrption && <span>Enviar receita</span>}
+                {!isLoading && !medicalPrescrption && <span>📤 Enviar receita</span>}
               </Form.Label>
 
-              {medicalPrescrption && <Form.Label className="label-upload send-ok prescription-button">Receita Enviada</Form.Label>}
+              {medicalPrescrption && <Form.Label className="label-upload send-ok prescription-button">📋 Receita Enviada</Form.Label>}
               <Form.Control className="input-upload" type="file" onChange={handleFileChange} />
             </Form.Group>
           </Form>
