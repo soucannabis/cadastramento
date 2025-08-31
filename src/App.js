@@ -188,6 +188,8 @@ function App() {
       <Routes>
         <Route path="/loja" element={<Products />} />
         <Route path="/seu-cadastro" element={<SignupEmail />} />
+        {/* Redireciona para /cadastro se não estiver logado */}
+        {!user && <Route path="/" element={<Navigate to="/cadastro" replace />} />}
       </Routes>
     </Router>
   );
