@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value }) => {
+const SelectComponent = ({
+  handleChange,
+  counterCheck,
+  disableCheckbox,
+  value,
+}) => {
   const [selectedOptions, setSelectedOptions] = useState(value || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
@@ -21,1336 +26,1337 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
       subcategories: [
         {
           value: "A01",
-          label: "Dor generalizada /múltipla"
+          label: "Dor generalizada /múltipla",
         },
         {
           value: "A02",
-          label: "Arrepios/ calafrios"
+          label: "Arrepios/ calafrios",
         },
         {
           value: "A03",
-          label: "Febre"
+          label: "Febre",
         },
         {
           value: "A04",
-          label: "Debilidade/cansaço geral/fadiga"
+          label: "Debilidade/cansaço geral/fadiga",
         },
         {
           value: "A05",
-          label: "Sentir-se doente"
+          label: "Sentir-se doente",
         },
         {
           value: "A06",
-          label: "Desmaio/síncope"
+          label: "Desmaio/síncope",
         },
         {
           value: "A07",
-          label: "Coma"
+          label: "Coma",
         },
         {
           value: "A08",
-          label: "Inchaço"
+          label: "Inchaço",
         },
         {
           value: "A09",
-          label: "Problemas de sudorese"
+          label: "Problemas de sudorese",
         },
         {
           value: "A10",
-          label: "Sangramento/Hemorragia NE"
+          label: "Sangramento/Hemorragia NE",
         },
         {
           value: "A11",
-          label: "Dores torácicas NE"
+          label: "Dores torácicas NE",
         },
         {
           value: "A13",
-          label: "Receio/Medo do tratamento"
+          label: "Receio/Medo do tratamento",
         },
         {
           value: "A16",
-          label: "Criança irritável"
+          label: "Criança irritável",
         },
         {
           value: "A18",
-          label: "Preocupação com aparência"
+          label: "Preocupação com aparência",
         },
         {
           value: "A20",
-          label: "Pedido/discussão eutanásia"
+          label: "Pedido/discussão eutanásia",
         },
         {
           value: "A21",
-          label: "Fator de risco de malignidade"
+          label: "Fator de risco de malignidade",
         },
         {
           value: "A23",
-          label: "Fator de risco NE"
+          label: "Fator de risco NE",
         },
         {
           value: "A25",
-          label: "Medo de morrer/medo da morte"
+          label: "Medo de morrer/medo da morte",
         },
         {
           value: "A26",
-          label: "Medo de câncer NE"
+          label: "Medo de câncer NE",
         },
         {
           value: "A27",
-          label: "Medo de outra doença NE"
+          label: "Medo de outra doença NE",
         },
         {
           value: "A28",
-          label: "Limitação funcional/incapacidade NE"
+          label: "Limitação funcional/incapacidade NE",
         },
         {
           value: "A29",
-          label: "Outros sinais/sintomas gerais"
+          label: "Outros sinais/sintomas gerais",
         },
         {
           value: "A70",
-          label: "Tuberculose"
+          label: "Tuberculose",
         },
         {
           value: "A71",
-          label: "Sarampo"
+          label: "Sarampo",
         },
         {
           value: "A72",
-          label: "Varicela"
+          label: "Varicela",
         },
         {
           value: "A73",
-          label: "Malária"
+          label: "Malária",
         },
         {
           value: "A74",
-          label: "Rubéola"
+          label: "Rubéola",
         },
         {
           value: "A75",
-          label: "Mononucleose infecciosa"
+          label: "Mononucleose infecciosa",
         },
         {
           value: "A76",
-          label: "Outro exantema viral"
+          label: "Outro exantema viral",
         },
         {
           value: "A77",
-          label: "Dengue e outras doenças virais NE"
+          label: "Dengue e outras doenças virais NE",
         },
         {
           value: "A78",
-          label: "Hanseníase e outras doenças infecciosas NE"
+          label: "Hanseníase e outras doenças infecciosas NE",
         },
         {
           value: "A79",
-          label: "Carcinomatose (localização primária desconhecida)"
+          label: "Carcinomatose (localização primária desconhecida)",
         },
         {
           value: "A80",
-          label: "Lesão traumática/acidente NE"
+          label: "Lesão traumática/acidente NE",
         },
         {
           value: "A81",
-          label: "Politraumatismos/ferimentos múltiplos"
+          label: "Politraumatismos/ferimentos múltiplos",
         },
         {
           value: "A82",
-          label: "Efeito secundário de lesão traumática"
+          label: "Efeito secundário de lesão traumática",
         },
         {
           value: "A84",
-          label: "Intoxicação por medicamento"
+          label: "Intoxicação por medicamento",
         },
         {
           value: "A85",
-          label: "Efeito adverso de fármaco dose correta"
+          label: "Efeito adverso de fármaco dose correta",
         },
         {
           value: "A86",
-          label: "Efeito tóxico de substância não medicinal"
+          label: "Efeito tóxico de substância não medicinal",
         },
         {
           value: "A87",
-          label: "Complicações de tratamento médico"
+          label: "Complicações de tratamento médico",
         },
         {
           value: "A88",
-          label: "Efeito adverso de fator físico"
+          label: "Efeito adverso de fator físico",
         },
         {
           value: "A89",
-          label: "Efeito da prótese"
+          label: "Efeito da prótese",
         },
         {
           value: "A90",
-          label: "Malformação congênita NE/múltiplas"
+          label: "Malformação congênita NE/múltiplas",
         },
         {
           value: "A91",
-          label: "Investigação com resultado anormal NE"
+          label: "Investigação com resultado anormal NE",
         },
         {
           value: "A92",
-          label: "Alergia/reação alérgica NE"
+          label: "Alergia/reação alérgica NE",
         },
         {
           value: "A93",
-          label: "Recém-nascido prematuro"
+          label: "Recém-nascido prematuro",
         },
         {
           value: "A94",
-          label: "Morbidade perinatal, outra"
+          label: "Morbidade perinatal, outra",
         },
         {
           value: "A95",
-          label: "Mortalidade perinatal"
+          label: "Mortalidade perinatal",
         },
         {
           value: "A96",
-          label: "Morte"
+          label: "Morte",
         },
         {
           value: "A97",
-          label: "Sem doença"
+          label: "Sem doença",
         },
         {
           value: "A98",
-          label: "Medicina preventiva/manutenção da saúde"
+          label: "Medicina preventiva/manutenção da saúde",
         },
         {
           value: "A99",
-          label: "Outras doenças gerais NE"
-        }
+          label: "Outras doenças gerais NE",
+        },
       ],
     },
     {
       category: "SANGUE, SISTEMA HEMATOPOIÉTICO, LINFÁTICO E BAÇO",
-      subcategories:[
+      subcategories: [
         {
           value: "B02",
-          label: "Gânglio linfático aumentado/doloroso"
+          label: "Gânglio linfático aumentado/doloroso",
         },
         {
           value: "B04",
-          label: "Sinais/sintomas sangue"
+          label: "Sinais/sintomas sangue",
         },
         {
           value: "B25",
-          label: "Medo de VIH/ HIV/SIDA/ AIDS"
+          label: "Medo de VIH/ HIV/SIDA/ AIDS",
         },
         {
           value: "B26",
-          label: "Medo de câncer no sangue/linfático"
+          label: "Medo de câncer no sangue/linfático",
         },
         {
           value: "B27",
-          label: "Medo de outras doenças do sangue/vasos linfáticos"
+          label: "Medo de outras doenças do sangue/vasos linfáticos",
         },
         {
           value: "B28",
-          label: "Limitação funcional/incapacidade"
+          label: "Limitação funcional/incapacidade",
         },
         {
           value: "B29",
-          label: "Outros sinais/ sintomas do sangue/sistema linfático/baço NE"
+          label: "Outros sinais/ sintomas do sangue/sistema linfático/baço NE",
         },
         {
           value: "B70",
-          label: "Linfadenite aguda"
+          label: "Linfadenite aguda",
         },
         {
           value: "B71",
-          label: "Linfadenite crônica NE"
+          label: "Linfadenite crônica NE",
         },
         {
           value: "B72",
-          label: "Doença de Hodgkin/linfomas"
+          label: "Doença de Hodgkin/linfomas",
         },
         {
           value: "B73",
-          label: "Leucemia"
+          label: "Leucemia",
         },
         {
           value: "B74",
-          label: "Outra neoplasia maligna no sangue"
+          label: "Outra neoplasia maligna no sangue",
         },
         {
           value: "B75",
-          label: "Neoplasia benigna NE"
+          label: "Neoplasia benigna NE",
         },
         {
           value: "B76",
-          label: "Rotura traumática do baço"
+          label: "Rotura traumática do baço",
         },
         {
           value: "B77",
-          label: "Outras lesões traumáticas do sangue/linfa/baço"
+          label: "Outras lesões traumáticas do sangue/linfa/baço",
         },
         {
           value: "B78",
-          label: "Anemia hemolítica hereditária"
+          label: "Anemia hemolítica hereditária",
         },
         {
           value: "B79",
-          label: "Outra malformação congênita do sangue/linfática"
+          label: "Outra malformação congênita do sangue/linfática",
         },
         {
           value: "B82",
-          label: "Outras anemias NE"
+          label: "Outras anemias NE",
         },
         {
           value: "B83",
-          label: "Púrpura/defeitos de coagulação"
+          label: "Púrpura/defeitos de coagulação",
         },
         {
           value: "B84",
-          label: "Glóbulos brancos anormais"
+          label: "Glóbulos brancos anormais",
         },
         {
           value: "B87",
-          label: "Esplenomegalia"
+          label: "Esplenomegalia",
         },
         {
           value: "B90",
-          label: "Infecção por VIH/ HIV/SIDA/ AIDS"
+          label: "Infecção por VIH/ HIV/SIDA/ AIDS",
         },
         {
           value: "B99",
-          label: "Outra doença do sangue/linfáticos/baço"
-        }
-      ]      
+          label: "Outra doença do sangue/linfáticos/baço",
+        },
+      ],
     },
     {
       category: "SISTEMA DIGESTIVO",
       subcategories: [
         {
           value: "D01",
-          label: "Dor abdominal generalizada/cólicas"
+          label: "Dor abdominal generalizada/cólicas",
         },
         {
           value: "D02",
-          label: "Dores abdominais, epigástricas"
+          label: "Dores abdominais, epigástricas",
         },
         {
           value: "D03",
-          label: "Azia/ Queimação"
+          label: "Azia/ Queimação",
         },
         {
           value: "D04",
-          label: "Dor anal/retal"
+          label: "Dor anal/retal",
         },
         {
           value: "D05",
-          label: "Irritação perianal"
+          label: "Irritação perianal",
         },
         {
           value: "D06",
-          label: "Outras dores abdominais localizadas"
+          label: "Outras dores abdominais localizadas",
         },
         {
           value: "D07",
-          label: "Dispepsia/indigestão"
+          label: "Dispepsia/indigestão",
         },
         {
           value: "D08",
-          label: "Flatulência /gases/eructações"
+          label: "Flatulência /gases/eructações",
         },
         {
           value: "D09",
-          label: "Náusea"
+          label: "Náusea",
         },
         {
           value: "D10",
-          label: "Vomito"
+          label: "Vomito",
         },
         {
           value: "D11",
-          label: "Diarreia"
+          label: "Diarreia",
         },
         {
           value: "D12",
-          label: "Obstipação"
+          label: "Obstipação",
         },
         {
           value: "D13",
-          label: "Icterícia"
+          label: "Icterícia",
         },
         {
           value: "D14",
-          label: "Hematêmese/vômito sangue"
+          label: "Hematêmese/vômito sangue",
         },
         {
           value: "D15",
-          label: "Melena"
+          label: "Melena",
         },
         {
           value: "D16",
-          label: "Hemorragia retal"
+          label: "Hemorragia retal",
         },
         {
           value: "D17",
-          label: "Incontinência fecal"
+          label: "Incontinência fecal",
         },
         {
           value: "D18",
-          label: "Alterações nas fezes/mov. intestinais"
+          label: "Alterações nas fezes/mov. intestinais",
         },
         {
           value: "D19",
-          label: "Sinais/sintomas dos dentes/gengivas"
+          label: "Sinais/sintomas dos dentes/gengivas",
         },
         {
           value: "D20",
-          label: "Sinais/sintomas da boca/língua/lábios"
+          label: "Sinais/sintomas da boca/língua/lábios",
         },
         {
           value: "D21",
-          label: "Problemas de deglutição"
+          label: "Problemas de deglutição",
         },
         {
           value: "D23",
-          label: "Hepatomegalia"
+          label: "Hepatomegalia",
         },
         {
           value: "D24",
-          label: "Massa abdominal NE"
+          label: "Massa abdominal NE",
         },
         {
           value: "D25",
-          label: "Distensão abdominal"
+          label: "Distensão abdominal",
         },
         {
           value: "D26",
-          label: "Medo de câncer no aparelho digestivo"
+          label: "Medo de câncer no aparelho digestivo",
         },
         {
           value: "D27",
-          label: "Medo de outras doenças aparelho digestivo"
+          label: "Medo de outras doenças aparelho digestivo",
         },
         {
           value: "D28",
-          label: "Limitação funcional/incapacidade"
+          label: "Limitação funcional/incapacidade",
         },
         {
           value: "D29",
-          label: "Outros sinais/sintomas digestivos"
+          label: "Outros sinais/sintomas digestivos",
         },
         {
           value: "D70",
-          label: "Infecção gastrointestinal"
+          label: "Infecção gastrointestinal",
         },
         {
           value: "D71",
-          label: "Caxumba/parotidite epidêmica"
+          label: "Caxumba/parotidite epidêmica",
         },
         {
           value: "D72",
-          label: "Hepatite viral"
+          label: "Hepatite viral",
         },
         {
           value: "D73",
-          label: "Gastroenterite, presumível infecção"
+          label: "Gastroenterite, presumível infecção",
         },
         {
           value: "D74",
-          label: "Neoplasia maligna do estômago"
+          label: "Neoplasia maligna do estômago",
         },
         {
           value: "D75",
-          label: "Neoplasia maligna do cólon/reto"
+          label: "Neoplasia maligna do cólon/reto",
         },
         {
           value: "D76",
-          label: "Neoplasia maligna do pâncreas"
+          label: "Neoplasia maligna do pâncreas",
         },
         {
           value: "D77",
-          label: "Neoplasia maligna do aparelho digestivo NE"
+          label: "Neoplasia maligna do aparelho digestivo NE",
         },
         {
           value: "D78",
-          label: "Neoplasia benigna do aparelho digestivo/incerta"
+          label: "Neoplasia benigna do aparelho digestivo/incerta",
         },
         {
           value: "D79",
-          label: "Corpo estranho no aparelho digestivo"
+          label: "Corpo estranho no aparelho digestivo",
         },
         {
           value: "D80",
-          label: "Outras lesões traumáticas"
+          label: "Outras lesões traumáticas",
         },
         {
           value: "D81",
-          label: "Malformações congênitasdo aparelho digestivo"
+          label: "Malformações congênitasdo aparelho digestivo",
         },
         {
           value: "D82",
-          label: "Doença dos dentes/gengivas"
+          label: "Doença dos dentes/gengivas",
         },
         {
           value: "D83",
-          label: "Doença da boca/língua/lábios"
+          label: "Doença da boca/língua/lábios",
         },
         {
           value: "D84",
-          label: "Doença do esôfago"
+          label: "Doença do esôfago",
         },
         {
           value: "D85",
-          label: "Úlcera do duodeno"
+          label: "Úlcera do duodeno",
         },
         {
           value: "D86",
-          label: "Úlcera péptica, outra"
+          label: "Úlcera péptica, outra",
         },
         {
           value: "D87",
-          label: "Alterações funcionais estômago"
+          label: "Alterações funcionais estômago",
         },
         {
           value: "D88",
-          label: "Apendicite"
+          label: "Apendicite",
         },
         {
           value: "D89",
-          label: "Hérnia inguinal"
+          label: "Hérnia inguinal",
         },
         {
           value: "D90",
-          label: "Hérnia de hiato /diafragmática"
+          label: "Hérnia de hiato /diafragmática",
         },
         {
           value: "D91",
-          label: "Hérnia abdominal, outras"
+          label: "Hérnia abdominal, outras",
         },
         {
           value: "D92",
-          label: "Doença diverticular intestinal"
+          label: "Doença diverticular intestinal",
         },
         {
           value: "D93",
-          label: "Síndrome do cólon irritável"
+          label: "Síndrome do cólon irritável",
         },
         {
           value: "D94",
-          label: "Enterite crônica / colite ulcerosa"
+          label: "Enterite crônica / colite ulcerosa",
         },
         {
           value: "D95",
-          label: "Fissura anal / abcesso perianal"
+          label: "Fissura anal / abcesso perianal",
         },
         {
           value: "D96",
-          label: "Lombrigas /outros parasitas"
+          label: "Lombrigas /outros parasitas",
         },
         {
           value: "D97",
-          label: "Doenças do fígado /NE"
+          label: "Doenças do fígado /NE",
         },
         {
           value: "D98",
-          label: "Colecistite, colelitíase"
+          label: "Colecistite, colelitíase",
         },
         {
           value: "D99",
-          label: "Outra doença do aparelho digestivo"
-        }
-      ]      
+          label: "Outra doença do aparelho digestivo",
+        },
+      ],
     },
     {
       category: "OLHO",
       subcategories: [
         {
           value: "F01",
-          label: "Dor no olho"
+          label: "Dor no olho",
         },
         {
           value: "F02",
-          label: "Olho vermelho"
+          label: "Olho vermelho",
         },
         {
           value: "F03",
-          label: "Secreção ocular"
+          label: "Secreção ocular",
         },
         {
           value: "F04",
-          label: "Moscas volantes/pontos luminosos/escotomas/manchas"
+          label: "Moscas volantes/pontos luminosos/escotomas/manchas",
         },
         {
           value: "F05",
-          label: "Outras perturbações visuais"
+          label: "Outras perturbações visuais",
         },
         {
           value: "F13",
-          label: "Sensações oculares anormais"
+          label: "Sensações oculares anormais",
         },
         {
           value: "F14",
-          label: "Movimentos oculares anormais"
+          label: "Movimentos oculares anormais",
         },
         {
           value: "F15",
-          label: "Aparência anormal nos olhos"
+          label: "Aparência anormal nos olhos",
         },
         {
           value: "F16",
-          label: "Sinais/sintomas das pálpebras"
+          label: "Sinais/sintomas das pálpebras",
         },
         {
           value: "F17",
-          label: "Sinais/sintomas relacionados a óculos"
+          label: "Sinais/sintomas relacionados a óculos",
         },
         {
           value: "F18",
-          label: "Sinais/sintomas relacionados a lentes de contato"
+          label: "Sinais/sintomas relacionados a lentes de contato",
         },
         {
           value: "F27",
-          label: "Medo de doença ocular"
+          label: "Medo de doença ocular",
         },
         {
           value: "F28",
-          label: "Limitação funcional/incapacidade"
+          label: "Limitação funcional/incapacidade",
         },
         {
           value: "F29",
-          label: "Outros sinais/sintomas oculares"
+          label: "Outros sinais/sintomas oculares",
         },
         {
           value: "F70",
-          label: "Conjuntivite infecciosa"
+          label: "Conjuntivite infecciosa",
         },
         {
           value: "F71",
-          label: "Conjuntivite alérgica"
+          label: "Conjuntivite alérgica",
         },
         {
           value: "F72",
-          label: "Blefarite/hordéolo/calázio"
+          label: "Blefarite/hordéolo/calázio",
         },
         {
           value: "F73",
-          label: "Outras infecções/inflamações oculares"
+          label: "Outras infecções/inflamações oculares",
         },
         {
           value: "F74",
-          label: "Neoplasia do olho/anexos"
+          label: "Neoplasia do olho/anexos",
         },
         {
           value: "F75",
-          label: "Contusão/hemorragia ocular"
+          label: "Contusão/hemorragia ocular",
         },
         {
           value: "F76",
-          label: "Corpo estranho ocular"
+          label: "Corpo estranho ocular",
         },
         {
           value: "F79",
-          label: "Outras lesões traumáticas oculares"
+          label: "Outras lesões traumáticas oculares",
         },
         {
           value: "F80",
-          label: "Obstrução canal lacrimal da criança"
+          label: "Obstrução canal lacrimal da criança",
         },
         {
           value: "F81",
-          label: "Outras malformações congênitas do olho"
+          label: "Outras malformações congênitas do olho",
         },
         {
           value: "F82",
-          label: "Descolamento da retina"
+          label: "Descolamento da retina",
         },
         {
           value: "F83",
-          label: "Retinopatia"
+          label: "Retinopatia",
         },
         {
           value: "F84",
-          label: "Degeneração macular"
+          label: "Degeneração macular",
         },
         {
           value: "F85",
-          label: "Úlcera da córnea"
+          label: "Úlcera da córnea",
         },
         {
           value: "F86",
-          label: "Tracoma"
+          label: "Tracoma",
         },
         {
           value: "F91",
-          label: "Erro de refração"
+          label: "Erro de refração",
         },
         {
           value: "F92",
-          label: "Catarata"
+          label: "Catarata",
         },
         {
           value: "F93",
-          label: "Glaucoma"
+          label: "Glaucoma",
         },
         {
           value: "F94",
-          label: "Cegueira"
+          label: "Cegueira",
         },
         {
           value: "F95",
-          label: "Estrabismo"
+          label: "Estrabismo",
         },
         {
           value: "F99",
-          label: "Outra doenças oculares/anexos"
-        }
-      ]      
+          label: "Outra doenças oculares/anexos",
+        },
+      ],
     },
     {
       category: "OUVIDO",
-      subcategories:[
+      subcategories: [
         {
           value: "H01",
-          label: "Dor de ouvidos"
+          label: "Dor de ouvidos",
         },
         {
           value: "H02",
-          label: "Problemas de audição"
+          label: "Problemas de audição",
         },
         {
           value: "H03",
-          label: "Acufeno, zumbidos, ruído, assobios"
+          label: "Acufeno, zumbidos, ruído, assobios",
         },
         {
           value: "H04",
-          label: "Secreção no ouvido"
+          label: "Secreção no ouvido",
         },
         {
           value: "H05",
-          label: "Hemorragia no ouvido"
+          label: "Hemorragia no ouvido",
         },
         {
           value: "H13",
-          label: "Sensação de ouvido tapado"
+          label: "Sensação de ouvido tapado",
         },
         {
           value: "H15",
-          label: "Preocupação com a aparência das orelhas"
+          label: "Preocupação com a aparência das orelhas",
         },
         {
           value: "H27",
-          label: "Medo de doença do ouvido"
+          label: "Medo de doença do ouvido",
         },
         {
           value: "H28",
-          label: "Limitação funcional/incapacidade"
+          label: "Limitação funcional/incapacidade",
         },
         {
           value: "H29",
-          label: "Outros sinais/sintomas ouvido"
+          label: "Outros sinais/sintomas ouvido",
         },
         {
           value: "H70",
-          label: "Otite externa"
+          label: "Otite externa",
         },
         {
           value: "H71",
-          label: "Otite media aguda/miringite"
+          label: "Otite media aguda/miringite",
         },
         {
           value: "H72",
-          label: "Otite média serosa"
+          label: "Otite média serosa",
         },
         {
           value: "H73",
-          label: "Infecção da Trompa de Eustáquio"
+          label: "Infecção da Trompa de Eustáquio",
         },
         {
           value: "H74",
-          label: "Otite media crônica"
+          label: "Otite media crônica",
         },
         {
           value: "H75",
-          label: "Neoplasia do ouvido"
+          label: "Neoplasia do ouvido",
         },
         {
           value: "H76",
-          label: "Corpo estranho do ouvido"
+          label: "Corpo estranho do ouvido",
         },
         {
           value: "H77",
-          label: "Perfuração do tímpano"
+          label: "Perfuração do tímpano",
         },
         {
           value: "H78",
-          label: "Fibrilação/utter auricular/atrial"
+          label: "Fibrilação/utter auricular/atrial",
         },
         {
           value: "H79",
-          label: "Outros traumatismos do ouvido"
+          label: "Outros traumatismos do ouvido",
         },
         {
           value: "H80",
-          label: "Malformações congênitas do ouvido"
+          label: "Malformações congênitas do ouvido",
         },
         {
           value: "H81",
-          label: "Cerúmen no ouvido em excesso"
+          label: "Cerúmen no ouvido em excesso",
         },
         {
           value: "H82",
-          label: "Síndrome vertiginosa"
+          label: "Síndrome vertiginosa",
         },
         {
           value: "H83",
-          label: "Otoesclerose"
+          label: "Otoesclerose",
         },
         {
           value: "H84",
-          label: "Presbiacusia"
+          label: "Presbiacusia",
         },
         {
           value: "H85",
-          label: "Lesão acústica"
+          label: "Lesão acústica",
         },
         {
           value: "H86",
-          label: "Surdez"
+          label: "Surdez",
         },
         {
           value: "H99",
-          label: "Outra doença do ouvido/mastóide"
-        }
-      ]      
+          label: "Outra doença do ouvido/mastóide",
+        },
+      ],
     },
     {
       category: "SISTEMA CIRCULATÓRIO",
       subcategories: [
         {
           value: "K01",
-          label: "Dor atribuída ao coração"
+          label: "Dor atribuída ao coração",
         },
         {
           value: "K02",
-          label: "Sensação de pressão/aperto atribuída ao coração"
+          label: "Sensação de pressão/aperto atribuída ao coração",
         },
         {
           value: "K03",
-          label: "Dores atribuídas ao aparelho circulatório NE"
+          label: "Dores atribuídas ao aparelho circulatório NE",
         },
         {
           value: "K04",
-          label: "Palpitações/percepção dos batimentos cardíacos"
+          label: "Palpitações/percepção dos batimentos cardíacos",
         },
         {
           value: "K05",
-          label: "Outras irregularidades dos batimentos cardíacos"
+          label: "Outras irregularidades dos batimentos cardíacos",
         },
         {
           value: "K06",
-          label: "Veias proeminentes"
+          label: "Veias proeminentes",
         },
         {
           value: "K07",
-          label: "Tornozelos inchados/edema"
+          label: "Tornozelos inchados/edema",
         },
         {
           value: "K22",
-          label: "Fator de risco para doença cardiovascular"
+          label: "Fator de risco para doença cardiovascular",
         },
         {
           value: "K24",
-          label: "Medo de doença cardíaca"
+          label: "Medo de doença cardíaca",
         },
         {
           value: "K25",
-          label: "Medo de hipertensão"
+          label: "Medo de hipertensão",
         },
         {
           value: "K27",
-          label: "Medo de outra doença cardiovascular"
+          label: "Medo de outra doença cardiovascular",
         },
         {
           value: "K28",
-          label: "Limitação funcional/incapacidade"
+          label: "Limitação funcional/incapacidade",
         },
         {
           value: "K29",
-          label: "Outros sinais/sintomas cardiovasculares"
+          label: "Outros sinais/sintomas cardiovasculares",
         },
         {
           value: "K70",
-          label: "Doença infecciosa do aparelho circulatório"
+          label: "Doença infecciosa do aparelho circulatório",
         },
         {
           value: "K71",
-          label: "Febre reumática/cardiopatia"
+          label: "Febre reumática/cardiopatia",
         },
         {
           value: "K72",
-          label: "Neoplasia do aparelho circulatório"
+          label: "Neoplasia do aparelho circulatório",
         },
         {
           value: "K73",
-          label: "Malformações congênitas do aparelho circulatório"
+          label: "Malformações congênitas do aparelho circulatório",
         },
         {
           value: "K74",
-          label: "Doença cardíaca isquêmica com angina"
+          label: "Doença cardíaca isquêmica com angina",
         },
         {
           value: "K75",
-          label: "Infarto ou Enfarte agudo miocárdio"
+          label: "Infarto ou Enfarte agudo miocárdio",
         },
         {
           value: "K76",
-          label: "Doença cardíaca isquémica sem angina"
+          label: "Doença cardíaca isquémica sem angina",
         },
         {
           value: "K79",
-          label: "Taquicardia Paroxística Fibrilação/Flutter auricular/atrial Insuficiência cardíaca"
+          label:
+            "Taquicardia Paroxística Fibrilação/Flutter auricular/atrial Insuficiência cardíaca",
         },
         {
           value: "K80",
-          label: "Arritmia cardíaca NE"
+          label: "Arritmia cardíaca NE",
         },
         {
           value: "K81",
-          label: "Sopro cardíaco/arterial NE"
+          label: "Sopro cardíaco/arterial NE",
         },
         {
           value: "K82",
-          label: "Doença cardiopulmonar"
+          label: "Doença cardiopulmonar",
         },
         {
           value: "K83",
-          label: "Doença valvular cardíaca NE"
+          label: "Doença valvular cardíaca NE",
         },
         {
           value: "K84",
-          label: "Outras doenças cardíacas"
+          label: "Outras doenças cardíacas",
         },
         {
           value: "K85",
-          label: "Pressão arterial elevada"
+          label: "Pressão arterial elevada",
         },
         {
           value: "K86",
-          label: "Hipertensão sem complicações"
+          label: "Hipertensão sem complicações",
         },
         {
           value: "K87",
-          label: "Hipertensão com complicações"
+          label: "Hipertensão com complicações",
         },
         {
           value: "K88",
-          label: "Hipotensão postural"
+          label: "Hipotensão postural",
         },
         {
           value: "K89",
-          label: "Isquemia/acidente cerebral transitória(o)"
+          label: "Isquemia/acidente cerebral transitória(o)",
         },
         {
           value: "K90",
-          label: "Trombose/acidente vascular cerebral"
+          label: "Trombose/acidente vascular cerebral",
         },
         {
           value: "K91",
-          label: "Doença vascular cerebral"
+          label: "Doença vascular cerebral",
         },
         {
           value: "K92",
-          label: "Aterosclerose/doença vascular periférica"
+          label: "Aterosclerose/doença vascular periférica",
         },
         {
           value: "K93",
-          label: "Embolia pulmonar"
+          label: "Embolia pulmonar",
         },
         {
           value: "K94",
-          label: "Flebite/tromboflebite"
+          label: "Flebite/tromboflebite",
         },
         {
           value: "K95",
-          label: "Veias varicosas da perna"
+          label: "Veias varicosas da perna",
         },
         {
           value: "K96",
-          label: "Hemorróidas"
+          label: "Hemorróidas",
         },
         {
           value: "K99",
-          label: "Outras doenças do aparelho circulatório"
-        }
-      ]      
+          label: "Outras doenças do aparelho circulatório",
+        },
+      ],
     },
     {
       category: "MÚSCULO-ESQUELÉTICO",
       subcategories: [
         {
-          "value": "L01",
-          "label": "Sinais/sintomas do pescoço"
+          value: "L01",
+          label: "Sinais/sintomas do pescoço",
         },
         {
-          "value": "L02",
-          "label": "Sinais/sintomas da região dorsal"
+          value: "L02",
+          label: "Sinais/sintomas da região dorsal",
         },
         {
-          "value": "L03",
-          "label": "Sinais/sintomas da região lombar"
+          value: "L03",
+          label: "Sinais/sintomas da região lombar",
         },
         {
-          "value": "L04",
-          "label": "Sinais/sintomas do tórax"
+          value: "L04",
+          label: "Sinais/sintomas do tórax",
         },
         {
-          "value": "L05",
-          "label": "Sinais/sintomas da axila"
+          value: "L05",
+          label: "Sinais/sintomas da axila",
         },
         {
-          "value": "L07",
-          "label": "Sinais/sintomas da mandíbula"
+          value: "L07",
+          label: "Sinais/sintomas da mandíbula",
         },
         {
-          "value": "L08",
-          "label": "Sinais/sintomas dos ombros"
+          value: "L08",
+          label: "Sinais/sintomas dos ombros",
         },
         {
-          "value": "L09",
-          "label": "Sinais/sintomas dos braços"
+          value: "L09",
+          label: "Sinais/sintomas dos braços",
         },
         {
-          "value": "L10",
-          "label": "Sinais/sintomas dos cotovelos"
+          value: "L10",
+          label: "Sinais/sintomas dos cotovelos",
         },
         {
-          "value": "L11",
-          "label": "Sinais/sintomas dos punhos"
+          value: "L11",
+          label: "Sinais/sintomas dos punhos",
         },
         {
-          "value": "L12",
-          "label": "Sinais/sintomas das mãos e dedos"
+          value: "L12",
+          label: "Sinais/sintomas das mãos e dedos",
         },
         {
-          "value": "L13",
-          "label": "Sinais/sintomas do quadril"
+          value: "L13",
+          label: "Sinais/sintomas do quadril",
         },
         {
-          "value": "L14",
-          "label": "Sinais/sintomas da coxa/perna"
+          value: "L14",
+          label: "Sinais/sintomas da coxa/perna",
         },
         {
-          "value": "L15",
-          "label": "Sinais/sintomas do joelho"
+          value: "L15",
+          label: "Sinais/sintomas do joelho",
         },
         {
-          "value": "L16",
-          "label": "Sinais/sintomas do tornozelo"
+          value: "L16",
+          label: "Sinais/sintomas do tornozelo",
         },
         {
-          "value": "L17",
-          "label": "Sinais/sintomas do pé/dedos pé"
+          value: "L17",
+          label: "Sinais/sintomas do pé/dedos pé",
         },
         {
-          "value": "L18",
-          "label": "Dores musculares"
+          value: "L18",
+          label: "Dores musculares",
         },
         {
-          "value": "L19",
-          "label": "Sinais/sintomas musculares NE"
+          value: "L19",
+          label: "Sinais/sintomas musculares NE",
         },
         {
-          "value": "L20",
-          "label": "Sinais/sintomas das articulações NE"
+          value: "L20",
+          label: "Sinais/sintomas das articulações NE",
         },
         {
-          "value": "L26",
-          "label": "Medo de câncer no aparelho músculoesquelético"
+          value: "L26",
+          label: "Medo de câncer no aparelho músculoesquelético",
         },
         {
-          "value": "L27",
-          "label": "Medo de doença no aparelho músculoesquelético, outro"
+          value: "L27",
+          label: "Medo de doença no aparelho músculoesquelético, outro",
         },
         {
-          "value": "L28",
-          "label": "Limitação funcional/incapacidade"
+          value: "L28",
+          label: "Limitação funcional/incapacidade",
         },
         {
-          "value": "L29",
-          "label": "Outros sinais/sintomas do aparelho músculo-esquelético"
+          value: "L29",
+          label: "Outros sinais/sintomas do aparelho músculo-esquelético",
         },
         {
-          "value": "L70",
-          "label": "Infecções do aparelho músculo-esquelético"
+          value: "L70",
+          label: "Infecções do aparelho músculo-esquelético",
         },
         {
-          "value": "L71",
-          "label": "Neoplasia maligna do aparelho músculoesquelético"
+          value: "L71",
+          label: "Neoplasia maligna do aparelho músculoesquelético",
         },
         {
-          "value": "L72",
-          "label": "Fratura: rádio/cúbito"
+          value: "L72",
+          label: "Fratura: rádio/cúbito",
         },
         {
-          "value": "L73",
-          "label": "Fratura: tíbia/perônio/ fíbula"
+          value: "L73",
+          label: "Fratura: tíbia/perônio/ fíbula",
         },
         {
-          "value": "L74",
-          "label": "Fratura: osso da mão/pé"
+          value: "L74",
+          label: "Fratura: osso da mão/pé",
         },
         {
-          "value": "L75",
-          "label": "Fratura: fêmur"
+          value: "L75",
+          label: "Fratura: fêmur",
         },
         {
-          "value": "L76",
-          "label": "Outras fraturas"
+          value: "L76",
+          label: "Outras fraturas",
         },
         {
-          "value": "L77",
-          "label": "Entorses e distensões do tornozelo"
+          value: "L77",
+          label: "Entorses e distensões do tornozelo",
         },
         {
-          "value": "L78",
-          "label": "Entorses e distensões do joelho"
+          value: "L78",
+          label: "Entorses e distensões do joelho",
         },
         {
-          "value": "L79",
-          "label": "Entorses e distensões das articulações NE"
+          value: "L79",
+          label: "Entorses e distensões das articulações NE",
         },
         {
-          "value": "L80",
-          "label": "Luxação/subluxação"
+          value: "L80",
+          label: "Luxação/subluxação",
         },
         {
-          "value": "L81",
-          "label": "Traumatismos do aparelho musculoesquelético NE"
+          value: "L81",
+          label: "Traumatismos do aparelho musculoesquelético NE",
         },
         {
-          "value": "L82",
-          "label": "Malformações congênitas do aparelho músculo-esquelético"
+          value: "L82",
+          label: "Malformações congênitas do aparelho músculo-esquelético",
         },
         {
-          "value": "L83",
-          "label": "Doenças ou síndromes da coluna cervical"
+          value: "L83",
+          label: "Doenças ou síndromes da coluna cervical",
         },
         {
-          "value": "L84",
-          "label": "Doenças ou síndromes da coluna sem irradiação de dor"
+          value: "L84",
+          label: "Doenças ou síndromes da coluna sem irradiação de dor",
         },
         {
-          "value": "L85",
-          "label": "Deformação adquirida da coluna"
+          value: "L85",
+          label: "Deformação adquirida da coluna",
         },
         {
-          "value": "L86",
-          "label": "Síndrome vertebral com irradiação dor"
+          value: "L86",
+          label: "Síndrome vertebral com irradiação dor",
         },
         {
-          "value": "L87",
-          "label": "Bursite/tendinite/sinovite NE"
+          value: "L87",
+          label: "Bursite/tendinite/sinovite NE",
         },
         {
-          "value": "L88",
-          "label": "Artrite reumatóide/soropositiva"
+          value: "L88",
+          label: "Artrite reumatóide/soropositiva",
         },
         {
-          "value": "L89",
-          "label": "Osteoartrose do quadril"
+          value: "L89",
+          label: "Osteoartrose do quadril",
         },
         {
-          "value": "L90",
-          "label": "Osteoartrose do joelho"
+          value: "L90",
+          label: "Osteoartrose do joelho",
         },
         {
-          "value": "L91",
-          "label": "Outras osteoartroses"
+          value: "L91",
+          label: "Outras osteoartroses",
         },
         {
-          "value": "L92",
-          "label": "Síndrome do ombro doloroso"
+          value: "L92",
+          label: "Síndrome do ombro doloroso",
         },
         {
-          "value": "L93",
-          "label": "Cotovelo de tenista"
+          value: "L93",
+          label: "Cotovelo de tenista",
         },
         {
-          "value": "L94",
-          "label": "Osteocondrose"
+          value: "L94",
+          label: "Osteocondrose",
         },
         {
-          "value": "L95",
-          "label": "Osteoporose"
+          value: "L95",
+          label: "Osteoporose",
         },
         {
-          "value": "L96",
-          "label": "Lesão interna aguda do joelho"
+          value: "L96",
+          label: "Lesão interna aguda do joelho",
         },
         {
-          "value": "L97",
-          "label": "Neoplasia benigna/incertas"
+          value: "L97",
+          label: "Neoplasia benigna/incertas",
         },
         {
-          "value": "L98",
-          "label": "Malformação adquirida de um membro"
+          value: "L98",
+          label: "Malformação adquirida de um membro",
         },
         {
-          "value": "L99",
-          "label": "Outra doença do aparelho músculo-esquelético"
-        }
-      ]      
+          value: "L99",
+          label: "Outra doença do aparelho músculo-esquelético",
+        },
+      ],
     },
     {
       category: "NEUROLÓGICO",
-      subcategories:[
+      subcategories: [
         {
-          "value": "N01",
-          "label": "Cefaléia"
+          value: "N01",
+          label: "Cefaléia",
         },
         {
-          "value": "N03",
-          "label": "Dores da face"
+          value: "N03",
+          label: "Dores da face",
         },
         {
-          "value": "N04",
-          "label": "Síndrome das pernas inquietas"
+          value: "N04",
+          label: "Síndrome das pernas inquietas",
         },
         {
-          "value": "N05",
-          "label": "Formigamento/parestesia nos dedos das mãos/pés"
+          value: "N05",
+          label: "Formigamento/parestesia nos dedos das mãos/pés",
         },
         {
-          "value": "N06",
-          "label": "Outras alterações da sensibilidade"
+          value: "N06",
+          label: "Outras alterações da sensibilidade",
         },
         {
-          "value": "N07",
-          "label": "Convulsões/ataques"
+          value: "N07",
+          label: "Convulsões/ataques",
         },
         {
-          "value": "N08",
-          "label": "Movimentos involuntários anormais"
+          value: "N08",
+          label: "Movimentos involuntários anormais",
         },
         {
-          "value": "N16",
-          "label": "Alterações do olfato/gosto"
+          value: "N16",
+          label: "Alterações do olfato/gosto",
         },
         {
-          "value": "N17",
-          "label": "Vertigens/tonturas"
+          value: "N17",
+          label: "Vertigens/tonturas",
         },
         {
-          "value": "N18",
-          "label": "Paralisia/fraqueza"
+          value: "N18",
+          label: "Paralisia/fraqueza",
         },
         {
-          "value": "N19",
-          "label": "Perturbações da fala"
+          value: "N19",
+          label: "Perturbações da fala",
         },
         {
-          "value": "N26",
-          "label": "Medo de câncer do sistema neurológico"
+          value: "N26",
+          label: "Medo de câncer do sistema neurológico",
         },
         {
-          "value": "N27",
-          "label": "Medo de outras doenças neurológicas"
+          value: "N27",
+          label: "Medo de outras doenças neurológicas",
         },
         {
-          "value": "N28",
-          "label": "Limitação funcional/incapacidade"
+          value: "N28",
+          label: "Limitação funcional/incapacidade",
         },
         {
-          "value": "N29",
-          "label": "Sinais/sintomas do sistema neurológico, outros"
+          value: "N29",
+          label: "Sinais/sintomas do sistema neurológico, outros",
         },
         {
-          "value": "N70",
-          "label": "Poliomielite"
+          value: "N70",
+          label: "Poliomielite",
         },
         {
-          "value": "N71",
-          "label": "Meningite/encefalite"
+          value: "N71",
+          label: "Meningite/encefalite",
         },
         {
-          "value": "N72",
-          "label": "Tétano"
+          value: "N72",
+          label: "Tétano",
         },
         {
-          "value": "N73",
-          "label": "Outra infecção neurológica"
+          value: "N73",
+          label: "Outra infecção neurológica",
         },
         {
-          "value": "N74",
-          "label": "Neoplasia maligna do sistema neurológico"
+          value: "N74",
+          label: "Neoplasia maligna do sistema neurológico",
         },
         {
-          "value": "N75",
-          "label": "Neoplasia benigna do sistema neurológico"
+          value: "N75",
+          label: "Neoplasia benigna do sistema neurológico",
         },
         {
-          "value": "N76",
-          "label": "Neoplasia do sistema neurológico de natureza incerta"
+          value: "N76",
+          label: "Neoplasia do sistema neurológico de natureza incerta",
         },
         {
-          "value": "N79",
-          "label": "Concussão"
+          value: "N79",
+          label: "Concussão",
         },
         {
-          "value": "N80",
-          "label": "Outras lesões cranianas"
+          value: "N80",
+          label: "Outras lesões cranianas",
         },
         {
-          "value": "N81",
-          "label": "Outra lesão do sistema neurológico"
+          value: "N81",
+          label: "Outra lesão do sistema neurológico",
         },
         {
-          "value": "N85",
-          "label": "Malformações congênitas"
+          value: "N85",
+          label: "Malformações congênitas",
         },
         {
-          "value": "N86",
-          "label": "Esclerose múltipla"
+          value: "N86",
+          label: "Esclerose múltipla",
         },
         {
-          "value": "N87",
-          "label": "Parkinsonismo"
+          value: "N87",
+          label: "Parkinsonismo",
         },
         {
-          "value": "N88",
-          "label": "Epilepsia"
+          value: "N88",
+          label: "Epilepsia",
         },
         {
-          "value": "N89",
-          "label": "Enxaqueca"
+          value: "N89",
+          label: "Enxaqueca",
         },
         {
-          "value": "N90",
-          "label": "Cefaléia de cluster"
+          value: "N90",
+          label: "Cefaléia de cluster",
         },
         {
-          "value": "N91",
-          "label": "Paralisia facial/paralisia de Bell"
+          value: "N91",
+          label: "Paralisia facial/paralisia de Bell",
         },
         {
-          "value": "N92",
-          "label": "Nevralgia do trigêmeo"
+          value: "N92",
+          label: "Nevralgia do trigêmeo",
         },
         {
-          "value": "N93",
-          "label": "Síndrome do túnel do carpo/Síndrome do canal cárpico"
+          value: "N93",
+          label: "Síndrome do túnel do carpo/Síndrome do canal cárpico",
         },
         {
-          "value": "N94",
-          "label": "Neurite/Nevrite/neuropatia periférica"
+          value: "N94",
+          label: "Neurite/Nevrite/neuropatia periférica",
         },
         {
-          "value": "N95",
-          "label": "Cefaléia tensional"
+          value: "N95",
+          label: "Cefaléia tensional",
         },
         {
-          "value": "N99",
-          "label": "Outras doenças do sistema neurológico"
-        }
-      ]      
+          value: "N99",
+          label: "Outras doenças do sistema neurológico",
+        },
+      ],
     },
     {
       category: "PSICOLÓGICO",
@@ -1988,7 +1994,8 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
         },
         {
           value: "T29",
-          label: "Sinais/sintomas endocrinológicos/metabólicos/nutricionais, outros",
+          label:
+            "Sinais/sintomas endocrinológicos/metabólicos/nutricionais, outros",
         },
         {
           value: "T70",
@@ -2657,25 +2664,27 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
       ],
     },
   ];
-  const handleOptionSelect = option => {
+  const handleOptionSelect = (option) => {
     if (!selectedOptions.includes(option.value)) {
       setSelectedOptions([...selectedOptions, option.value]);
       handleChange([...selectedOptions, option.value]);
     } else {
-      setSelectedOptions(selectedOptions.filter(item => item !== option.value));
-      handleChange(selectedOptions.filter(item => item !== option.value));
-    }    
+      setSelectedOptions(
+        selectedOptions.filter((item) => item !== option.value)
+      );
+      handleChange(selectedOptions.filter((item) => item !== option.value));
+    }
   };
 
   const toggleDropdown = () => {
     setIsSelectOpen(!isSelectOpen);
   };
 
-  const toggleCat = event => {
+  const toggleCat = (event) => {
     if (isCatOpen) {
-      if(isCatOpen == event.target.className){
+      if (isCatOpen == event.target.className) {
         setIsCatOpen(!isCatOpen);
-      }else{
+      } else {
         setIsCatOpen(event.target.className);
       }
     } else {
@@ -2685,11 +2694,11 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
     setIsCatClose(true);
   };
 
-  const closeCats = () => {
-    setIsCatOpen(!isCatOpen);
-  };
-
-  const filteredOptions = options.filter(option => option.subcategories.some(subcat => subcat.label.toLowerCase().includes(searchTerm.toLowerCase())));
+  const filteredOptions = options.filter((option) =>
+    option.subcategories.some((subcat) =>
+      subcat.label.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
   return (
     <div id="catSearch" className="select-container">
@@ -2698,7 +2707,7 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
         type="text"
         placeholder="Pesquise pelo motivo do tratamento"
         value={searchTerm}
-        onChange={e => {
+        onChange={(e) => {
           setIsCatOpen("all");
           setSearchTerm(e.target.value);
         }}
@@ -2709,18 +2718,44 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
         }}
       />
       <div className={`conteiner-options ${isSelectOpen ? "open" : ""}`}>
-      <p style={{color:"white",fontWeight:"bold",textAlign:"center",fontSize:"18pp", paddingTop:"10px"}}>SELECIONE AS OPÇÕES ABAIXO</p>
+        <p
+          style={{
+            color: "white",
+            fontWeight: "bold",
+            textAlign: "center",
+            fontSize: "18pp",
+            paddingTop: "10px",
+          }}
+        >
+          SELECIONE AS OPÇÕES ABAIXO
+        </p>
         {filteredOptions.map((option, index) => (
           <div key={index} className="option-group">
             <h3 className={"options" + index} onClick={toggleCat}>
-              {option.category}
+              <>
+                {option.category}{" "}
+                <span style={{ fontSize: "10px" }}>clique aqui</span>
+              </>
             </h3>
-
-            <div className={"option" + index} style={{ display: isCatOpen === "options" + index || isCatOpen === "all" ? "block" : "none" }}>
+            <div
+              className={"option" + index}
+              style={{
+                display:
+                  isCatOpen === "options" + index || isCatOpen === "all"
+                    ? "block"
+                    : "none",
+              }}
+            >
+               <p style={{ color: "white" }}>
+                      Escolha uma ou mais opções que descrevem o motivo do seu
+                      tratamento.
+                    </p>
               {option.subcategories
-                .filter(subcat => subcat.label.toLowerCase().includes(searchTerm.toLowerCase()))
+                .filter((subcat) =>
+                  subcat.label.toLowerCase().includes(searchTerm.toLowerCase())
+                )
                 .map((subcat, idx) => (
-                  <label key={idx} className="option-label">
+                  <label key={idx} className="option-label">                   
                     <input
                       type="checkbox"
                       className="option-checkbox"
@@ -2739,6 +2774,5 @@ const SelectComponent = ({ handleChange, counterCheck, disableCheckbox, value })
     </div>
   );
 };
-
 
 export default SelectComponent;

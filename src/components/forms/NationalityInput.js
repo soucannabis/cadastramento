@@ -1,64 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
+import React, { useState, useRef, useEffect } from 'react';
 
 const NationalityInput = ({ handleChangeInput, value, name }) => {
-  const [hiddenInput, setHiddenInput] = useState(false);
-  const [currentValue, setCurrentValue] = useState(value || '');
+  const [isCustomInputVisible, setIsCustomInputVisible] = useState(false);
+  const customInputRef = useRef(null);
+  const selectRef = useRef(null);
 
-  // Sincroniza com o valor recebido via props
+  // Inicialização: verifica se deve mostrar o campo personalizado
   useEffect(() => {
-    setCurrentValue(value || '');
-    if (value && value !== 'outro') {
-      setHiddenInput(false);
+    if (value && value !== 'brasileiro(a)' && value !== 'outro') {
+      setIsCustomInputVisible(true);
     } else if (value === 'outro') {
-      setHiddenInput(true);
+      setIsCustomInputVisible(true);
     }
-  }, [value]);
+  }, []);
 
-  function handleChange(e){
-    const newValue = e.target.value;
-    setCurrentValue(newValue);
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
     
-    if (newValue === 'outro') {
-      setHiddenInput(true);
+    if (selectedValue === 'outro') {
+      setIsCustomInputVisible(true);
+      // Foca no campo personalizado se já existe um valor
+      if (customInputRef.current && customInputRef.current.value) {
+        setTimeout(() => customInputRef.current.focus(), 100);
+      }
     } else {
-      setHiddenInput(false);
+      setIsCustomInputVisible(false);
+      // Atualiza o localStorage com o valor selecionado
+      handleChangeInput(e);
     }
+  };
+
+  const handleCustomInputChange = (e) => {
+    const newValue = e.target.value;
     
-    // Chama a função de callback para atualizar o localStorage
-    handleChangeInput(e);
-  }
+    // Cria um evento simulado para o localStorage
+    const customEvent = {
+      target: {
+        name: 'nationality',
+        value: newValue
+      }
+    };
+    
+    // Atualiza o localStorage
+    handleChangeInput(customEvent);
+  };
+
+  const handleCustomInputBlur = () => {
+    // Se o campo personalizado estiver vazio, volta para o select
+    if (customInputRef.current && !customInputRef.current.value.trim()) {
+      setIsCustomInputVisible(false);
+      if (selectRef.current) {
+        selectRef.current.value = '';
+      }
+    }
+  };
 
   return (
-        <form>
-          <select
-            className="form-input" 
-            as="select"
-            id="nationality"
-            name="nationality"
-            value={currentValue}
-            onChange={handleChange}
-          >
-            <option value="">Selecione...</option>
-            <option value="brasileiro(a)">Brasileiro(a)</option>
-            <option value="outro">Outra nacionalidade</option>
-          </select>
-          <br></br>
-          <br></br>
-          {hiddenInput && (
-            <input 
-              placeholder='Digite sua nacionalidade'  
-              className="form-input" 
-              type="text"  
-              name="nationality" 
-              value={currentValue === 'outro' ? '' : currentValue}
-              onChange={(e) => {
-                setCurrentValue(e.target.value);
-                handleChangeInput(e);
-              }}
-            />
-          )}
-        </form>
+    <div>
+      <select
+        ref={selectRef}
+        className="form-input" 
+        id="nationality"
+        name="nationality"
+        value={isCustomInputVisible ? 'outro' : (value || '')}
+        onChange={handleSelectChange}
+      >
+        <option value="">Selecione...</option>
+        <option value="brasileiro(a)">Brasileiro(a)</option>
+        <option value="outro">Outra nacionalidade</option>
+      </select>
+      
+      <br />
+      <br />
+      
+      {isCustomInputVisible && (
+        <input 
+          ref={customInputRef}
+          placeholder='Digite sua nacionalidade'  
+          className="form-input" 
+          type="text"  
+          name="nationality" 
+          defaultValue={value && value !== 'brasileiro(a)' && value !== 'outro' ? value : ''}
+          onChange={handleCustomInputChange}
+          onBlur={handleCustomInputBlur}
+        />
+      )}
+    </div>
   );
 };
 

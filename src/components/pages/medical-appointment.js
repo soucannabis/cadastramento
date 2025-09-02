@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import User from "../../modules/User";
 import apiRequest from "../../modules/apiRequest";
 import MultipleFiles from "./elements/multipleFiles";
-import ContactModal from "../../components/pages/modals/contact";
+import ContactModal from "./elements/contact";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import directusRequestUpload from "../../modules/directusRequestUpload";
 import AlertError from "../forms/AlertError";
 import Resizer from "react-image-file-resizer";
 
@@ -96,7 +95,7 @@ function MedicalAppointment() {
 
   async function aprove() {
     await apiRequest("/api/directus/update", { userId: user.id, formData: { associate_status: 7, status: "aguardando-aprovacao" } }, "POST");
-    window.location.assign("/cadastro");
+    window.location.assign("/cadastro-concluido");
   }
 
   return (
@@ -127,8 +126,8 @@ function MedicalAppointment() {
             <Form.Group controlId="formFile1">
               <Form.Label className="label-upload" hidden={medicalPrescrption}>
                 {isLoading && (
-                  <span class="loading-text">
-                    <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
+                  <span className="loading-text">
+                    <img className="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
                 {!isLoading && !medicalPrescrption && <span>📤 Enviar receita</span>}
@@ -147,7 +146,7 @@ function MedicalAppointment() {
         </div>
       )}
       {fileError && (
-        <div class="alert3">
+        <div className="alert3">
           <AlertError message="Formato do documento inválido, formatos aceitos (JPG, PNG, GIF e PDF)" />
         </div>
       )}

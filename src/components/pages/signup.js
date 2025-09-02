@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
-import directusRequest from "../../modules/apiRequest";
 import apiRequest from "../../modules/apiRequest";
 
 function Signup() {
@@ -19,8 +17,8 @@ function Signup() {
 
     if (!validateEmail) {
       const searchEmail = await apiRequest("/api/directus/search", { query: "/items/Users?filter[email_account][_eq]=" + emailInput }, "POST")
-      console.log(searchEmail)
-      if (searchEmail && searchEmail.associate_status !=0) {
+
+      if (searchEmail) {
         setErrorEmail(true);
         setTimeout(() => {
           setErrorEmail(false);
@@ -28,7 +26,7 @@ function Signup() {
       } else {
         const userData = await apiRequest("/api/directus/create-user", { email_account: emailInput, associate_status: 0, status:"signup"}, "POST")
         localStorage.setItem("user_code", await userData.user_code);
-        console.log(userData)
+   
         if (userData) {
           window.location.assign("/bem-vindo");
         }
@@ -46,34 +44,36 @@ function Signup() {
   };
 
   return (
-    <div class="signup-form-container">
-      <div class="signup-form-content">
+    <div className="signup-form-container">
+      <div className="signup-form-content">      
+        <h1>Faça seu cadastro</h1>
+        <h6 style={{color:"#fff", marginBottom:"30px"}}>Para iniciar seu cadastro, insira seu e-mail pessoal.</h6>
         {errorEmail && (
-          <div class="alert alert-danger" role="alert">
+          <div className="alert alert-danger" role="alert">
             Este endereço de e-mail já está sendo usado.
           </div>
         )}
 
         {emailValidate && (
-          <div class="alert alert-danger" role="alert">
+          <div className="alert alert-danger" role="alert">
             Endereço de e-mail inválido
           </div>
         )}
-        <h1 class="sub-title">Faça seu cadastro</h1>
         <form onSubmit={signUp}>
-          <div class="form-group">
-            <label class="label-login" for="email">
+          <div className="form-group">
+            <label className="label-login" htmlFor="email">
               E-mail:
             </label>
-            <input type="email" class="form-input input-login" onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
+            <input type="email" className="form-input input-login" onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
           </div>
-          <button type="submit" onClick={signUp} class="btn btn-primary btn-lg btn-signup">
+          <button type="submit" onClick={signUp} className="btn btn-primary btn-lg btn-signup">
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 20 20" fill="#ffffff"><path fill="#ffffff" d="M6.75 9a3.25 3.25 0 1 0 0-6.5a3.25 3.25 0 0 0 0 6.5ZM17 6.5a2.5 2.5 0 1 1-5 0a2.5 2.5 0 0 1 5 0Zm-8 8c0-1.704.775-3.228 1.993-4.237A1.991 1.991 0 0 0 10 10H3.5a2 2 0 0 0-2 2s0 4 5.25 4c.953 0 1.733-.132 2.371-.347A5.522 5.522 0 0 1 9 14.5Zm10 0a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0Zm-4-2a.5.5 0 0 0-1 0V14h-1.5a.5.5 0 0 0 0 1H14v1.5a.5.5 0 0 0 1 0V15h1.5a.5.5 0 0 0 0-1H15v-1.5Z"/></svg>
             <span style={{marginLeft: "10px"}}>Fazer Cadastro</span>
           </button>
         </form>
       </div>
     </div>
+  
   );
 }
 

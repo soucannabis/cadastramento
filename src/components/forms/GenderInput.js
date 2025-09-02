@@ -4,15 +4,19 @@ import { Formik, Form, Field } from 'formik';
 const GenderSelect = ({ handleChangeInput, value, name }) => {
   const [hiddenInput, setHiddenInput] = useState(false);
   const [currentValue, setCurrentValue] = useState(value || '');
+  const [customGenderValue, setCustomGenderValue] = useState('');
 
-  // Sincroniza com o valor recebido via props
   useEffect(() => {
-    setCurrentValue(value || '');
-    if (value && value !== 'outro') {
-      setHiddenInput(false);
-    } else if (value === 'outro') {
+
+    const standardOptions = ['homem-cis', 'mulher-cis', 'homem-trans', 'mulher-trans', 'travesti', 'nao-binario', 'outro'];
+    if (value && !standardOptions.includes(value)) {
+      setCurrentValue('outro'); // Define o select como "outro"
+      setCustomGenderValue(value);
       setHiddenInput(true);
+    } else {
+      setCurrentValue(value || '');
     }
+    // Não altera o hiddenInput baseado no value para evitar fechar o input customizado
   }, [value]);
 
   function handleChange(e){
@@ -23,14 +27,27 @@ const GenderSelect = ({ handleChangeInput, value, name }) => {
       setHiddenInput(true);
     } else {
       setHiddenInput(false);
+      // Chama a função de callback para atualizar o localStorage
+      handleChangeInput(e);
     }
+  }
+
+  function handleCustomGenderChange(e) {
+    const customValue = e.target.value;
+    setCustomGenderValue(customValue);
     
-    // Chama a função de callback para atualizar o localStorage
-    handleChangeInput(e);
+    // Cria um evento sintético para passar o valor customizado
+    const syntheticEvent = {
+      target: {
+        name: 'gender',
+        value: customValue
+      }
+    };    
+    handleChangeInput(syntheticEvent);
   }
 
   return (
-        <form>
+        <div>
           <select
             className="form-input" 
             as="select"
@@ -56,14 +73,11 @@ const GenderSelect = ({ handleChangeInput, value, name }) => {
               type="text" 
               name="gender" 
               placeholder="Digite o gênero que se identifica"  
-              value={currentValue === 'outro' ? '' : currentValue}
-              onChange={(e) => {
-                setCurrentValue(e.target.value);
-                handleChangeInput(e);
-              }}
+              value={customGenderValue}
+              onChange={handleCustomGenderChange}
             />
           )}
-        </form>
+        </div>
   );
 };
 

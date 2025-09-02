@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import apiRequest from "../../../modules/apiRequest";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import User from "../../../modules/User";
 import AlertError from "../../forms/AlertError";
-import directusRequestUpload from "../../../modules/directusRequestUpload";
-import Resizer from 'react-image-file-resizer';
-
 
 function MultipleFiles() {
 
@@ -116,7 +113,7 @@ function MultipleFiles() {
     <div>
       <div>
         <div className="col-12 d-flex justify-content-center">
-          <select class="form-input input-login select-namefile" id="nameDocument" name="nameDocument" onChange={nameFile}>
+          <select className="form-input input-login select-namefile" id="nameDocument" name="nameDocument" onChange={nameFile}>
             <option value="">
               {!selectInfo &&
                 "Selecione o tipo do documento"
@@ -135,8 +132,8 @@ function MultipleFiles() {
           <Form.Group controlId="formFile2">
             <Form.Label className="label-upload" hidden={selectInfo}>
               {isLoadingButton && (
-                <span class="loading-text">
-                  <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
+                <span className="loading-text">
+                  <img className="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
                 </span>
               )}
               {!isLoadingButton && !attachment && <span>📎 Anexar arquivo</span>}
@@ -146,21 +143,21 @@ function MultipleFiles() {
             <Form.Control className="input-upload" type="file" onChange={handleFile} />
           </Form.Group>
         </Form>
-        <div class="col-12 d-flex justify-content-center align-items-center" style={{ marginTop: "70px" }}><a onClick={(nextPage)} class="btn btn-success btn-lg btn-signup">✅ CONCLUIR CADASTRO</a></div>
+        <div className="col-12 d-flex justify-content-center align-items-center" style={{ marginTop: "70px" }}><a onClick={(nextPage)} className="btn btn-success btn-lg btn-signup">✅ CONCLUIR CADASTRO</a></div>
 
       </div>
       {errorNamefile && (
-        <div class="alert3">
+        <div className="alert3">
           <AlertError message="Você precisa selecionar o tipo do documento" />
         </div>
       )}
       {fileError && (
-        <div class="alert3">
+        <div className="alert3">
           <AlertError message="Formato do documento inválido, formatos aceitos (JPG, PNG, GIF e PDF)" />
         </div>
       )}
       {fileSuccess && (
-        <div class="alert4">
+        <div className="alert4">
           <AlertError message="Seu arquivo foi enviado com sucesso!" />
         </div>
       )}

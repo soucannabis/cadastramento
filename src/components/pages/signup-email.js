@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
-import directusRequest from "../../modules/apiRequest";
 import apiRequest from "../../modules/apiRequest";
 import User from "../../modules/User";
 
@@ -57,7 +55,7 @@ function SignupEmail() {
 
     if (!validateEmail) {
       const serchEmail = await apiRequest("/api/directus/search", { query: "/items/Users?filter[email_account][_eq]=" + emailInput }, "POST");
-      console.log(serchEmail);
+
       if (serchEmail) {
         setErrorEmail(true);
       } else {
@@ -80,15 +78,15 @@ function SignupEmail() {
   };
 
   return (
-    <div class="container">
-      <div class="row justify-content-center">
-        <img class="logo" src={import.meta.env.VITE_ASSOCIATION_LOGO}></img>
+    <div className="container">
+      <div className="row justify-content-center">
+        <img className="logo" src={import.meta.env.VITE_ASSOCIATION_LOGO}></img>
       </div>
-      <h1 class="title" style={{ marginTop: "30px" }}>
+      <h1 className="title" style={{ marginTop: "30px" }}>
         Cadastro de associado
       </h1>
-      <div class="row justify-content-center">
-        <div class="col-md-6 form-signup">
+      <div className="row justify-content-center">
+        <div className="col-md-6 form-signup">
           {errorEmail && (
             <div className="alert alert-danger" role="alert">
               Este endereço de e-mail já está sendo usado. Se você ja se preencheu seus dados, por favor, <a href="/login">FAÇA LOGIN AQUI</a>
@@ -100,10 +98,10 @@ function SignupEmail() {
             </div>
           )}
 
-          <h1 class="sub-title">Preencha seu e-mail abaixo para iniciar seu cadastro de associado.</h1>
+          <h1 className="sub-title">Preencha seu e-mail abaixo para iniciar seu cadastro de associado.</h1>
           <form onSubmit={signUp}>
-            <div class="form-group">
-              <input type="email" class="form-input input-login"  onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
+            <div className="form-group">
+              <input type="email" className="form-input input-login"  onChange={emailHandleChange} value={emailInput} id="email" placeholder="Digite seu email"></input>
             </div>
             <br />
             <a href="/login" style={{color:"white", fontSize:"17px"}} className="btn">

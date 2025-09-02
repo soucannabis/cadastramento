@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import User from "../../../modules/User";
 import CheckIcon from "./checkIcon";
-import Contact from "../modals/contact";
+import Contact from "./contact";
 
 const TopBarMobile = () => {
   const [user, setUser] = useState({});
@@ -16,8 +16,8 @@ const TopBarMobile = () => {
 
   return (
     <div>
-          <div class="">
-          <ul class="list-unstyled topMenuMobile">
+          <div className="">
+          <ul className="list-unstyled topMenuMobile">
           {user.associate_status === 0 && (
               <div>
                 <Link to="/cadastro-associado">
@@ -41,7 +41,7 @@ const TopBarMobile = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -69,7 +69,7 @@ const TopBarMobile = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -98,7 +98,7 @@ const TopBarMobile = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -127,7 +127,7 @@ const TopBarMobile = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -156,7 +156,7 @@ const TopBarMobile = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -191,7 +191,7 @@ const TopBarMobile = () => {
                 <Link to="/cadastro-aprovado">
                   <li className="item-selected">
                     <CheckIcon status={1} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -225,7 +225,7 @@ const TopBarMobile = () => {
                 <Link to="/cadastro-aprovado">
                   <li className="item-selected">
                     <CheckIcon status={2} size={12} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>

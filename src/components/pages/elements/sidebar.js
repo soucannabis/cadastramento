@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import User from "../../../modules/User";
 import CheckIcon from "./checkIcon";
-import Contact from "../modals/contact";
+import Contact from "./contact";
 
 const Sidebar = () => {
   const [user, setUser] = useState({});
@@ -42,7 +42,7 @@ const Sidebar = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -70,7 +70,7 @@ const Sidebar = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -98,7 +98,7 @@ const Sidebar = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -126,7 +126,7 @@ const Sidebar = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -154,7 +154,7 @@ const Sidebar = () => {
                 <Link>
                   <li className="disabled">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>
@@ -188,7 +188,7 @@ const Sidebar = () => {
                 <Link to="/cadastro-aprovado">
                   <li className="item-selected">
                     <CheckIcon status={1} size={32} />
-                    Aprovação do cadastro
+                    Cadastro Concluído
                   </li>
                 </Link>
               </div>

@@ -18,7 +18,7 @@ function Logout() {
       <div>
       Usuario Logado! 
       <br></br>     
-      <a  onClick={logoutHandleChange} class="btn btn-primary">Sair</a>
+      <a  onClick={logoutHandleChange} className="btn btn-primary">Sair</a>
       </div>
      );
 }

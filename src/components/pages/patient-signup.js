@@ -5,8 +5,6 @@ import User from "../../modules/User";
 import GenderInput from "../forms/GenderInput";
 import NationalityInput from "../forms/NationalityInput";
 import AlertError from "../forms/AlertError";
-import MultiSelectField from "../forms/CIAPInput";
-import Modal from "react-bootstrap/Modal";
 import LabelInfo from "../pages/elements/labelInfo";
 import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -63,9 +61,7 @@ const AssociateSignUp = () => {
     city: null,
     state: null,
     cep: null,
-    reason_treatment: null,
     mobile_number: null,
-    reason_treatment_text: null,
     associate_status: 9,
   };
 
@@ -87,10 +83,7 @@ const AssociateSignUp = () => {
     updateField(event.target.name, event.target.value);
   };
 
-  const handleSelectionChange = event => {
-    // Atualiza o campo reason_treatment no localStorage
-    updateField("reason_treatment", event);
-  };
+
 
   const handleChoice = choice => {
     handleClose();
@@ -139,33 +132,20 @@ const AssociateSignUp = () => {
                      if (key != "complement") {
              emptyFieldsArray.push(key);
            }
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "complement" && key != "mobile_number") {
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "complement" && key != "mobile_number") {
             document.querySelector("#" + key).className = "form-input input-login input-empty";
           }
         } else {
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "reason_treatment" && key != "email" && key != "mobile_number" && key != "complement") {
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "mobile_number" && key != "complement") {
             document.querySelector("#" + key).className = "form-input input-login";
           }
         }
 
-        if (formData.reason_treatment == [] || formData.reason_treatment == null) {
-          document.querySelector("#reason_treatment").className = "css-b62m3t-container input-empty";
-        } else {
-          document.querySelector("#reason_treatment").className = "css-b62m3t-container";
-        }
+
       }
     }
 
-    console.log(emptyFieldsArray)
 
-    if (emptyFieldsArray.length == 2) {
-      if (emptyFieldsArray.includes("reason_treatment") || emptyFieldsArray.includes("reason_treatment_text")) {
-        emptyFieldsArray = [];
-      }
-
-    }
-
-    console.log(emptyFieldsArray)
 
     if (emptyFieldsArray != []) {
       setValidateForm(true);
@@ -180,7 +160,7 @@ const AssociateSignUp = () => {
         setCpfError(false);
       }, 6000);
 
-      emptyFields.push("cpf");
+      emptyFieldsArray.push("cpf");
     } else {
       function realCPF(cpf) {
         if (formData.cpf_associate) {
@@ -262,7 +242,6 @@ const AssociateSignUp = () => {
       const element = document.getElementById(firstEmptyField);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.focus();
       }
       setIsSubmitting(false);
       return; // Para a execução aqui
@@ -272,17 +251,11 @@ const AssociateSignUp = () => {
     setFieldsError(false);
     formData.responsable_code = codeUser;
 
-    console.log(formData);
-
-    formData.reason_treatment = user.reason_treatment
-    formData.reason_treatment_text = user.reason_treatment_text
-
     await apiRequest("/api/directus/create-user", formData, "POST")
 
     const searchUser = await apiRequest("/api/directus/search", { query: "/items/Users?filter[responsable_code][_eq]=" + codeUser }, "POST")
 
     await apiRequest("/api/directus/update", { userId: user.id, formData: { responsible_for: searchUser.user_code } }, "POST")
-    //await apiRequest("/api/directus/update", { userId: user.id, formData: { reason_treatment: null, reason_treatment_text: null } }, "POST"
     
     // Sempre desabilita o estado de envio no final
     setIsSubmitting(false);
@@ -305,7 +278,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite o primeiro nome do paciente" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.name_associate || ""} 
@@ -319,7 +292,7 @@ const AssociateSignUp = () => {
             <label className="form-label" htmlFor="lastname_associate">
               Sobrenome
             </label>
-            <input placeholder="Digite o sobrenome do paciente" class="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.lastname_associate} type="text" id="lastname_associate" name="lastname_associate"></input>
+            <input placeholder="Digite o sobrenome do paciente" className="form-input input-login" onChange={handleChangeInput} onBlur={handleChangeInput} value={formData.lastname_associate} type="text" id="lastname_associate" name="lastname_associate"></input>
           </div>
 
           <div className="mb-3">
@@ -335,7 +308,7 @@ const AssociateSignUp = () => {
               id="birthday_associate" 
               name="birthday_associate"
             >        
-              {inputProps =>  <input placeholder="__/__/____" class="form-input input-login" {...inputProps}  />}
+              {inputProps =>  <input placeholder="__/__/____" className="form-input input-login" {...inputProps}  />}
             </InputMask>
           </div>
 
@@ -350,7 +323,6 @@ const AssociateSignUp = () => {
               handleChangeInput={handleChangeInput} 
             />
           </div>
-          <br></br>
           <div className="mb-3">
             <label className="form-label" htmlFor="nationality">
               Nacionalidade <LabelInfo message="Escolha o país onde nasceu" id="nac" />
@@ -397,7 +369,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite orgão emissor do documento" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.emiiter_rg_associate || ""} 
@@ -412,7 +384,7 @@ const AssociateSignUp = () => {
               Estado civil
             </label>
             <select 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.marital_status || ""} 
@@ -435,7 +407,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite a rua do endereço" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.street || ""} 
@@ -451,7 +423,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite o número ou bloco" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.number || ""} 
@@ -467,7 +439,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite um complemento se necessário" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.complement || ""} 
@@ -483,7 +455,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite o bairro" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.neighborhood || ""} 
@@ -499,7 +471,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite a cidade" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               value={formData.city || ""} 
               type="text" 
@@ -513,7 +485,7 @@ const AssociateSignUp = () => {
               Estado
             </label>
             <select 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.state || ""} 
@@ -536,7 +508,7 @@ const AssociateSignUp = () => {
             </label>
             <input 
               placeholder="Digite o CEP" 
-              class="form-input input-login" 
+              className="form-input input-login" 
               onChange={handleChangeInput} 
               onBlur={handleChangeInput} 
               value={formData.cep || ""} 
@@ -544,24 +516,7 @@ const AssociateSignUp = () => {
               id="cep" 
               name="cep"
             />
-          </div>
-          <div className="mb-3" style={{ display: "none" }}>
-            <MultiSelectField 
-              onChange={handleSelectionChange} 
-              value={formData.reason_treatment} 
-              name="reason_treatment" 
-              hidden 
-            />
-            <textarea 
-              onChange={handleChangeInput} 
-              onBlur={handleChangeInput} 
-              value={formData.reason_treatment_text || ""} 
-              as="textarea" 
-              id="reason_treatment_text" 
-              name="reason_treatment_text" 
-              hidden 
-            />
-          </div>
+          </div>     
           
           <button 
             className="btn btn-success btn-lg btn-float-right" 
@@ -594,19 +549,20 @@ const AssociateSignUp = () => {
           <br></br>
         </div>
         
-        {fieldsError && <AlertError message="Você precisa preencher os seguintes campos: " emptyFields={emptyFieldsMessage} />}
+        {fieldsError && !cpfError && !cpfNotValid && 
+         <AlertError message="Você precisa preencher os seguintes campos: " emptyFields={emptyFieldsMessage} />}
         {cpfError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O CPF precisa estar completo" />
           </div>
         )}
         {rgError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O RG precisa estar completo" />
           </div>
         )}
         {cpfNotValid && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O CPF digitado não é válido" />
           </div>
         )}

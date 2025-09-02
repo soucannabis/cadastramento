@@ -2,7 +2,7 @@ html,
 body {
   height: 100%;
   margin: 0;
-  padding: 0;
+  padding: 0 0 50px 0;
   background-attachment: fixed !important;
 }
 
@@ -67,9 +67,8 @@ h1.sub-title {
 
 .btn-login {
   margin: 20px 0;
-  font-size: 22px;
+  font-size: 15px;
   letter-spacing: 1px;
-  font-weight: 600
 }
 
 .vertical-center {
@@ -83,17 +82,13 @@ h1.sub-title {
   top: 0;
 }
 
-
-
-
-
 .line-through {
   text-decoration: line-through;
 }
 
 .form-container {
   max-width: 600px;
-  padding: 4rem;
+  padding: 1rem 4em 0 4em;
   margin-left: 165px;
 }
 
@@ -211,7 +206,7 @@ ul.listPages {
 .listPages>div>a>li,
 .listPages>a>li {
   list-style: none;
-  height: 96px;
+  height: 80px;
   padding: 31px 20px 40px 20px;
 }
 
@@ -410,8 +405,13 @@ p.loading-text {
   position: fixed;
   top: 100px;
   right: 20px;
-  z-index: 1000;
   transition: top 0.5s ease-in-out;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.custom-alert .btn-close {
+  pointer-events: auto;
 }
 
 .alert2 {
@@ -492,7 +492,7 @@ textarea {
 .lost-pass {
   float: right;
   text-decoration: none;
-  margin-bottom: 30px;
+  margin-bottom: 0;
   cursor: pointer;
 }
 
@@ -649,6 +649,21 @@ input.option-checkbox {
   font-size:18px
 }
 
+.homepage{
+  padding:0 20px
+}
+
+@media screen and (min-width: 800px) {
+.container {
+  background: linear-gradient(rgba(19, 39, 18, 0.9), rgba(19, 39, 18, 0.9)), url("../images/background.jpg") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+}
+
+
 @media screen and (max-width: 600px) {
 
   body {
@@ -683,7 +698,7 @@ input.option-checkbox {
   }
 
   .topMenuMobile {
-    margin-top: 56px;
+    margin-top: 65px;
     margin-bottom: 40px;
   }
 
@@ -773,10 +788,11 @@ input.option-checkbox {
     margin-top: 10px;
     font-size: 14px;
     margin-left: 7px;
+    text-align:center
   }
 
   .container.vertical-center {
-    justify-content: left;
+    justify-content: center;
   }
 
   .vertical-center {
@@ -789,10 +805,20 @@ input.option-checkbox {
     margin-left: 0;
   }
   
-
-
   .mobile-login {
-    padding: 40px !important;
+    padding: 0 40px 60px 40px !important;
+  }
+
+
+  .mobile-forms .login-form-container,
+  .mobile-forms .signup-form-container {
+    width: 100%;
+    position: relative;
+    height: auto;
+    background: none;
+    right: auto;
+    top: auto;
+    z-index: auto;
   }
 
   .form-login,
@@ -818,6 +844,7 @@ input.option-checkbox {
   button.btn.btn-success.btn-lg {
     margin-left: 0;
     font-size: 15px;
+    background-color: #0a58ca !important;
   }
 
   h1 {
@@ -921,7 +948,7 @@ input.option-checkbox {
 
 .login-form-content h1.sub-title,
 .signup-form-content h1.sub-title {
-  margin-bottom: 40px;
+  margin-bottom: 15px;
 }
 
 .login-form-content .form-group,
@@ -969,20 +996,21 @@ input.option-checkbox {
 }
 
 .signup-form-content .btn-signup {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #146c43;
+  border-color: #146c43;
 }
 
 .signup-form-content .btn-signup:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: #146c43;
+  border-color: #146c43;
 }
 
 .login-form-content .alert,
 .signup-form-content .alert {
-  margin-bottom: 20px;
   border-radius: 8px;
 }
+
+
 
 /* Responsividade para dispositivos móveis */
 @media (max-width: 768px) {
@@ -990,6 +1018,10 @@ input.option-checkbox {
     width: 100%;
     position: relative;
   }
+
+  .content {
+    height: auto;
+}
   
   .content {
     width: 100% !important;
@@ -1000,7 +1032,6 @@ input.option-checkbox {
     background-size: cover !important;
     background-position: center !important;
     position: relative !important;
-    min-height: 100vh !important;
   }
   
   .content::before {
@@ -1036,19 +1067,10 @@ input.option-checkbox {
 
 /* Regra adicional para dispositivos muito pequenos */
 @media (max-width: 600px) {
-  .content {
-    background: url("../images/background.jpg") !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center !important;
-    min-height: 100vh !important;
-  }
-  
   /* Fallback para garantir que a imagem apareça */
   body {
     background: url("../images/background.jpg") !important;
     background-repeat: no-repeat !important;
-    background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
   }

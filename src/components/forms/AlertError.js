@@ -26,8 +26,6 @@ function AlertComponent({ message, emptyFields }) {
                 const cpfField = document.getElementById("cpf_associate");
                 if (cpfField) {
                     cpfField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    cpfField.focus();
-                    // Adiciona uma classe temporária para destacar o campo
                     cpfField.classList.add('highlight-error');
                     setTimeout(() => {
                         cpfField.classList.remove('highlight-error');
@@ -42,8 +40,6 @@ function AlertComponent({ message, emptyFields }) {
                 const passField = document.getElementById("pass_account");
                 if (passField) {
                     passField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    passField.focus();
-                    // Adiciona uma classe temporária para destacar o campo
                     passField.classList.add('highlight-error');
                     setTimeout(() => {
                         passField.classList.remove('highlight-error');
@@ -58,8 +54,6 @@ function AlertComponent({ message, emptyFields }) {
                 const phoneField = document.getElementById("mobile_number");
                 if (phoneField) {
                     phoneField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    phoneField.focus();
-                    // Adiciona uma classe temporária para destacar o campo
                     phoneField.classList.add('highlight-error');
                     setTimeout(() => {
                         phoneField.classList.remove('highlight-error');
@@ -104,8 +98,6 @@ function AlertComponent({ message, emptyFields }) {
                 const element = document.getElementById(fieldId);
                 if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element.focus();
-                    // Adiciona uma classe temporária para destacar o campo
                     element.classList.add('highlight-error');
                     setTimeout(() => {
                         element.classList.remove('highlight-error');
@@ -128,7 +120,7 @@ function AlertComponent({ message, emptyFields }) {
                 </b>
                 <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <style jsx>{`
+            <style>{`
                 .highlight-error {
                     animation: shake 0.5s ease-in-out;
                     border: 2px solid #dc3545 !important;

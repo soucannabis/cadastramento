@@ -26,7 +26,7 @@ const EmailInput = ({ handleChangeInput, onBlur, setButtonDisabled }) => (
         <Form>
           <Field
           id="email"
-            class="form-control"
+            className="form-control"
             type="email"
             name="email"
             onBlur={(e) => {
@@ -38,7 +38,7 @@ const EmailInput = ({ handleChangeInput, onBlur, setButtonDisabled }) => (
               handleChangeInput(e);
             }}
           />
-          <ErrorMessage name="email" component="div" class="errorInput" />
+          <ErrorMessage name="email" component="div" className="errorInput" />
         </Form>
       )}
     </Formik>

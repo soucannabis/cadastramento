@@ -21,17 +21,34 @@ export const useLocalStorage = (key, initialValue) => {
     }
   });
 
+  // Função para limpar referências circulares
+  const cleanCircularReferences = (obj) => {
+    const seen = new WeakSet();
+    return JSON.parse(JSON.stringify(obj, (key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return '[Circular Reference]';
+        }
+        seen.add(value);
+      }
+      return value;
+    }));
+  };
+
   // Função para atualizar o valor no localStorage e no estado
   const setValue = (value) => {
     try {
       // Permite que value seja uma função para ter a mesma API do useState
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       
+      // Limpa referências circulares antes de salvar
+      const cleanValue = cleanCircularReferences(valueToStore);
+      
       // Salva no estado
-      setStoredValue(valueToStore);
+      setStoredValue(cleanValue);
       
       // Salva no localStorage
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(key, JSON.stringify(cleanValue));
     } catch (error) {
       console.error(`Erro ao salvar no localStorage: ${error}`);
     }

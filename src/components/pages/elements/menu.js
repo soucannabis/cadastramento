@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import User from '../../../modules/User'
-import Contact from '../modals/contact'
+import Contact from './contact'
 
 const MenuTopo = () => {
 
@@ -20,8 +20,8 @@ const MenuTopo = () => {
   
   return (
     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-      <img style={{width:import.meta.env.VITE_ASSOCIATION_LOGO_SIZE}} src={import.meta.env.VITE_ASSOCIATION_LOGO}></img>
-      <span class="name-logo">{import.meta.env.VITE_ASSOCIATION_NAME_LOGO_SHOW ? import.meta.env.VITE_ASSOCIATION_NAME : ''}</span>
+      <img style={{width:"150px"}} src={import.meta.env.VITE_ASSOCIATION_LOGO_MENU}></img>
+      <span className="name-logo">{import.meta.env.VITE_ASSOCIATION_NAME_LOGO_SHOW ? import.meta.env.VITE_ASSOCIATION_NAME : ''}</span>
       <div className="container-fluid">
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">

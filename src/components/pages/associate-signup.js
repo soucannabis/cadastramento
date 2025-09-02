@@ -6,10 +6,8 @@ import GenderInput from "../forms/GenderInput";
 import NationalityInput from "../forms/NationalityInput";
 import LabelInfo from "../pages/elements/labelInfo";
 import AlertError from "../forms/AlertError";
-import MultiSelectField from "../forms/CIAPInput";
 import Modal from "react-bootstrap/Modal";
 import PhoneInputs from "../forms/PhoneNumberInput";
-import ReasonTreatment from "../forms/ReasonTreatment";
 import Ciap2Select from "../forms/CIAP2Select";
 import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -25,10 +23,13 @@ const AssociateSignUp = () => {
   const [showPopup, setShowPopup] = useState(false);
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
+  const handleCloseTreatmentModal = () => setShowTreatmentModal(false);
+  const handleShowTreatmentModal = () => setShowTreatmentModal(true);
   const [passError, setPassError] = useState(false);
   const [ciapError, setCiapError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showTreatmentModal, setShowTreatmentModal] = useState(false);
   // Dados iniciais do formulário
   const initialFormData = {
     responsable_type: null,
@@ -51,7 +52,6 @@ const AssociateSignUp = () => {
     reason_treatment: null,
     mobile_number: null,
     reason_treatment_text: null,
-    associate_status: 3,
     pass_account: null,
     met_us: null,
   };
@@ -63,13 +63,14 @@ const AssociateSignUp = () => {
     updateField,
     updateMultipleFields,
     resetForm,
-    clearFormData,
+    clearFormData
   ] = useFormLocalStorage("associate_signup", initialFormData);
   const [counterTratmentOptions, setCounterTratment] = useState(false);
   const [counterCheck, setCounterCheck] = useState(false);
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
 
   useEffect(() => {
+    // ppid(id)
     (async () => {
       const userData = await User();
       setUser(userData);
@@ -104,7 +105,10 @@ const AssociateSignUp = () => {
 
   const handleSelectionChange = (event) => {
     // Atualiza o campo reason_treatment no localStorage
-    updateField("reason_treatment", event);
+    // Se for um array (seleção múltipla), usa diretamente
+    // Se for um evento, extrai o valor
+    const value = Array.isArray(event) ? event : event.target?.value || event;
+    updateField("reason_treatment", value);
   };
 
   function counter() {
@@ -112,7 +116,10 @@ const AssociateSignUp = () => {
   }
 
   const handleChangeInputPhone = (event) => {
-    updateField("mobile_number", event);
+    // Extrai apenas o valor do evento, não o evento completo
+    const value =
+      typeof event === "string" ? event : event.target?.value || event;
+    updateField("mobile_number", value);
     setInputError(false);
   };
   const handleChoice = (choice) => {
@@ -169,9 +176,9 @@ const AssociateSignUp = () => {
     setIsSubmitting(true);
 
     var emptyFields = [];
-    var fieldsNames = [];
+    var fieldsNames = [];   
 
-    for (let key in formData) {
+    for (let key in formData) {      
       if (formData.hasOwnProperty(key)) {
         if (
           formData[key] == null ||
@@ -179,7 +186,7 @@ const AssociateSignUp = () => {
           formData[key] == "" ||
           formData[key] == []
         ) {
-          if (key != "complement") {
+          if (key != "complement" && key != "associate_status") {
             emptyFields.push(key);
             fieldsNames.push(key);
           }
@@ -214,6 +221,11 @@ const AssociateSignUp = () => {
         ) {
           document.querySelector(".select-treatment").className =
             "form-input input-login select-treatment input-empty";
+          // Mostra o modal para o campo de motivo do tratamento apenas se for o único campo vazio
+          console.log(emptyFields)
+          if (emptyFields.length === 1 && emptyFields.includes("reason_treatment")) {
+            setShowTreatmentModal(true);
+          }
         } else {
           document.querySelector(".select-treatment").className =
             "select-treatment form-input input-login";
@@ -256,7 +268,6 @@ const AssociateSignUp = () => {
     let translatedFieldsString = translatedFields.join(", ");
 
     setEmptyFieldsMessage(translatedFieldsString);
-
     if (emptyFields != []) {
       setValidateForm(true);
     } else {
@@ -270,7 +281,7 @@ const AssociateSignUp = () => {
         setCpfError(false);
       }, 6000);
 
-      emptyFields.push("cpf");
+      emptyFields.push("cpf_associate");
     } else {
       function realCPF(cpf) {
         if (formData.cpf_associate) {
@@ -300,7 +311,7 @@ const AssociateSignUp = () => {
 
       if (!realCPF(validateCPF)) {
         if (formData.cpf_associate) {
-          emptyFields.push("cpf");
+          emptyFields.push("cpf_associate");
           setCpfNotValid(true);
           setTimeout(() => {
             setCpfNotValid(false);
@@ -333,30 +344,66 @@ const AssociateSignUp = () => {
       }
     }
 
+    // Validação do CEP
+    const validateCEP = formData.cep;
+    if (validateCEP && validateCEP.includes("_")) {
+      setcepError(true);
+      setTimeout(() => {
+        setcepError(false);
+      }, 6000);
+
+      emptyFields.push("cep");
+    }
+
     setFieldsError(true);
     setTimeout(() => {
       setFieldsError(false);
     }, 6000);
 
+    // Move a página para o primeiro campo vazio
+    if (emptyFields.length > 0) {
+      const firstEmptyField = emptyFields[0];
+      const element = document.getElementById(firstEmptyField);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
     if (emptyFields == "" || emptyFields == []) {
       setFieldsError(false);
-      formData.status = "registered";
-      formData.log = "Registered OK";
-      if (formData.reason_treatment && formData.reason_treatment.length > 10) {
+      // Cria uma cópia limpa do formData para envio
+      const cleanFormData = {
+        ...formData,
+        status: "registered",
+        log: "Registered OK",
+      };
+
+      if (
+        cleanFormData.reason_treatment &&
+        cleanFormData.reason_treatment.length > 10
+      ) {
         setCiapError(true);
         setTimeout(() => {
           setCiapError(false);
         }, 6000);
+        setIsSubmitting(false);
+        return;
       } else {
-        await apiRequest(
-          "/api/directus/update",
-          { userId: user.id, formData: formData },
-          "POST"
-        )
-          .then((response) => {})
-          .catch((error) => {
-            console.error(error);
+        try {
+          cleanFormData.associate_status = 3;
+          const response = await apiRequest(
+            "/api/directus/update",
+            { userId: user.id, formData: cleanFormData },
+            "POST"
+          );
+        } catch (error) {
+          console.error("API Error (success case):", error);
+          console.error("Error details:", {
+            message: error.message,
+            status: error.status,
+            response: error.response,
           });
+        }
 
         if (formData.responsable_type == "another") {
           window.location.assign("/cadastro-paciente");
@@ -365,22 +412,37 @@ const AssociateSignUp = () => {
         }
       }
     } else {
-              await apiRequest(
+      try {
+        formData.associate_status = 0;
+        const cleanFormDataWithError = {
+          ...formData, // Inclui todos os dados do formulário
+          status: "formerror",
+          log: { formError: { emptyFields: emptyFields } },
+        };
+
+        const response = await apiRequest(
           "/api/directus/update",
           {
             userId: user.id,
-            formData: {
-              status: "formerror",
-              log: { formError: { emptyFields: emptyFields } },
-            },
+            formData: cleanFormDataWithError,
           },
           "POST"
         );
+      } catch (error) {
+        console.error("API Error (form error case):", error);
+        console.error("Error details:", {
+          message: error.message,
+          status: error.status,
+          response: error.response,
+        });
       }
-      
-      // Sempre desabilita o estado de envio no final
       setIsSubmitting(false);
-    };
+      return;
+    }
+
+    // Sempre desabilita o estado de envio no final
+    setIsSubmitting(false);
+  };
 
   function scrollDown() {
     window.scrollTo(0, document.body.scrollHeight);
@@ -390,7 +452,7 @@ const AssociateSignUp = () => {
     <div>
       {counterTratmentOptions && (
         <div
-          class="fixed-div"
+          className="fixed-div"
           style={
             !counterCheck
               ? { backgroundColor: "" }
@@ -406,14 +468,14 @@ const AssociateSignUp = () => {
             ) : (
               <h5>0/10</h5>
             )}
-            <a class="btn btn-primary btn-sm" onClick={scrollDown}>
+            <a className="btn btn-primary btn-sm" onClick={scrollDown}>
               Continuar{" "}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
                 fill="currentColor"
-                class="bi bi-arrow-down-circle-fill"
+                className="bi bi-arrow-down-circle-fill"
                 viewBox="0 0 16 16"
               >
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z" />
@@ -425,12 +487,22 @@ const AssociateSignUp = () => {
 
       <form onSubmit={updateUser} className="form-container ">
         <h1>Você é responsável pelo seu próprio tratamento?</h1>
+        <h6
+          style={{
+            color: "#fff",
+            marginBottom: "30px",
+            textAlign: "center",
+            padding: "0 20px",
+          }}
+        >
+          Selecione a baixo a opção que se enquadra em sua situação.
+        </h6>
         <br></br>
         <div className="form-input input-login" id="responsable_type">
           <input
             type="radio"
             className="btn-check"
-            onClick={responsable_himself}
+            onChange={responsable_himself}
             name="responsable_type"
             id="btnradio1"
             value="himself"
@@ -448,9 +520,30 @@ const AssociateSignUp = () => {
                 textAlign: "left",
               }}
             >
-              <span style={{ fontSize: "18px", marginTop: "20px" }}><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48"><mask id="ipSPeople0"><path fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M24 20a7 7 0 1 0 0-14a7 7 0 0 0 0 14ZM6 40.8V42h36v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496C35.92 28 33.68 28 29.2 28H18.8c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C6 34.08 6 36.32 6 40.8Z"/></mask><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#ipSPeople0)"/></svg></span>
+              <span style={{ fontSize: "18px", marginTop: "20px" }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 48 48"
+                >
+                  <mask id="ipSPeople0">
+                    <path
+                      fill="#fff"
+                      stroke="#fff"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="4"
+                      d="M24 20a7 7 0 1 0 0-14a7 7 0 0 0 0 14ZM6 40.8V42h36v-1.2c0-4.48 0-6.72-.872-8.432a8 8 0 0 0-3.496-3.496C35.92 28 33.68 28 29.2 28H18.8c-4.48 0-6.72 0-8.432.872a8 8 0 0 0-3.496 3.496C6 34.08 6 36.32 6 40.8Z"
+                    />
+                  </mask>
+                  <path                   
+                    d="M0 0h48v48H0z"
+                    mask="url(#ipSPeople0)"
+                  />
+                </svg>
+              </span>
               <p style={{ marginLeft: "15px", marginTop: "10px" }}>
-                {" "}
                 Sim, sou responsável pelo MEU PRÓPRIO tratamento
               </p>
             </span>
@@ -458,7 +551,7 @@ const AssociateSignUp = () => {
           <input
             type="radio"
             className="btn-check"
-            onClick={responsable_another}
+            onChange={responsable_another}
             name="responsable_type"
             id="btnradio2"
             value="another"
@@ -476,9 +569,21 @@ const AssociateSignUp = () => {
                 textAlign: "left",
               }}
             >
-              <span style={{ fontSize: "18px", marginTop: "20px" }}><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" fill="#000000"><path fill="#000000" d="M17 24c3.867 0 7-3.133 7-7s-3.133-7-7-7s-7 3.133-7 7s3.133 7 7 7Zm22-3.5c0 3.039-2.461 5.5-5.5 5.5a5.499 5.499 0 0 1-5.5-5.5c0-3.039 2.461-5.5 5.5-5.5s5.5 2.461 5.5 5.5ZM17 26c2.734 0 7.183.851 10.101 2.545C28.293 29.758 29 31.081 29 32.4V38H4v-5.6c0-4.256 8.661-6.4 13-6.4Zm27 12H31v-5.6c0-1.416-.511-2.72-1.324-3.883c1.541-.345 3.058-.517 4.217-.517C37.62 28 44 29.787 44 33.333V38Z"/></svg></span>
+              <span style={{ fontSize: "18px", marginTop: "20px" }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 48 48"
+                  fill="#000000"
+                >
+                  <path
+                    fill="#000000"
+                    d="M17 24c3.867 0 7-3.133 7-7s-3.133-7-7-7s-7 3.133-7 7s3.133 7 7 7Zm22-3.5c0 3.039-2.461 5.5-5.5 5.5a5.499 5.499 0 0 1-5.5-5.5c0-3.039 2.461-5.5 5.5-5.5s5.5 2.461 5.5 5.5ZM17 26c2.734 0 7.183.851 10.101 2.545C28.293 29.758 29 31.081 29 32.4V38H4v-5.6c0-4.256 8.661-6.4 13-6.4Zm27 12H31v-5.6c0-1.416-.511-2.72-1.324-3.883c1.541-.345 3.058-.517 4.217-.517C37.62 28 44 29.787 44 33.333V38Z"
+                  />
+                </svg>
+              </span>
               <p style={{ marginLeft: "15px", marginTop: "10px" }}>
-                {" "}
                 Sou responsável pelo tratamento de OUTRA PESSOA
               </p>
             </span>
@@ -486,17 +591,17 @@ const AssociateSignUp = () => {
           <input
             type="radio"
             className="btn-check"
-            onClick={responsable_pet}
             name="responsable_type"
             id="btnradio3"
             value="pet"
             checked={formData.responsable_type === "pet"}
+            onChange={responsable_pet}
           />
           <label
             className="btn btn-outline-primary radio-input"
             htmlFor="btnradio3"
           >
-              <span
+            <span
               style={{
                 display: "flex",
                 alignItems: "flex-start",
@@ -504,8 +609,21 @@ const AssociateSignUp = () => {
                 textAlign: "left",
               }}
             >
-              <span style={{ fontSize: "18px", marginTop: "10px" }}><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 1022 1024" fill="#000000"><path fill="#000000" d="M896.423 1024q-29 0-56.5-12t-40.5-23t-31-29q-64 64-192 64h-480q-13 0-22.5-9.5t-9.5-22.5t9.5-22.5t22.5-9.5q12 0 28.5-22.5t31.5-57t25.5-82.5t10.5-94q0-26-6.5-44t-16-31t-19-28.5t-16-46t-6.5-74.5q0-26 6.5-42.5t16-25t19-17.5t16-27.5t6.5-47.5q0-64-64-64q-45 0-86.5-34.5T.423 160q0-23 21.5-43.5t42.5-20.5q17 0 31.5-10t27.5-24t28.5-28t42-24t62.5-10q47 0 76.5 11t44 28.5t23.5 49t12.5 62.5t12.5 79t23 90q19 57 89.5 145.5t102.5 110.5q128 85 128 256q0 49 57 88.5t135 39.5q26 0 61-10q-9 35-44 54.5t-81 19.5zm-576-320q-3 16-8 41.5t-21.5 77.5t-34.5 73h128q0-43-10-74.5t-22-45.5t-22-32.5t-10-39.5z"/></svg></span>
-              <p style={{ marginLeft: "15px", marginTop: "5px" }}>              
+              <span style={{ fontSize: "18px", marginTop: "10px" }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 1022 1024"
+                  fill="#000000"
+                >
+                  <path
+                    fill="#000000"
+                    d="M896.423 1024q-29 0-56.5-12t-40.5-23t-31-29q-64 64-192 64h-480q-13 0-22.5-9.5t-9.5-22.5t9.5-22.5t22.5-9.5q12 0 28.5-22.5t31.5-57t25.5-82.5t10.5-94q0-26-6.5-44t-16-31t-19-28.5t-16-46t-6.5-74.5q0-26 6.5-42.5t16-25t19-17.5t16-27.5t6.5-47.5q0-64-64-64q-45 0-86.5-34.5T.423 160q0-23 21.5-43.5t42.5-20.5q17 0 31.5-10t27.5-24t28.5-28t42-24t62.5-10q47 0 76.5 11t44 28.5t23.5 49t12.5 62.5t12.5 79t23 90q19 57 89.5 145.5t102.5 110.5q128 85 128 256q0 49 57 88.5t135 39.5q26 0 61-10q-9 35-44 54.5t-81 19.5zm-576-320q-3 16-8 41.5t-21.5 77.5t-34.5 73h128q0-43-10-74.5t-22-45.5t-22-32.5t-10-39.5z"
+                  />
+                </svg>
+              </span>
+              <p style={{ marginLeft: "15px", marginTop: "5px" }}>
                 Sou responsável por um PET
               </p>
             </span>
@@ -514,8 +632,7 @@ const AssociateSignUp = () => {
 
         <br></br>
         <div>
-          <p style={{ color: "white" }}>
-            {" "}
+          <p style={{ color: "white", textAlign: "center" }}>
             {formData.responsable_type == "another"
               ? "Informe primeiro os dados do Responsável pelo Paciente"
               : ""}
@@ -526,7 +643,7 @@ const AssociateSignUp = () => {
               Primeiro nome
             </label>
             <input
-              class="form-input input-login"
+              className="form-input input-login"
               placeholder="Digite seu primeiro nome"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
@@ -542,7 +659,7 @@ const AssociateSignUp = () => {
               Sobrenome
             </label>
             <input
-              class="form-input input-login"
+              className="form-input input-login"
               placeholder="Digite seu sobrenome"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
@@ -569,7 +686,7 @@ const AssociateSignUp = () => {
               {(inputProps) => (
                 <input
                   placeholder="__/__/____"
-                  class="form-input input-login"
+                  className="form-input input-login"
                   {...inputProps}
                 />
               )}
@@ -591,7 +708,6 @@ const AssociateSignUp = () => {
               handleChangeInput={handleChangeInput}
             />
           </div>
-          <br></br>
           <div className="mb-3">
             <label className="form-label" htmlFor="nationality">
               Nacionalidade{" "}
@@ -657,7 +773,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite o orgão emissor do seu RG"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.emiiter_rg_associate || ""}
@@ -672,7 +788,7 @@ const AssociateSignUp = () => {
               Estado civil
             </label>
             <select
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.marital_status || ""}
@@ -700,13 +816,14 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite uma senha para sua conta"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.pass_account || ""}
               type="password"
               id="pass_account"
               name="pass_account"
+              autoComplete="new-password"
             />
           </div>
           <div className="mb-3">
@@ -730,7 +847,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite o nome da sua rua"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.street || ""}
@@ -746,7 +863,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite o número da sua casa ou ap"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.number || ""}
@@ -762,7 +879,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite um complemento para seu endereço"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.complement || ""}
@@ -778,7 +895,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite seu bairro"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.neighborhood || ""}
@@ -794,7 +911,7 @@ const AssociateSignUp = () => {
             </label>
             <input
               placeholder="Digite sua cidade"
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               value={formData.city || ""}
               type="text"
@@ -808,7 +925,7 @@ const AssociateSignUp = () => {
               Estado
             </label>
             <select
-              class="form-input input-login"
+              className="form-input input-login"
               onChange={handleChangeInput}
               onBlur={handleChangeInput}
               value={formData.state || ""}
@@ -837,7 +954,7 @@ const AssociateSignUp = () => {
               {(inputProps) => (
                 <input
                   placeholder="Informe seu CEP"
-                  class="form-input input-login"
+                  className="form-input input-login"
                   type="text"
                   id="cep"
                   name="cep"
@@ -870,7 +987,7 @@ const AssociateSignUp = () => {
             <Ciap2Select
               handleChange={handleSelectionChange}
               id="reason_treatment"
-              class="form-input input-login select-treatment"
+              className="form-input input-login select-treatment"
               value={formData.reason_treatment}
               name="reason_treatment"
               counterCheck={counter}
@@ -895,7 +1012,7 @@ const AssociateSignUp = () => {
           </div>
 
           <div>
-            <label class="form-label">Como você chegou até nós?</label>
+            <label className="form-label">Como você chegou até nós?</label>
             <select
               className="form-input input-login"
               id="met_us"
@@ -944,10 +1061,27 @@ const AssociateSignUp = () => {
                 Enviando...
               </>
             ) : (
-             <>
-             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" fill="#ffffff"><path fill="#ffffff" d="M5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 12.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 3a.5.5 0 0 0 0 1H8V3z"/><path fill="#ffffff" fill-rule="evenodd" d="M14 4.57a.5.5 0 0 0-.024-.235l-.013-.063a1.5 1.5 0 0 0-.18-.434c-.092-.15-.222-.28-.482-.54l-2.59-2.59c-.259-.26-.389-.39-.54-.483a1.5 1.5 0 0 0-.496-.193a.5.5 0 0 0-.235-.024C9.329.004 9.194.004 9.015.004h-2.21c-1.68 0-2.52 0-3.16.327a3.02 3.02 0 0 0-1.31 1.31c-.327.642-.327 1.48-.327 3.16v6.4c0 1.68 0 2.52.327 3.16a3.02 3.02 0 0 0 1.31 1.31c.642.327 1.48.327 3.16.327h2.4c1.68 0 2.52 0 3.16-.327a3.02 3.02 0 0 0 1.31-1.31c.327-.642.327-1.48.327-3.16V4.99c0-.178 0-.313-.005-.425zm-2.91 10.4c-.45.037-1.03.038-1.89.038H6.8c-.857 0-1.44-.001-1.89-.038c-.438-.036-.663-.101-.819-.18a2 2 0 0 1-.874-.874c-.08-.156-.145-.381-.18-.819c-.037-.45-.038-1.03-.038-1.89v-6.4c0-.857.001-1.44.038-1.89c.036-.438.101-.663.18-.819c.192-.376.498-.682.874-.874c.156-.08.381-.145.819-.18c.45-.037 1.03-.038 1.89-.038H9v3.5a.5.5 0 0 0 .5.5H13v6.2c0 .857 0 1.44-.038 1.89c-.035.438-.1.663-.18.82a2 2 0 0 1-.874.873c-.156.08-.38.145-.819.18zM10 1.47l2.59 2.59H10z" clip-rule="evenodd"/></svg>
-             <span style={{marginLeft: '10px'}}>Enviar dados</span>
-             </> 
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 16 16"
+                  fill="#ffffff"
+                >
+                  <path
+                    fill="#ffffff"
+                    d="M5 6.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 9a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 12.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5M5.5 3a.5.5 0 0 0 0 1H8V3z"
+                  />
+                  <path
+                    fill="#ffffff"
+                    fillRule="evenodd"
+                    d="M14 4.57a.5.5 0 0 0-.024-.235l-.013-.063a1.5 1.5 0 0 0-.18-.434c-.092-.15-.222-.28-.482-.54l-2.59-2.59c-.259-.26-.389-.39-.54-.483a1.5 1.5 0 0 0-.496-.193a.5.5 0 0 0-.235-.024C9.329.004 9.194.004 9.015.004h-2.21c-1.68 0-2.52 0-3.16.327a3.02 3.02 0 0 0-1.31 1.31c-.327.642-.327 1.48-.327 3.16v6.4c0 1.68 0 2.52.327 3.16a3.02 3.02 0 0 0 1.31 1.31c.642.327 1.48.327 3.16.327h2.4c1.68 0 2.52 0 3.16-.327a3.02 3.02 0 0 0 1.31-1.31c.327-.642.327-1.48.327-3.16V4.99c0-.178 0-.313-.005-.425zm-2.91 10.4c-.45.037-1.03.038-1.89.038H6.8c-.857 0-1.44-.001-1.89-.038c-.438-.036-.663-.101-.819-.18a2 2 0 0 1-.874-.874c-.08-.156-.145-.381-.18-.819c-.037-.45-.038-1.03-.038-1.89v-6.4c0-.857.001-1.44.038-1.89c.036-.438.101-.663.18-.819c.192-.376.498-.682.874-.874c.156-.08.381-.145.819-.18c.45-.037 1.03-.038 1.89-.038H9v3.5a.5.5 0 0 0 .5.5H13v6.2c0 .857 0 1.44-.038 1.89c-.035.438-.1.663-.18.82a2 2 0 0 1-.874.873c-.156.08-.38.145-.819.18zM10 1.47l2.59 2.59H10z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span style={{ marginLeft: "10px" }}>Enviar dados</span>
+              </>
             )}
           </button>
           <br></br>
@@ -955,43 +1089,66 @@ const AssociateSignUp = () => {
           <br></br>
         </div>
 
-        {fieldsError && (
+        {fieldsError && !ciapError && !cpfError && !cepError && !cpfNotValid && !passError && !phoneError && (
           <AlertError
             message="Você precisa preencher os seguintes campos: "
             emptyFields={emptyFieldsMessage}
           />
         )}
         {ciapError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="Você marcou mais que 10 motivos para seu tratamento." />
           </div>
         )}
         {cpfError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O CPF precisa estar completo" />
           </div>
         )}
         {cepError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O CEP está incompleto" />
           </div>
         )}
         {cpfNotValid && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O CPF digitado não é válido" />
           </div>
         )}
         {passError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="A senha precisa ter pelo menos 6 dígitos" />
           </div>
         )}
         {phoneError && (
-          <div class="alert2">
+          <div className="alert2">
             <AlertError message="O telefone precisa ter 13 dígitos" />
           </div>
         )}
       </form>
+
+      {/* Modal para Motivo do Tratamento */}
+      <Modal show={showTreatmentModal} onHide={handleCloseTreatmentModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Campo Obrigatório</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <img src="/Screenshot_4.png" width="90%" />
+          <br></br>
+          <br></br>
+          <p>O campo <strong>"Motivo principal para o tratamento"</strong> é obrigatório.</p>
+          <p>Você pode pesquisar por um motivo ou clicar em uma das Opções Gerais para escolher uma ou mais opções.</p>
+          <p>Esse campo é padronizado com o CIAP2 (Classificação Internacional de Atenção Primária) e nos ajuda a padronizar os motivos de tratamento de nossos associados.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <button 
+            className="btn btn-primary" 
+            onClick={handleCloseTreatmentModal}
+          >
+            Entendi
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

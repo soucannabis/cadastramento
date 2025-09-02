@@ -43,28 +43,28 @@ const LostPass = () => {
           <Modal.Title>Esqueceu sua senha?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h5 class="text-center">Preencha seu e-mail abaixo para receber um link para definir uma nova senha.</h5>
+          <h5 className="text-center">Preencha seu e-mail abaixo para receber um link para definir uma nova senha.</h5>
           <form action="POST">
             <br></br>
             {mailError && (
-              <div class="alert alert-danger" role="alert">
+              <div className="alert alert-danger" role="alert">
                 O e-mail não está cadastrado em nossa base de dados.
               </div>
             )}
             {resetPassMsg && (
-              <div class="alert alert-success text-center" role="alert">
+              <div className="alert alert-success text-center" role="alert">
                 Verifique sua caixa de entrada para redefinir sua senha.<br></br>
                 Se caso não achar o e-mail, <b>verifique a caixa de SPAN.</b>
               </div>
             )}
-            <input class="form-control input-login" placeholder="Digite seu e-mail" onChange={handleChange} type="text"></input>
-            <a class="btn btn-success btn-lg btn-float-right" onClick={submit}>
+            <input className="form-control input-login" placeholder="Digite seu e-mail" onChange={handleChange} type="text"></input>
+            <a className="btn btn-success btn-lg btn-float-right" onClick={submit}>
               Redefinir senha
             </a>
           </form>
         </Modal.Body>
       </Modal>
-      <a onClick={lostPass} class="text-left text-white lost-pass">
+      <a onClick={lostPass} className="text-left text-white lost-pass">
         Esqueci minha senha
       </a>
     </div>

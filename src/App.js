@@ -1,8 +1,15 @@
-import { BrowserRouter as Router, Route, Routes, Navigate, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import LoginForm from "./components/pages/loginForm";
-import ApproveAssociate from "./components/pages/approveAssociate";
-import Contact from "./components/pages/first-contact";
+import SignupFinish from "./components/pages/signupFinish";
 import Menu from "./components/pages/elements/menu";
 import MenuMobile from "./components/pages/elements/menu-mobile";
 import AssociateSignup from "./components/pages/associate-signup";
@@ -14,15 +21,38 @@ import SignupEmail from "./components/pages/signup-email";
 import UploadComponent from "./components/pages/documents-upload";
 import Home from "./components/pages/home";
 import MedicalAppointment from "./components/pages/medical-appointment";
-import Prescription from "./components/pages/prescription";
-import PrescriptionAppointment from "./components/pages/prescription-appointment";
 import Welcome from "./components/pages/welcome";
 import LostPass from "./components/pages/lost-password";
 import User from "./modules/User";
-import Products from "./components/pages/shop/products";
 import "./styles/general.css";
-import backgroundImage from './images/background.jpg'
-import { Dropdown } from 'react-bootstrap';
+
+// Componente para redirecionamento automático
+function ProtectedRoute({ children, user }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Se não estiver logado e não estiver em uma rota pública, redireciona para /cadastro
+    if (
+      !user &&
+      ![
+        "/cadastro",
+        "/login",
+        "/iniciar-cadastro",
+        "/nova-senha",
+        "/loja",
+        "/seu-cadastro",
+      ].includes(location.pathname)
+    ) {
+      navigate("/cadastro", { replace: true });
+    }
+    if (user && ["/cadastro"].includes(location.pathname)) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate, location.pathname]);
+
+  return children;
+}
 
 function App() {
   const [user, setUser] = useState(false);
@@ -59,138 +89,169 @@ function App() {
 
   if (loading) {
     return (
-      <div class="container vertical-center">
-        <img src="logo.svg" width="5%" class="logo-load" />
-        <p class="loading-text">carregando...</p>
+      <div className="container vertical-center">
+        <img src="logo.svg" width="5%" className="logo-load" />
+        <p className="loading-text">carregando...</p>
       </div>
     );
   }
 
   return (
     <Router>
-      {hiddenLogin && (
-        <div>
-          <Routes>
-            <Route path="/iniciar-cadastro" element={<SignupEmail />} />
-          </Routes>
-          <div class="container vertical-center">
-            <div class="text-center login-div">
-              <Routes>
-                <Route path="/nova-senha" element={<LostPass />} />
-              </Routes>
+      <ProtectedRoute user={user}>
+        {hiddenLogin && (
+          <div>
+            <Routes>
+              <Route path="/iniciar-cadastro" element={<SignupEmail />} />
+            </Routes>
+            <div className="containe-login cal-center container">
+              <div className="text-center login-div">
+                <Routes>
+                  <Route path="/nova-senha" element={<LostPass />} />
+                </Routes>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {!user && (
-        <div>
-          {window.innerWidth > 600 && (
-            <div class="container vertical-center" hidden={hiddenLogin}>
-              <div class="text-center login-div">
-                <img
-                  src="/logoSou.png"
-                  style={{width: "250px", height: "250px"}}
-                />
-                <br></br>
-                <div class="row">                
-                  <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
-                    Criar minha conta
-                  </Link>
-                  <Link to="/login" class="btn btn-lg btn-primary btn-login" hidden={hiddenButtons}>
-                    Login
-                  </Link>
+        )}
+        {!user && (
+          <div>
+            {window.innerWidth > 600 && (
+              <div className="container vertical-center" hidden={hiddenLogin}>
+                <div className="text-center login-div">
+                  <img
+                    src={import.meta.env.VITE_ASSOCIATION_LOGO}
+                    style={{
+                      width: import.meta.env.VITE_ASSOCIATION_LOGO_SIZE,
+                      height: import.meta.env.VITE_ASSOCIATION_LOGO_SIZE,
+                    }}
+                  />
+                  <br></br>
+                  <div className="row">
+                    <Link
+                      to="/cadastro"
+                      className="btn btn-lg btn-success"
+                      hidden={hiddenButtons}
+                    >
+                      Se cadastrar como <strong>Associado</strong>
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="btn btn-lg btn-primary btn-login"
+                      hidden={hiddenButtons}
+                    >
+                      Login
+                    </Link>
+                  </div>
                 </div>
-              </div>
-              <Routes>
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/cadastro" element={<Signup />} />          
-
-              </Routes>
-            </div>
-          )}
-
-          {window.innerWidth < 600 && (
-            <div class="container mobile-login" hidden={hiddenLogin}>
-              <div class="text-center">
-                <img
-                  src="/logoSou.png"
-                  style={{width: "250px", height: "250px"}}
-                />
-                <div class="row">                  
-                  <Link to="/cadastro" class="btn btn-lg btn-success" hidden={hiddenButtons}>
-                    Criar minha conta
-                  </Link>
-                  <Link to="/login" class="btn btn-lg btn-primary btn-login" hidden={hiddenButtons}>
-                    Login
-                  </Link>
-                </div>
-              </div>
-              <Routes>
-                <Route path="/login" element={<LoginForm />} />
-                <Route path="/cadastro" element={<Signup />} />
-              </Routes>
-            </div>
-          )}
-        </div>
-
-      )}
-
-
-      {user && (
-        <div>
-          {window.innerWidth > 600 && (
-            <div class="wrapper">
-              <span>
-                <Menu />
-              </span>
-              <div class="sidebar">
-                <Sidebar />
-              </div>
-              <div class="content">
                 <Routes>
-                  <Route path="/" element={<Home />} />,
-                  <Route path="/bem-vindo" element={<Welcome />} />
-                  <Route path="/solicitacao-contato" element={<Contact />} />
-                  <Route path="/cadastro-associado" element={<AssociateSignup />} />
-                  <Route path="/cadastro-paciente" element={<PatientSignup />} />
-                  <Route path="/documentos" element={<UploadComponent />} />
-                  <Route path="/consulta" element={<MedicalAppointment />} />
-                  <Route path="/receita-medica" element={<Prescription />} />
-                  <Route path="/receita-medica-agendamento" element={<PrescriptionAppointment />} /> <Route path="/cadastro" element={<ApproveAssociate />} />
+                  <Route path="/login" element={<LoginForm />} />
+                  <Route path="/cadastro" element={<Signup />} />
                 </Routes>
               </div>
-            </div>
-          )}
+            )}
 
-          {window.innerWidth < 600 && (
-
-            <div class="wrapper">
-              <MenuMobile />
-              <TopBarMobile />
-              <div class="">
-                <Routes>
-                  <Route path="/" element={<Home />} />,
-                  <Route path="/bem-vindo" element={<Welcome />} />
-                  <Route path="/solicitacao-contato" element={<Contact />} />
-                  <Route path="/cadastro-associado" element={<AssociateSignup />} />
-                  <Route path="/cadastro-paciente" element={<PatientSignup />} />
-                  <Route path="/documentos" element={<UploadComponent />} />
-                  <Route path="/consulta" element={<MedicalAppointment />} />
-                  <Route path="/receita-medica" element={<Prescription />} />
-                  <Route path="/receita-medica-agendamento" element={<PrescriptionAppointment />} />
-                  <Route path="/cadastro" element={<ApproveAssociate />} />
-                </Routes>
+            {window.innerWidth < 600 && (
+              <div className="container mobile-login" hidden={hiddenLogin}>
+                <div className="text-center">
+                  <img
+                    src="/logoSou.png"
+                    style={{ width: "250px", height: "250px" }}
+                  />
+                  <div className="row">
+                    <Link
+                      to="/cadastro"
+                      className="btn btn-lg btn-success"
+                      hidden={hiddenButtons}
+                    >
+                      Se cadastrar como <strong>Associado</strong>
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="btn btn-lg btn-primary btn-login"
+                      hidden={hiddenButtons}
+                    >
+                      Login
+                    </Link>
+                  </div>
+                </div>
+                <div className="mobile-forms">
+                  <Routes>
+                    <Route path="/login" element={<LoginForm />} />
+                    <Route path="/cadastro" element={<Signup />} />
+                  </Routes>
+                </div>
               </div>
-            </div>
+            )}
+          </div>
+        )}
+
+        {user && (
+          <div>
+            {window.innerWidth > 600 && (
+              <div className="wrapper">
+                <span>
+                  <Menu />
+                </span>
+                <div className="sidebar">
+                  <Sidebar />
+                </div>
+                <div className="content">
+                  <Routes>
+                    <Route path="/" element={<Home />} />,
+                    <Route path="/bem-vindo" element={<Welcome />} />
+                    <Route
+                      path="/cadastro-associado"
+                      element={<AssociateSignup />}
+                    />
+                    <Route
+                      path="/cadastro-paciente"
+                      element={<PatientSignup />}
+                    />
+                    <Route path="/documentos" element={<UploadComponent />} />
+                    <Route path="/consulta" element={<MedicalAppointment />} />
+                    <Route
+                      path="/cadastro-concluido"
+                      element={<SignupFinish />}
+                    />
+                  </Routes>
+                </div>
+              </div>
+            )}
+
+            {window.innerWidth < 600 && (
+              <div className="wrapper">
+                <MenuMobile />
+                <TopBarMobile />
+                <div className="">
+                  <Routes>
+                    <Route path="/" element={<Home />} />,
+                    <Route path="/bem-vindo" element={<Welcome />} />
+                    <Route
+                      path="/cadastro-associado"
+                      element={<AssociateSignup />}
+                    />
+                    <Route
+                      path="/cadastro-paciente"
+                      element={<PatientSignup />}
+                    />
+                    <Route path="/documentos" element={<UploadComponent />} />
+                    <Route path="/consulta" element={<MedicalAppointment />} />
+                    <Route
+                      path="/cadastro-concluido"
+                      element={<SignupFinish />}
+                    />
+                  </Routes>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        <Routes>
+          {!user && (
+            <Route path="/" element={<Navigate to="/cadastro" replace />} />
           )}
-        </div>
-      )}
-      <Routes>
-        <Route path="/loja" element={<Products />} />
-        <Route path="/seu-cadastro" element={<SignupEmail />} />
-        {/* Redireciona para /cadastro se não estiver logado */}
-        {!user && <Route path="/" element={<Navigate to="/cadastro" replace />} />}
-      </Routes>
+        </Routes>
+      </ProtectedRoute>
     </Router>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import User from '../../../modules/User'
-import Contact from '../modals/contact'
+import Contact from './contact'
 
 const MenuTopo = () => {
 
@@ -20,7 +20,7 @@ const MenuTopo = () => {
 
   return (
     <nav className="navbar navbar-light fixed-top">
-      <img style={{width:"30%"}} src={import.meta.env.VITE_ASSOCIATION_LOGO} alt="Logo da Associação" />
+      <img style={{width:"25%"}} src={import.meta.env.VITE_ASSOCIATION_LOGO_MENU} alt="Logo da Associação" />
       <Contact />
       <div className="">
         <button 

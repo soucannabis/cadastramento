@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Form } from "react-bootstrap";
-import directusRequestUpload from "../../modules/directusRequestUpload";
 import apiRequest from "../../modules/apiRequest";
 import User from "../../modules/User";
 import AlertError from "../forms/AlertError";
-import Resizer from "react-image-file-resizer";
 
 const FileUploadComponent = () => {
   const [user, setUser] = useState({});
@@ -41,7 +39,6 @@ const FileUploadComponent = () => {
   // Função para iniciar o monitoramento do status
   const startStatusMonitoring = () => {
     setIsMonitoringStatus(true);
-    console.log("startStatusMonitoring")
     // Verifica imediatamente
     checkAssociateStatus();
     
@@ -67,15 +64,11 @@ const FileUploadComponent = () => {
     }
   };
 
- /* setTimeout(async () => {
-     userData = await User();
-     setUser(userData);
-     console.log("xxx")
-   }, 4000);*/
-
-
-
   useEffect(() => {
+    // Limpa os dados dos formulários do localStorage quando acessar /documentos
+    localStorage.removeItem("form_patient_signup");
+    localStorage.removeItem("form_associate_signup");
+    
     (async function () {
       userData = await User();
       setUser(userData);
@@ -332,12 +325,12 @@ const FileUploadComponent = () => {
   };
 
   return (
-    <div class="justify-content-center">
+    <div className="justify-content-center">
       <h1 style={{ paddingTop: "10px" }}>Envie seu Documento de Identidade</h1>
       <h2 style={{ textAlign: "center" }}>Clique no botão para enviar uma foto de seu comprovante de identidade.</h2>
       <h2 style={{ textAlign: "center" }}>Você pode enviar a parte de trás do seu RG ou seu CNH.</h2>
       <br></br>
-      <div class="">
+      <div className="">
         {!rgProof && (
           <Form>
             <Form.Group controlId="formFile1">
@@ -366,7 +359,7 @@ const FileUploadComponent = () => {
           </Form>
         )}
         {rgProof && (
-          <div class="document-send">
+          <div className="document-send">
             <Form.Label className="label-upload send-ok">✅ Comprovante de identidade enviado</Form.Label>
           </div>
         )}
@@ -376,8 +369,8 @@ const FileUploadComponent = () => {
             <Form.Group controlId="formFile3">
               <Form.Label className="label-upload">
                 {isLoadingC && (
-                  <span class="loading-text">
-                    <img class="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img class="animated-icon" width="40" src="/icons/data-cloud.gif" />
+                  <span className="loading-text">
+                    <img className="animated-icon" width="40" src="/icons/data-cloud.gif" /> Carregando documento... <img className="animated-icon" width="40" src="/icons/data-cloud.gif" />
                   </span>
                 )}
                 {!isLoadingC && (
@@ -393,7 +386,7 @@ const FileUploadComponent = () => {
         )}
 
         {rg_patient_proof && (
-          <div class="document-send">
+          <div className="document-send">
             <Form.Label hidden={visible} className="label-upload send-ok">
               Documento de Identidade enviado
             </Form.Label>
@@ -402,7 +395,7 @@ const FileUploadComponent = () => {
         <br></br>
         <div style={{ textAlign: 'center', color: '#fff' }}>
           <a target="_blank" style={{textDecoration:'none', color:'#fff'}} href={`https://enviararquivos.soucannabis.ong.br?u=${user.user_code}`}>
-            Algum problema em enviar seus documentos? <strong>Clique aqui</strong>
+            Algum problema em enviar seus documentos?<br></br> <strong>Clique aqui</strong>
           </a>
         </div>
         <br></br>
@@ -419,7 +412,7 @@ const FileUploadComponent = () => {
          </a>
         {isMonitoringStatus && (
           <div style={{ textAlign: 'center', marginTop: '10px' }}>
-            <p style={{ color: '#4CAF50', fontSize: '16px', fontWeight: 'bold' }}>
+            <p style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
               🔄 Após assinatura do Termo de responsabilidade, está página será atualizada automaticamente.
             </p>
           </div>
@@ -431,12 +424,12 @@ const FileUploadComponent = () => {
         <br></br>
       </div>
       {docError && (
-        <div class="alert1">
+        <div className="alert1">
           <AlertError message="Erro ao enviar o arquivo, recarregue a página e tente novamente." />
         </div>
       )}
       {fileError && (
-        <div class="alert1">
+        <div className="alert1">
           <AlertError message="Formato do documento inválido, formatos aceitos (JPG, PNG, GIF e PDF)" />
         </div>
       )}
