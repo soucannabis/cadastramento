@@ -33,10 +33,10 @@ function Home() {
     window.location.assign("/consulta");
   }
   if (user.associate_status == 5) {
-    window.location.assign("/cadastro");
+    window.location.assign("/cadastro-concluido");
   }
   if (user.associate_status >= 6) {
-    window.location.assign("/cadastro");
+    window.location.assign("/cadastro-concluido");
   }
 
   return <></>;

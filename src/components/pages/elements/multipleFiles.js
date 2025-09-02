@@ -105,8 +105,8 @@ function MultipleFiles() {
   }
 
   async function nextPage() {
-    await apiRequest("/api/directus/update", { userId: user.id, formData: { associate_status: 7, status: "aguardando-aprovacao" } }, "POST");
-    window.location.assign("/cadastro");
+    await apiRequest("/api/directus/update", { userId: user.id, formData: { associate_status: 7, status: "Associado" } }, "POST");
+    window.location.assign("/cadastro-concluido");
   }
 
   return (
