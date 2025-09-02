@@ -87,6 +87,17 @@ function MedicalAppointment() {
 
   const medicalAppointmentYes = async () => {
     setPrescription(true);
+    
+    // Aguarda o componente ser renderizado e então rola até o prescription-container
+    setTimeout(() => {
+      const prescriptionContainer = document.getElementById('prescription-container');
+      if (prescriptionContainer) {
+        prescriptionContainer.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }, 100);
   };
 
   const medicalAppointmentNo = async () => {
@@ -120,7 +131,7 @@ function MedicalAppointment() {
       </form>
 
       {prescription && (
-        <div>
+        <div id="prescription-container">
           <h1 className="sub-title">Envie sua receita aqui: </h1>
           <Form>
             <Form.Group controlId="formFile1">
