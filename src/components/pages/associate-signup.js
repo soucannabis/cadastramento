@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputMask from "react-input-mask";
 import apiRequest from "../../modules/apiRequest";
-import User from "../../modules/User";
+import { useUser } from "../../contexts/UserContext";
 import GenderInput from "../forms/GenderInput";
 import NationalityInput from "../forms/NationalityInput";
 import LabelInfo from "../pages/elements/labelInfo";
@@ -12,7 +12,7 @@ import Ciap2Select from "../forms/CIAP2Select";
 import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
 const AssociateSignUp = () => {
-  const [user, setUser] = useState({});
+  const { user } = useUser();
   const [inputError, setInputError] = useState(false);
   const [fieldsError, setFieldsError] = useState(false);
   const [validateForm, setValidateForm] = useState();
@@ -70,12 +70,6 @@ const AssociateSignUp = () => {
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
 
   useEffect(() => {
-    // ppid(id)
-    (async () => {
-      const userData = await User();
-      setUser(userData);
-    })();
-
     const timer = setTimeout(() => {}, 3000);
     return () => clearTimeout(timer);
   }, []);
@@ -87,6 +81,13 @@ const AssociateSignUp = () => {
       setCounterCheck(false);
     }
   }, [formData]);
+
+  // ✅ Debug: Verificar dados do usuário
+  useEffect(() => {
+    console.log('🔍 AssociateSignUp: Dados do usuário:', user);
+    console.log('🔍 AssociateSignUp: User ID:', user?.id);
+    console.log('🔍 AssociateSignUp: User Code:', user?.user_code);
+  }, [user]);
 
   if (user.associate_status > 3) {
     window.location.assign("/");
@@ -389,13 +390,26 @@ const AssociateSignUp = () => {
         setIsSubmitting(false);
         return;
       } else {
+        // ✅ Verificar se userId existe antes de fazer update
+        if (!user?.id) {
+          console.error('❌ AssociateSignUp: User ID não encontrado, não é possível fazer update');
+          setInputError(true);
+          setIsSubmitting(false);
+          return;
+        }
+
         try {
           cleanFormData.associate_status = 3;
+          console.log('🔍 AssociateSignUp: Fazendo update com userId:', user.id);
+          console.log('🔍 AssociateSignUp: Dados do formulário:', cleanFormData);
+          
           const response = await apiRequest(
             "/api/directus/update",
             { userId: user.id, formData: cleanFormData },
             "POST"
           );
+          
+          console.log('✅ AssociateSignUp: Update realizado com sucesso:', response);
         } catch (error) {
           console.error("API Error (success case):", error);
           console.error("Error details:", {
@@ -412,6 +426,14 @@ const AssociateSignUp = () => {
         }
       }
     } else {
+      // ✅ Verificar se userId existe antes de fazer update
+      if (!user?.id) {
+        console.error('❌ AssociateSignUp: User ID não encontrado para update de erro');
+        setInputError(true);
+        setIsSubmitting(false);
+        return;
+      }
+
       try {
         formData.associate_status = 0;
         const cleanFormDataWithError = {
@@ -419,6 +441,9 @@ const AssociateSignUp = () => {
           status: "formerror",
           log: { formError: { emptyFields: emptyFields } },
         };
+
+        console.log('🔍 AssociateSignUp: Fazendo update de erro com userId:', user.id);
+        console.log('🔍 AssociateSignUp: Dados de erro:', cleanFormDataWithError);
 
         const response = await apiRequest(
           "/api/directus/update",
@@ -428,6 +453,8 @@ const AssociateSignUp = () => {
           },
           "POST"
         );
+        
+        console.log('✅ AssociateSignUp: Update de erro realizado:', response);
       } catch (error) {
         console.error("API Error (form error case):", error);
         console.error("Error details:", {

@@ -143,7 +143,7 @@ h1.sub-title {
 
 .content {
   width: 75%;
-  padding: 100px 20px 80px 50px;
+  padding: 100px 0 100px 0;
   float: right;
   background: url("../images/background.jpg");
   background-repeat: no-repeat;
@@ -605,6 +605,13 @@ label.option-label {
   font-weight: 200;
   font-size: 19px;
   margin-bottom: 13px;
+}
+li.item-selected {
+  font-size: 19px;
+}
+
+li.line-through {
+  font-size: 19px;
 }
 
 input.option-checkbox {

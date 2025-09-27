@@ -24,7 +24,8 @@ const AssociateSignUp = () => {
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
 
-  const codeUser = localStorage.getItem("user_code");
+  // ✅ Remover referência ao localStorage - usar dados do usuário autenticado
+  const codeUser = user?.user_code;
 
   useEffect(() => {
     (async () => {
@@ -254,8 +255,7 @@ const AssociateSignUp = () => {
     await apiRequest("/api/directus/create-user", formData, "POST")
 
     const searchUser = await apiRequest("/api/directus/search", { query: "/items/Users?filter[responsable_code][_eq]=" + codeUser }, "POST")
-
-    await apiRequest("/api/directus/update", { userId: user.id, formData: { responsible_for: searchUser.user_code } }, "POST")
+    await apiRequest("/api/directus/update", { userId: user.id, formData: { responsible_for: searchUser.data.user_code } }, "POST")
     
     // Sempre desabilita o estado de envio no final
     setIsSubmitting(false);

@@ -1,42 +1,86 @@
-import React, { useState, useEffect } from "react";
-import User from "../../modules/User";
+import React, { useEffect } from "react";
+import { useUser } from "../../contexts/UserContext";
 
 function Home() {
-  const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useUser();
 
+  // ✅ Debug: Verificar dados do usuário
   useEffect(() => {
-    (async () => {
-      const userData = await User();
-      setUser(userData);
-    })();
-  }, []);
+    console.log('🔍 Home: Dados do usuário:', user);
+    console.log('🔍 Home: Associate Status:', user?.associate_status);
+    console.log('🔍 Home: Responsable Type:', user?.responsable_type);
+  }, [user]);
 
-  if (user.associate_status == 0) {
-    window.location.assign("/bem-vindo");
+  // ✅ Lógica de redirecionamento baseada no status do usuário
+  useEffect(() => {
+    if (!user || loading) {
+      console.log('⏳ Home: Aguardando dados do usuário...');
+      return;
+    }
+
+    const status = user.associate_status;
+    console.log('🔄 Home: Verificando redirecionamento para status:', status);
+
+    switch (status) {
+      case 0:
+        console.log('🔄 Home: Redirecionando para /bem-vindo');
+        window.location.assign("/bem-vindo");
+        break;
+      
+      case 1:
+      case 2:
+        console.log('🔄 Home: Redirecionando para /cadastro-associado');
+        window.location.assign("/cadastro-associado");
+        break;
+      
+      case 3:
+        if (user.responsable_type === "another" && user.responsible_for === null) {
+          console.log('🔄 Home: Redirecionando para /cadastro-paciente (responsável por outro)');
+          window.location.assign("/cadastro-paciente");
+        } else {
+          console.log('🔄 Home: Redirecionando para /documentos');
+          window.location.assign("/documentos");
+        }
+        break;
+      
+      case 4:
+        console.log('🔄 Home: Redirecionando para /consulta');
+        window.location.assign("/consulta");
+        break;
+      
+      case 5:
+        console.log('🔄 Home: Redirecionando para /cadastro-concluido');
+        window.location.assign("/cadastro-concluido");
+        break;
+      
+      default:
+        if (status >= 6) {
+          console.log('🔄 Home: Redirecionando para /cadastro-concluido (status >= 6)');
+          window.location.assign("/cadastro-concluido");
+        } else {
+          console.log('⚠️ Home: Status desconhecido:', status);
+        }
+        break;
+    }
+  }, [user, loading]);
+
+  // ✅ Mostrar loading enquanto dados estão sendo carregados
+  if (loading) {
+    return (
+      <div className="container vertical-center">
+        <img src="logo.svg" width="5%" className="logo-load" />
+        <p className="loading-text">carregando...</p>
+      </div>
+    );
   }
 
-  if (user.associate_status == 1) {
-    window.location.assign("/cadastro-associado");
-  }
-
-  if (user.associate_status == 2) {
-    window.location.assign("/cadastro-associado");
-  }
-  
-  if (user.associate_status == 3 && user.responsable_type == "another" && user.responsible_for == null) {
-    window.location.assign("/cadastro-paciente");
-  } else if (user.associate_status == 3) {
-    window.location.assign("/documentos");
-  }
-  if (user.associate_status == 4) {
-    window.location.assign("/consulta");
-  }
-  if (user.associate_status == 5) {
-    window.location.assign("/cadastro-concluido");
-  }
-  if (user.associate_status >= 6) {
-    window.location.assign("/cadastro-concluido");
+  // ✅ Se não há usuário, mostrar mensagem
+  if (!user) {
+    return (
+      <div className="container vertical-center">
+        <p>Usuário não encontrado. Redirecionando...</p>
+      </div>
+    );
   }
 
   return <></>;

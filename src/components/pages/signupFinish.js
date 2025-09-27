@@ -12,7 +12,7 @@ function ApproveAssociate() {
 
   const [user, setUser] = useState({});
   const handleContactClick = () => {
-    window.open("https://soucannabis.ong.br/receba-nosso-suporte/", "_blank");
+    window.open(import.meta.env.VITE_CONTACT_URL, "_blank");
   };
 
   return (

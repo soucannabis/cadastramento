@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import Logout from "../logout";
 import LostPass from "./modals/lost-password";
-import apiRequest from "../../modules/apiRequest";
-import CryptoJS from "crypto-js";
-
-function decrypt(decrypt, secretKey) {
-  const bytes = CryptoJS.AES.decrypt(decrypt, secretKey);
-  decrypt = bytes.toString(CryptoJS.enc.Utf8);
-  return decrypt;
-}
+import SecureAuthentication from "../../modules/SecureAuthentication";
 
 function LoginForm() {
   const [emailInput, setEmailInput] = useState([]);
@@ -17,70 +10,33 @@ function LoginForm() {
   const [loginSucess, setLoginSucess] = useState(false);
   const [loginErrorPass, setLoginErrorPass] = useState(false);
   const [loginEmailError, setLoginEmailError] = useState(false);
-  const [logged, setLogged] = useState(false);
-
-  var verLogin = localStorage.getItem("user_code");
-
-  useEffect(() => {
-    if (verLogin) {
-      setLogged(true);
-    } else {
-      setLogged(false);
-    }
-  }, []);
 
   const userLogin = async (event) => {
     event.preventDefault();
 
-    if (passInput == []) {
+    if (!passInput || !emailInput) {
       setLoginEmailError(true);
-    } else {
-      await apiRequest(
-        "/api/directus/login",
-        { email: emailInput, pass: passInput },
-        "POST"
-      ).then(async (response) => {
-        if (response.pass_account) {
-          var userPass = decrypt(
-            response.pass_account,
-            import.meta.env.VITE_PASS_ENCRYPT
-          );
-        } else {
-          setLoginEmailError(true);
-          setTimeout(() => {
-            setLoginEmailError(false);
-          }, 5000);
-          setLogged(false);
-          setTimeout(() => {
-            setLoginEmailError(false);
-          }, 5000);
+      return;
+    }
 
-          userPass = "";
-        }
-
-        if (!response) {
-          setLoginEmailError(true);
-          setTimeout(() => {
-            setLoginEmailError(false);
-          }, 5000);
-          setLogged(false);
-          setTimeout(() => {
-            setLoginEmailError(false);
-          }, 5000);
-        } else {
-          if (userPass == passInput) {
-            localStorage.setItem("user_code", await response.user_code);
-            setLogged(true);
-            setLoginSucess(true);
-            window.location.assign("/");
-          } else {
+    try {
+      const result = await SecureAuthentication.login(emailInput, passInput);
+      console.log(result)
+      if (result.success) {
+        setLoginSucess(true);
+        // ✅ Não armazenar dados sensíveis no localStorage
+        window.location.assign("/");
+      } else {
+        setLoginEmailError(true);
+        setTimeout(() => {
+          setLoginEmailError(false);
+        }, 5000);
+      }
+    } catch (error) {
             setLoginEmailError(true);
             setTimeout(() => {
               setLoginEmailError(false);
             }, 5000);
-          }
-        }
-      });
     }
   };
 
@@ -95,7 +51,7 @@ function LoginForm() {
   return (
     <div className="login-form-container">
       {loginSucess && <Navigate to="/" replace={true} />}
-      {!logged && (
+      
         <div className="login-form-content">
           <h1 className="sub-title">Preencha seus dados de acesso</h1>
           <h6 style={{ color: "#fff", marginBottom: "30px" }}>
@@ -163,9 +119,6 @@ function LoginForm() {
           </form>
           
         </div>
-      )}
-
-      {logged && <Logout />}
     </div>
   );
 }

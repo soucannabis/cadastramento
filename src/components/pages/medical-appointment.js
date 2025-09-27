@@ -101,7 +101,7 @@ function MedicalAppointment() {
   };
 
   const medicalAppointmentNo = async () => {
-    window.location.assign("http://soucannabis.ong.br/receba-nosso-suporte", "_blank");
+    window.location.assign(import.meta.env.VITE_CONTACT_URL, "_blank");
   };
 
   async function aprove() {

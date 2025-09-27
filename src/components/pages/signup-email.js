@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import apiRequest from "../../modules/apiRequest";
 import User from "../../modules/User";
+import MyLoader from "./elements/loader";
 
 function SignupEmail() {
   const [emailInput, setEmailInput] = useState("");
   const [emailValidate, setEmailValidate] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -51,25 +53,36 @@ function SignupEmail() {
 
   const signUp = async event => {
     event.preventDefault();
+    setIsLoading(true);
+    
     const validateEmail = !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(emailInput);
 
     if (!validateEmail) {
-      const serchEmail = await apiRequest("/api/directus/search", { query: "/items/Users?filter[email_account][_eq]=" + emailInput }, "POST");
+      try {
+        const serchEmail = await apiRequest("/api/directus/search", { query: "/items/Users?filter[email_account][_eq]=" + emailInput }, "POST");
 
-      if (serchEmail) {
-        setErrorEmail(true);
-      } else {
-        const userData = await apiRequest("/api/directus/create-user", { email_account: emailInput, associate_status: 0 }, "POST");
-        localStorage.setItem("user_code", await userData.user_code);
-        if (userData) {
-          window.location.assign("/bem-vindo");
+        if (serchEmail) {
+          setErrorEmail(true);
+        } else {
+          const userData = await apiRequest("/api/directus/create-user", { email_account: emailInput, associate_status: 0 }, "POST");
+          // ✅ Não armazenar dados sensíveis no localStorage - usar autenticação segura
+          // localStorage.setItem("user_code", await userData.user_code);
+          if (userData) {
+            window.location.assign("/bem-vindo");
+          }
         }
+      } catch (error) {
+        console.log("Erro no cadastro:", error);
+        setErrorEmail(true);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setEmailValidate(true);
       setTimeout(() => {
         setEmailValidate(false);
       }, 5000);
+      setIsLoading(false);
     }
   };
 
@@ -107,8 +120,23 @@ function SignupEmail() {
             <a href="/login" style={{color:"white", fontSize:"17px"}} className="btn">
               Fazer login
             </a>
-            <button type="submit" className="btn btn-primary btn-lg btn-signup">
-              Iniciar cadastro
+            <button 
+              type="submit" 
+              className="btn btn-primary btn-lg btn-signup"
+              disabled={isLoading}
+              style={{ 
+                opacity: isLoading ? 0.7 : 1,
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isLoading ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <MyLoader size={10} color="#ffffff" />
+                  <span style={{ marginLeft: "10px" }}>Processando...</span>
+                </div>
+              ) : (
+                "Iniciar cadastro"
+              )}
             </button>
           </form>
         </div>

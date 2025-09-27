@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Form } from "react-bootstrap";
 import apiRequest from "../../modules/apiRequest";
-import User from "../../modules/User";
+import { useUser } from "../../contexts/UserContext";
 import AlertError from "../forms/AlertError";
 
 const FileUploadComponent = () => {
-  const [user, setUser] = useState({});
+  const { user, fetchUser } = useUser();
   const [rgProof, setRgProof] = useState(false);
   const [rg_patient_proof, setRg_patient_proof] = useState(false);
   const [proof_of_address, setProof_of_address] = useState(false);
@@ -19,13 +19,10 @@ const FileUploadComponent = () => {
   const [buttonMsg, setButtonMsg] = useState(false);
   const [isMonitoringStatus, setIsMonitoringStatus] = useState(false);
 
-  var userData = {};
-
   // Função para verificar o status do associado
-  const checkAssociateStatus = async () => {
+  const checkAssociateStatus = () => {
     try {
-      const userData = await User();
-      if (userData.associate_status === 4) {
+      if (user?.associate_status === 4) {
         window.location.assign("/consulta");
         return true;
       }
@@ -38,16 +35,41 @@ const FileUploadComponent = () => {
 
   // Função para iniciar o monitoramento do status
   const startStatusMonitoring = () => {
+    // Prevenir múltiplos intervalos
+    if (isMonitoringStatus) {
+      console.log("⚠️ Monitoramento já está ativo");
+      return;
+    }
+    
+    console.log("🚀 Iniciando monitoramento de status...");
+    console.log("📊 Status atual do usuário:", user?.associate_status);
     setIsMonitoringStatus(true);
+    
     // Verifica imediatamente
     checkAssociateStatus();
     
     // Configura verificação a cada 10 segundos
     const intervalId = setInterval(async () => {
-      const shouldRedirect = await checkAssociateStatus();
-      if (shouldRedirect) {
-        clearInterval(intervalId);
-        setIsMonitoringStatus(false);
+      console.log("⏰ Verificação periódica de status...");
+      console.log("📊 Status atual do usuário (cache):", user?.associate_status);
+      
+      try {
+        // Busca dados atualizados do servidor
+        const updatedUser = await fetchUser(true);
+        console.log("📊 Status atual do usuário (servidor):", updatedUser?.associate_status);
+        
+        if (updatedUser?.associate_status === 4) {
+          console.log("✅ Status 4 detectado! Redirecionando para consulta...");
+          clearInterval(intervalId);
+          setIsMonitoringStatus(false);
+          window.statusMonitoringInterval = null;
+          window.location.assign("/consulta");
+          return;
+        }
+        
+        console.log("⏳ Status ainda não é 4, continuando monitoramento...");
+      } catch (error) {
+        console.error("❌ Erro ao buscar dados atualizados:", error);
       }
     }, 10000); // 10 segundos
     
@@ -69,43 +91,43 @@ const FileUploadComponent = () => {
     localStorage.removeItem("form_patient_signup");
     localStorage.removeItem("form_associate_signup");
     
-    (async function () {
-      userData = await User();
-      setUser(userData);
+    // ✅ Debug: Verificar dados do usuário
+    console.log('🔍 DocumentsUpload: Dados do usuário:', user);
+    console.log('🔍 DocumentsUpload: User ID:', user?.id);
+    console.log('🔍 DocumentsUpload: Associate Status:', user?.associate_status);
 
-      // Verifica se o status do associado é 4 e redireciona se necessário
-      if (userData.associate_status === 4) {
-        window.location.assign("/consulta");
-        return;
-      }
+    // Verifica se o status do associado é 4 e redireciona se necessário
+    if (user?.associate_status === 4) {
+      window.location.assign("/consulta");
+      return;
+    }
 
-      if (userData.rg_proof == null) {
-        setRgProof(false);
-      } else {
-        setRgProof(true);
-      }
+    if (user?.rg_proof == null) {
+      setRgProof(false);
+    } else {
+      setRgProof(true);
+    }
 
-      if (userData.rg_patient_proof == null) {
-        setRg_patient_proof(false);
-      } else {
-        setRg_patient_proof(true);
-      }
-      if (userData.proof_of_address == null) {
-        setProof_of_address(false);
-      } else {
-        setProof_of_address(true);
-      }
-      if (userData.contract == null) {
-        setContract(false);
-      } else {
+    if (user?.rg_patient_proof == null) {
+      setRg_patient_proof(false);
+    } else {
+      setRg_patient_proof(true);
+    }
+    if (user?.proof_of_address == null) {
+      setProof_of_address(false);
+    } else {
+      setProof_of_address(true);
+    }
+    if (user?.contract == null) {
+      setContract(false);
+    } else {
         setContract(true);
       }
-      if (userData.responsable_type == "himself" || userData.responsable_type == "pet") {
+      if (user?.responsable_type == "himself" || user?.responsable_type == "pet") {
         setVisible(true);
       } else {
         setVisible(false);
       }
-    })();
 
     // Cleanup function para limpar o intervalo quando o componente for desmontado
     return () => {
@@ -114,14 +136,14 @@ const FileUploadComponent = () => {
         window.statusMonitoringInterval = null;
       }
     };
-  }, []);
+  }, [user]); // ✅ Reagir às mudanças do usuário
 
   const handleFileAssociateChange = async event => {
     const file = event.target.files[0];
 
     if (file) {
       const createFolder = await apiRequest("/api/directus/create-folder", { name: user.user_code }, "POST");
-      var userFolder = createFolder.id;
+      var userFolder = createFolder.data.id;
       localStorage.setItem("user_folder", userFolder);
 
       await apiRequest("/api/directus/update", { userId: user.id, formData: { user_path: userFolder } }, "POST");
@@ -143,8 +165,7 @@ const FileUploadComponent = () => {
 
         await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
           if (response) {
-            fileId = response.id;
-
+            fileId = response.data.id;         
             if (fileId != "não-carregou-o-arquivo" && fileId != "") {
            //   setButtonMsg(true);
               return fileId;
@@ -393,11 +414,13 @@ const FileUploadComponent = () => {
           </div>
         )}
         <br></br>
+        {import.meta.env.VITE_ASSOCIATION_NAME =="Sou Cannabis" && (
         <div style={{ textAlign: 'center', color: '#fff' }}>
           <a target="_blank" style={{textDecoration:'none', color:'#fff'}} href={`https://enviararquivos.soucannabis.ong.br?u=${user.user_code}`}>
             Algum problema em enviar seus documentos?<br></br> <strong>Clique aqui</strong>
           </a>
         </div>
+        )}
         <br></br>
                  <a 
            className="label-upload assign-term" 

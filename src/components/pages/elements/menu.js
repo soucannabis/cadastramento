@@ -1,34 +1,30 @@
-import React, { useState, useEffect } from "react";
-import User from '../../../modules/User'
+import React from "react";
+import { useUser } from '../../../contexts/UserContext';
 import Contact from './contact'
 
 const MenuTopo = () => {
-
-  const [user, setUser] = useState();
-
-  useEffect(() =>{
-    (async function () {
-      const userData = await User();
-      setUser(userData);
-    })();
-  },[])
+  const { user, logout } = useUser();
 
   const logoutHandleChange = () => {
-    localStorage.removeItem("user_code")
-    window.location.assign("/login");
+    logout();
   };
   
   return (
     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-      <img style={{width:"150px"}} src={import.meta.env.VITE_ASSOCIATION_LOGO_MENU}></img>
+      <img style={{width:"120px"}} src={import.meta.env.VITE_ASSOCIATION_LOGO_MENU}></img>
       <span className="name-logo">{import.meta.env.VITE_ASSOCIATION_NAME_LOGO_SHOW ? import.meta.env.VITE_ASSOCIATION_NAME : ''}</span>
       <div className="container-fluid">
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              {user &&
-                <span style={{marginRight: '10px'}} className="nav-link" href="#">{user.email_account}</span>
-              }
+              {user && (
+                <span style={{marginRight: '10px'}} className="nav-link" href="#">
+                  {user.email_account || user.email || 'Email não encontrado'}
+                </span>
+              )}
+              {/* ✅ Debug: Mostrar dados do usuário */}
+              {console.log('🔍 Menu Render - user:', user)}
+              {console.log('🔍 Menu Render - user.email_account:', user?.email_account)}
             </li>
        
             <li className="nav-item">

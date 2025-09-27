@@ -23,7 +23,7 @@ import Home from "./components/pages/home";
 import MedicalAppointment from "./components/pages/medical-appointment";
 import Welcome from "./components/pages/welcome";
 import LostPass from "./components/pages/lost-password";
-import User from "./modules/User";
+import { UserProvider, useUser } from "./contexts/UserContext";
 import "./styles/general.css";
 
 // Componente para redirecionamento automático
@@ -32,7 +32,28 @@ function ProtectedRoute({ children, user }) {
   const location = useLocation();
 
   useEffect(() => {
-    // Se não estiver logado e não estiver em uma rota pública, redireciona para /cadastro
+    console.log('🔍 ProtectedRoute Debug:', {
+      user: user,
+      pathname: location.pathname,
+      isPublicRoute: [
+        "/cadastro",
+        "/login",
+        "/iniciar-cadastro",
+        "/nova-senha",
+        "/loja",
+        "/seu-cadastro",
+        "/bem-vindo",
+      ].includes(location.pathname)
+    });
+
+    // ✅ Se não estiver logado e tentar acessar /bem-vindo, redirecionar para /login
+    if (!user && location.pathname === '/bem-vindo') {
+      console.log('🔒 Usuário não autenticado tentando acessar /bem-vindo, redirecionando para /login');
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    // Se não estiver logado e não estiver em uma rota pública, redireciona para /login
     if (
       !user &&
       ![
@@ -44,38 +65,52 @@ function ProtectedRoute({ children, user }) {
         "/seu-cadastro",
       ].includes(location.pathname)
     ) {
-      navigate("/cadastro", { replace: true });
+      console.log('🔄 Redirecionando para /login - usuário não logado e não é rota pública');
+      navigate("/login", { replace: true });
     }
-    if (user && ["/cadastro"].includes(location.pathname)) {
-      navigate("/", { replace: true });
+    if (user && ["/cadastro", "/login"].includes(location.pathname)) {
+      console.log('🔄 Redirecionando para /bem-vindo - usuário logado em página de cadastro/login');
+      navigate("/bem-vindo", { replace: true });
     }
   }, [user, navigate, location.pathname]);
 
   return children;
 }
 
-function App() {
-  const [user, setUser] = useState(false);
+// Componente interno que usa o contexto
+function AppContent() {
+  const { user, loading } = useUser();
   const [userCode, setUserCode] = useState(false);
   const [hiddenButtons, setHiddenButtons] = useState(true);
-  const [loading, setLoading] = useState(true);
   const [hiddenLogin, setHiddenLogin] = useState(false);
 
+  // ✅ Log quando o estado do usuário muda
   useEffect(() => {
-    (async () => {
-      const userData = await User();
-      setUser(userData);
-    })();
+    console.log('👤 Estado do usuário mudou:', user);
+    console.log('👤 Tipo do usuário:', typeof user);
+    console.log('👤 user é true?', user === true);
+    console.log('👤 user tem dados?', user && typeof user === 'object');
+  }, [user]);
 
-    if (localStorage.getItem("user_code")) {
-      setUserCode(localStorage.getItem("user_code"));
-    } else {
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    console.log('🔍 App Debug - currentPath:', currentPath);
+    
+    if (currentPath === '/cadastro-associado' || currentPath === '/cadastro-paciente') {
+      console.log('✅ Página pública com layout completo');
       setHiddenButtons(false);
+    } else if (currentPath === '/login' || currentPath === '/cadastro') {
+      console.log('✅ Página pública sem layout completo');
+      setHiddenButtons(false);
+    } else {
+      // ✅ Para outras páginas, verificar se usuário está autenticado
+      if (user && user.user_code) {
+        setUserCode(user.user_code);
+        setHiddenButtons(false);
+      } else {
+        setHiddenButtons(false);
+      }
     }
-
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
 
     const url = window.location.href;
     var page = url.split("/");
@@ -85,7 +120,7 @@ function App() {
     if (page == "nova-senha" || page == "iniciar-cadastro") {
       setHiddenLogin(true);
     }
-  }, []);
+  }, [user]);
 
   if (loading) {
     return (
@@ -96,6 +131,11 @@ function App() {
     );
   }
 
+  // ✅ Determinar se deve mostrar layout completo baseado no usuário ou página pública
+  const shouldShowFullLayout = user || 
+    window.location.pathname === '/cadastro-associado' || 
+    window.location.pathname === '/cadastro-paciente';
+
   return (
     <Router>
       <ProtectedRoute user={user}>
@@ -103,17 +143,11 @@ function App() {
           <div>
             <Routes>
               <Route path="/iniciar-cadastro" element={<SignupEmail />} />
+              <Route path="/nova-senha" element={<LostPass />} />
             </Routes>
-            <div className="containe-login cal-center container">
-              <div className="text-center login-div">
-                <Routes>
-                  <Route path="/nova-senha" element={<LostPass />} />
-                </Routes>
-              </div>
-            </div>
           </div>
         )}
-        {!user && (
+        {!shouldShowFullLayout && (
           <div>
             {window.innerWidth > 600 && (
               <div className="container vertical-center" hidden={hiddenLogin}>
@@ -146,6 +180,7 @@ function App() {
                 <Routes>
                   <Route path="/login" element={<LoginForm />} />
                   <Route path="/cadastro" element={<Signup />} />
+                  <Route path="/bem-vindo" element={<Welcome />} />
                 </Routes>
               </div>
             )}
@@ -178,6 +213,7 @@ function App() {
                   <Routes>
                     <Route path="/login" element={<LoginForm />} />
                     <Route path="/cadastro" element={<Signup />} />
+                    <Route path="/bem-vindo" element={<Welcome />} />
                   </Routes>
                 </div>
               </div>
@@ -185,16 +221,16 @@ function App() {
           </div>
         )}
 
-        {user && (
+        {shouldShowFullLayout && (
           <div>
             {window.innerWidth > 600 && (
               <div className="wrapper">
-                <span>
-                  <Menu />
-                </span>
-                <div className="sidebar">
-                  <Sidebar />
-                </div>
+                        <span>
+                          <Menu />
+                        </span>
+                        <div className="sidebar">
+                          <Sidebar />
+                        </div>
                 <div className="content">
                   <Routes>
                     <Route path="/" element={<Home />} />,
@@ -247,12 +283,21 @@ function App() {
           </div>
         )}
         <Routes>
-          {!user && (
-            <Route path="/" element={<Navigate to="/cadastro" replace />} />
+          {!shouldShowFullLayout && (
+            <Route path="/" element={<Navigate to="/login" replace />} />
           )}
         </Routes>
       </ProtectedRoute>
     </Router>
+  );
+}
+
+// Função App principal que envolve tudo com UserProvider
+function App() {
+  return (
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
   );
 }
 

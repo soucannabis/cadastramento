@@ -1,9 +1,9 @@
 import React from 'react';
 import { BeatLoader } from 'react-spinners';
 
-const MyLoader = () => {
+const MyLoader = ({ size = 15, color = "#ffffff" }) => {
   return (
-    <BeatLoader color="#00BFFF" loading={true} size={80} />
+    <BeatLoader color={color} loading={true} size={size} />
   );
 };
 

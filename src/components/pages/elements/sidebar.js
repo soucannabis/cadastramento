@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import User from "../../../modules/User";
+import { useUser } from "../../../contexts/UserContext";
 import CheckIcon from "./checkIcon";
 import Contact from "./contact";
 
 const Sidebar = () => {
-  const [user, setUser] = useState({});
+  const { user } = useUser();
 
-  useEffect(() => {
-    (async () => {
-      const userData = await User();
-      setUser(userData);
-    })();
-  }, []);
+  // ✅ Debug: Mostrar dados do usuário no sidebar
+  console.log('🔍 Sidebar Render - user:', user);
+  console.log('🔍 Sidebar Render - user.associate_status:', user?.associate_status);
 
   return (
     <div>
       <div>
         <div className="bg-green text-white">
           <ul className="listPages">
-            {user.associate_status === 0 && (
+            {user && user.associate_status === 0 && (
               <div>
                 <Link to="/cadastro-associado">
                   <li className="item-selected">
@@ -47,7 +44,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 2 && (
+            {user && user.associate_status === 2 && (
               <div>
                 <Link to="/cadastro-associado">
                   <li className="item-selected">
@@ -75,7 +72,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 3 && (
+            {user && user.associate_status === 3 && (
               <div>
                 <Link>
                   <li className="line-through">
@@ -103,7 +100,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 4 && (
+            {user && user.associate_status === 4 && (
               <div>
                 <Link>
                   <li className="line-through">
@@ -131,7 +128,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 5 && (
+            {user && user.associate_status === 5 && (
               <div>
                 <Link>
                   <li className="line-through">
@@ -159,7 +156,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 6 && (
+            {user && user.associate_status === 6 && (
               <div>
                 <Link>
                   <li className="line-through">
@@ -193,7 +190,7 @@ const Sidebar = () => {
                 </Link>
               </div>
             )}
-            {user.associate_status === 7 && (
+            {user && user.associate_status === 7 && (
               <div>
                 <Link>
                   <li className="line-through">
