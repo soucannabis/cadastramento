@@ -11,7 +11,6 @@ import apiRequest from "../../modules/apiRequest";
 import CryptoJS from "crypto-js";
 
 const LostPass = () => {
-  var userId;
 
   const [showPopup, setShowPopup] = useState(false);
   const [passError, setPassError] = useState(false);
@@ -21,15 +20,12 @@ const LostPass = () => {
     passB: null,
   });
 
+  const [userId, setUserId] = useState(null);
+
   function decrypt(decrypt, secretKey) {
     const bytes = CryptoJS.AES.decrypt(decrypt, secretKey);
     decrypt = bytes.toString(CryptoJS.enc.Utf8);
     return decrypt;
-  }
-
-  function encrypt(encrypt, secretKey) {
-    const encrypted = CryptoJS.AES.encrypt(encrypt, secretKey).toString();
-    return encrypted;
   }
 
   // ✅ Remover chave de criptografia exposta - usar endpoint seguro do servidor
@@ -40,8 +36,10 @@ const LostPass = () => {
     var params = url.split("?");
     var date = params[1];
     const id = params[2];
+    console.log(params)
     var timestamp = decrypt(date, secretKey);
-    userId = decrypt(id, secretKey);
+    setUserId(decrypt(id, secretKey));
+    console.log(userId)
     var date = new Date().getTime();
     const validateTime = date - timestamp;
     if (validateTime > 600000) {
@@ -55,8 +53,8 @@ const LostPass = () => {
     if (formData.passA != formData.passB) {
       setPassError(true);
     } else {
-      console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-      console.log(formData);
+
+      console.log(userId);
       await apiRequest(
         "/api/redefine-pass",
         { userId: userId, formData: { pass_account: formData.passA } },
