@@ -72,7 +72,6 @@ function SignupEmail() {
           }
         }
       } catch (error) {
-        console.log("Erro no cadastro:", error);
         setErrorEmail(true);
       } finally {
         setIsLoading(false);

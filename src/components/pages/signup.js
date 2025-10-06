@@ -31,10 +31,8 @@ function Signup() {
               { query: "/items/Users?filter[email_account][_eq]=" + emailInput },
               "POST"
             );
-            console.log('🔍 Verificação de email:', searchEmail);
             emailExists = searchEmail.data;
           } catch (searchError) {
-            console.log('❌ Erro ao verificar email (rota protegida):', searchError.response?.status);
             // ✅ Se der 401, assumir que email não existe e continuar
             emailExists = false;
           }
@@ -55,19 +53,14 @@ function Signup() {
             "POST"
           );
           
-          console.log('✅ Usuário criado:', userData);
           
             if (userData.data) {
-              console.log('✅ Usuário criado com sucesso:', userData);
               
               // ✅ Verificar se o backend já autenticou automaticamente
               try {
-                console.log('🔍 Verificando se usuário já está autenticado...');
                 const authCheck = await apiRequest("/api/auth/me", "", "GET");
-                console.log('🔍 Resposta do /api/auth/me:', authCheck);
                 
                 if (authCheck.success && authCheck.user) {
-                  console.log('✅ Usuário já autenticado via cookie HttpOnly:', authCheck.user);
                   // ✅ Usuário autenticado, pode buscar dados reais
                   window.location.assign("/bem-vindo");
                   return;
@@ -77,7 +70,6 @@ function Signup() {
               }
               
               // ✅ Se não estiver autenticado, fazer login automático
-              console.log('🔐 Fazendo login automático após cadastro...');
               try {
                 const loginResponse = await apiRequest("/api/auth/login", {
                   email: emailInput,
@@ -85,21 +77,17 @@ function Signup() {
                 }, "POST");
                 
                 if (loginResponse.success) {
-                  console.log('✅ Login automático realizado com sucesso');
                   window.location.assign("/bem-vindo");
                 } else {
-                  console.log('❌ Erro no login automático, redirecionando mesmo assim');
                   window.location.assign("/bem-vindo");
                 }
               } catch (loginError) {
-                console.log('❌ Erro no login automático:', loginError);
                 // ✅ Redirecionar mesmo com erro de login
                 window.location.assign("/bem-vindo");
               }
               }
             }
         } catch (error) {
-        console.log("Erro no cadastro:", error);
         // ✅ Se der erro, mostrar mensagem de erro mas não redirecionar
         setErrorEmail(true);
         setTimeout(() => {

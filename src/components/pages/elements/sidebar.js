@@ -7,10 +7,6 @@ import Contact from "./contact";
 const Sidebar = () => {
   const { user } = useUser();
 
-  // ✅ Debug: Mostrar dados do usuário no sidebar
-  console.log('🔍 Sidebar Render - user:', user);
-  console.log('🔍 Sidebar Render - user.associate_status:', user?.associate_status);
-
   return (
     <div>
       <div>

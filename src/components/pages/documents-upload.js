@@ -35,31 +35,17 @@ const FileUploadComponent = () => {
 
   // Função para iniciar o monitoramento do status
   const startStatusMonitoring = () => {
-    // Prevenir múltiplos intervalos
-    if (isMonitoringStatus) {
-      console.log("⚠️ Monitoramento já está ativo");
-      return;
-    }
-    
-    console.log("🚀 Iniciando monitoramento de status...");
-    console.log("📊 Status atual do usuário:", user?.associate_status);
+   
     setIsMonitoringStatus(true);
-    
-    // Verifica imediatamente
-    checkAssociateStatus();
-    
+
     // Configura verificação a cada 10 segundos
-    const intervalId = setInterval(async () => {
-      console.log("⏰ Verificação periódica de status...");
-      console.log("📊 Status atual do usuário (cache):", user?.associate_status);
-      
+    const intervalId = setInterval(async () => {      
       try {
+        console.log("🔄 Verificando status...");
         // Busca dados atualizados do servidor
         const updatedUser = await fetchUser(true);
-        console.log("📊 Status atual do usuário (servidor):", updatedUser?.associate_status);
         
         if (updatedUser?.associate_status === 4) {
-          console.log("✅ Status 4 detectado! Redirecionando para consulta...");
           clearInterval(intervalId);
           setIsMonitoringStatus(false);
           window.statusMonitoringInterval = null;
@@ -67,7 +53,6 @@ const FileUploadComponent = () => {
           return;
         }
         
-        console.log("⏳ Status ainda não é 4, continuando monitoramento...");
       } catch (error) {
         console.error("❌ Erro ao buscar dados atualizados:", error);
       }
@@ -90,12 +75,7 @@ const FileUploadComponent = () => {
     // Limpa os dados dos formulários do localStorage quando acessar /documentos
     localStorage.removeItem("form_patient_signup");
     localStorage.removeItem("form_associate_signup");
-    
-    // ✅ Debug: Verificar dados do usuário
-    console.log('🔍 DocumentsUpload: Dados do usuário:', user);
-    console.log('🔍 DocumentsUpload: User ID:', user?.id);
-    console.log('🔍 DocumentsUpload: Associate Status:', user?.associate_status);
-
+  
     // Verifica se o status do associado é 4 e redireciona se necessário
     if (user?.associate_status === 4) {
       window.location.assign("/consulta");
@@ -129,13 +109,8 @@ const FileUploadComponent = () => {
         setVisible(false);
       }
 
-    // Cleanup function para limpar o intervalo quando o componente for desmontado
-    return () => {
-      if (window.statusMonitoringInterval) {
-        clearInterval(window.statusMonitoringInterval);
-        window.statusMonitoringInterval = null;
-      }
-    };
+    // Cleanup não precisa limpar o intervalo de monitoramento
+    // Quando o status mudar para 4, a página redireciona automaticamente
   }, [user]); // ✅ Reagir às mudanças do usuário
 
   const handleFileAssociateChange = async event => {

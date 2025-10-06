@@ -82,13 +82,6 @@ const AssociateSignUp = () => {
     }
   }, [formData]);
 
-  // ✅ Debug: Verificar dados do usuário
-  useEffect(() => {
-    console.log('🔍 AssociateSignUp: Dados do usuário:', user);
-    console.log('🔍 AssociateSignUp: User ID:', user?.id);
-    console.log('🔍 AssociateSignUp: User Code:', user?.user_code);
-  }, [user]);
-
   if (user.associate_status > 3) {
     window.location.assign("/");
   }
@@ -223,7 +216,6 @@ const AssociateSignUp = () => {
           document.querySelector(".select-treatment").className =
             "form-input input-login select-treatment input-empty";
           // Mostra o modal para o campo de motivo do tratamento apenas se for o único campo vazio
-          console.log(emptyFields)
           if (emptyFields.length === 1 && emptyFields.includes("reason_treatment")) {
             setShowTreatmentModal(true);
           }
@@ -400,8 +392,6 @@ const AssociateSignUp = () => {
 
         try {
           cleanFormData.associate_status = 3;
-          console.log('🔍 AssociateSignUp: Fazendo update com userId:', user.id);
-          console.log('🔍 AssociateSignUp: Dados do formulário:', cleanFormData);
           
           const response = await apiRequest(
             "/api/directus/update",
@@ -409,7 +399,6 @@ const AssociateSignUp = () => {
             "POST"
           );
           
-          console.log('✅ AssociateSignUp: Update realizado com sucesso:', response);
         } catch (error) {
           console.error("API Error (success case):", error);
           console.error("Error details:", {
@@ -442,9 +431,6 @@ const AssociateSignUp = () => {
           log: { formError: { emptyFields: emptyFields } },
         };
 
-        console.log('🔍 AssociateSignUp: Fazendo update de erro com userId:', user.id);
-        console.log('🔍 AssociateSignUp: Dados de erro:', cleanFormDataWithError);
-
         const response = await apiRequest(
           "/api/directus/update",
           {
@@ -454,7 +440,6 @@ const AssociateSignUp = () => {
           "POST"
         );
         
-        console.log('✅ AssociateSignUp: Update de erro realizado:', response);
       } catch (error) {
         console.error("API Error (form error case):", error);
         console.error("Error details:", {

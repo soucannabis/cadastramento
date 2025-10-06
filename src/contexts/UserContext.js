@@ -26,24 +26,20 @@ export const UserProvider = ({ children }) => {
     
     // ✅ Se não for refresh forçado e os dados ainda estão em cache, não fazer nova requisição
     if (!forceRefresh && user && (now - lastFetch) < CACHE_DURATION) {
-      console.log('🚀 UserContext: Usando dados em cache');
       return user;
     }
 
     try {
-      console.log('🔍 UserContext: Buscando dados do usuário...');
       setLoading(true);
       setError(null);
       
       const userData = await User();
       
       if (userData) {
-        console.log('✅ UserContext: Dados do usuário obtidos:', userData);
         setUser(userData);
         setLastFetch(now);
         return userData;
       } else {
-        console.log('❌ UserContext: Nenhum usuário autenticado');
         setUser(null);
         setLastFetch(now);
         return null;
@@ -59,19 +55,16 @@ export const UserProvider = ({ children }) => {
   };
 
   const refreshUser = () => {
-    console.log('🔄 UserContext: Refresh forçado dos dados do usuário');
     return fetchUser(true);
   };
 
   const clearUser = () => {
-    console.log('🗑️ UserContext: Limpando dados do usuário');
     setUser(null);
     setLastFetch(0);
     setError(null);
   };
 
   const logout = async () => {
-    console.log('🔓 UserContext: Iniciando logout...');
     
     // ✅ Usar o LogoutService para fazer logout completo
     await LogoutService.logout();
@@ -80,7 +73,6 @@ export const UserProvider = ({ children }) => {
     clearUser();
     
     // ✅ Forçar reload da página para garantir limpeza completa
-    console.log('🔄 UserContext: Redirecionando para login...');
     window.location.href = "/login";
   };
 
@@ -98,10 +90,8 @@ export const UserProvider = ({ children }) => {
     
     // ✅ Só tentar buscar usuário se não estiver em rota pública
     if (!publicRoutes.includes(currentPath)) {
-      console.log('🔍 UserContext: Buscando usuário (não é rota pública)');
       fetchUser();
     } else {
-      console.log('🔍 UserContext: Rota pública detectada, não buscando usuário:', currentPath);
       setLoading(false);
     }
   }, []);

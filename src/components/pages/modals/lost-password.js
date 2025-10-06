@@ -19,7 +19,6 @@ const LostPass = () => {
   async function submit() {
     await apiRequest("/api/email/lost-password", { email: formData.email }, "POST").then(response => {
       if (response.success) {
-        console.log(response)
         setResetPassMsg(true);
       } else {
         setMailError(true);

@@ -36,10 +36,8 @@ const LostPass = () => {
     var params = url.split("?");
     var date = params[1];
     const id = params[2];
-    console.log(params)
     var timestamp = decrypt(date, secretKey);
     setUserId(decrypt(id, secretKey));
-    console.log(userId)
     var date = new Date().getTime();
     const validateTime = date - timestamp;
     if (validateTime > 600000) {
@@ -54,7 +52,6 @@ const LostPass = () => {
       setPassError(true);
     } else {
 
-      console.log(userId);
       await apiRequest(
         "/api/redefine-pass",
         { userId: userId, formData: { pass_account: formData.passA } },

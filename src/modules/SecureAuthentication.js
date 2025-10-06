@@ -27,16 +27,9 @@ class SecureAuthentication {
 
   static async getCurrentUser() {
     try {
-      console.log('🔍 SecureAuthentication: Tentando obter usuário atual...');
       const response = await apiRequest('/api/auth/me', '', 'GET');
-      console.log('✅ SecureAuthentication: Resposta recebida:', response);
       return response.user;
     } catch (error) {
-      console.log('❌ SecureAuthentication: Erro ao obter usuário:', error.response?.status, error.message);
-      // ✅ Não logar erro 401 como erro, é comportamento esperado quando não autenticado
-      if (error.response?.status !== 401) {
-        console.error('Erro ao obter usuário atual:', error);
-      }
       return null;
     }
   }

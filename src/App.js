@@ -32,23 +32,9 @@ function ProtectedRoute({ children, user }) {
   const location = useLocation();
 
   useEffect(() => {
-    console.log('🔍 ProtectedRoute Debug:', {
-      user: user,
-      pathname: location.pathname,
-      isPublicRoute: [
-        "/cadastro",
-        "/login",
-        "/iniciar-cadastro",
-        "/nova-senha",
-        "/loja",
-        "/seu-cadastro",
-        "/bem-vindo",
-      ].includes(location.pathname)
-    });
-
+   
     // ✅ Se não estiver logado e tentar acessar /bem-vindo, redirecionar para /login
     if (!user && location.pathname === '/bem-vindo') {
-      console.log('🔒 Usuário não autenticado tentando acessar /bem-vindo, redirecionando para /login');
       navigate("/login", { replace: true });
       return;
     }
@@ -65,11 +51,9 @@ function ProtectedRoute({ children, user }) {
         "/seu-cadastro",
       ].includes(location.pathname)
     ) {
-      console.log('🔄 Redirecionando para /login - usuário não logado e não é rota pública');
       navigate("/login", { replace: true });
     }
     if (user && ["/cadastro", "/login"].includes(location.pathname)) {
-      console.log('🔄 Redirecionando para /bem-vindo - usuário logado em página de cadastro/login');
       navigate("/bem-vindo", { replace: true });
     }
   }, [user, navigate, location.pathname]);
@@ -84,23 +68,12 @@ function AppContent() {
   const [hiddenButtons, setHiddenButtons] = useState(true);
   const [hiddenLogin, setHiddenLogin] = useState(false);
 
-  // ✅ Log quando o estado do usuário muda
-  useEffect(() => {
-    console.log('👤 Estado do usuário mudou:', user);
-    console.log('👤 Tipo do usuário:', typeof user);
-    console.log('👤 user é true?', user === true);
-    console.log('👤 user tem dados?', user && typeof user === 'object');
-  }, [user]);
-
   useEffect(() => {
     const currentPath = window.location.pathname;
-    console.log('🔍 App Debug - currentPath:', currentPath);
     
     if (currentPath === '/cadastro-associado' || currentPath === '/cadastro-paciente') {
-      console.log('✅ Página pública com layout completo');
       setHiddenButtons(false);
     } else if (currentPath === '/login' || currentPath === '/cadastro') {
-      console.log('✅ Página pública sem layout completo');
       setHiddenButtons(false);
     } else {
       // ✅ Para outras páginas, verificar se usuário está autenticado

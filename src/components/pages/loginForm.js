@@ -21,7 +21,6 @@ function LoginForm() {
 
     try {
       const result = await SecureAuthentication.login(emailInput, passInput);
-      console.log(result)
       if (result.success) {
         setLoginSucess(true);
         // ✅ Não armazenar dados sensíveis no localStorage

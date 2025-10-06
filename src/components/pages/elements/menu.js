@@ -22,9 +22,6 @@ const MenuTopo = () => {
                   {user.email_account || user.email || 'Email não encontrado'}
                 </span>
               )}
-              {/* ✅ Debug: Mostrar dados do usuário */}
-              {console.log('🔍 Menu Render - user:', user)}
-              {console.log('🔍 Menu Render - user.email_account:', user?.email_account)}
             </li>
        
             <li className="nav-item">
