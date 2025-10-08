@@ -68,23 +68,6 @@ function Signup() {
               } catch (authError) {
                 console.log('❌ Usuário não autenticado via cookie:', authError.response?.status);
               }
-              
-              // ✅ Se não estiver autenticado, fazer login automático
-              try {
-                const loginResponse = await apiRequest("/api/auth/login", {
-                  email: emailInput,
-                  password: "123456" // ✅ Tentar senha padrão
-                }, "POST");
-                
-                if (loginResponse.success) {
-                  window.location.assign("/bem-vindo");
-                } else {
-                  window.location.assign("/bem-vindo");
-                }
-              } catch (loginError) {
-                // ✅ Redirecionar mesmo com erro de login
-                window.location.assign("/bem-vindo");
-              }
               }
             }
         } catch (error) {

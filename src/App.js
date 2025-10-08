@@ -17,7 +17,6 @@ import PatientSignup from "./components/pages/patient-signup";
 import Sidebar from "./components/pages/elements/sidebar";
 import TopBarMobile from "./components/pages/elements/topBarMobile";
 import Signup from "./components/pages/signup";
-import SignupEmail from "./components/pages/signup-email";
 import UploadComponent from "./components/pages/documents-upload";
 import Home from "./components/pages/home";
 import MedicalAppointment from "./components/pages/medical-appointment";
