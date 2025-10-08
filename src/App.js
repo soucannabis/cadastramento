@@ -26,6 +26,15 @@ import LostPass from "./components/pages/lost-password";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import "./styles/general.css";
 
+// Componente de redirecionamento
+function RedirectToCadastro() {
+  useEffect(() => {
+    window.location.href = "/cadastro";
+  }, []);
+  
+  return null;
+}
+
 // Componente para redirecionamento automático
 function ProtectedRoute({ children, user }) {
   const navigate = useNavigate();
@@ -115,7 +124,7 @@ function AppContent() {
         {hiddenLogin && (
           <div>
             <Routes>
-              <Route path="/iniciar-cadastro" element={<SignupEmail />} />
+              <Route path="/iniciar-cadastro" element={<RedirectToCadastro />} />
               <Route path="/nova-senha" element={<LostPass />} />
             </Routes>
           </div>
