@@ -38,16 +38,24 @@ export const UserProvider = ({ children }) => {
       if (userData) {
         setUser(userData);
         setLastFetch(now);
+        // ✅ Armazenar isLoggedIn no localStorage quando o usuário é obtido com sucesso
+        if (userData.user_code) {
+          localStorage.setItem("isLoggedIn", userData.user_code);
+        }
         return userData;
       } else {
         setUser(null);
         setLastFetch(now);
+        // ✅ Limpar isLoggedIn se não houver dados do usuário
+        localStorage.removeItem("isLoggedIn");
         return null;
       }
     } catch (err) {
       console.error('❌ UserContext: Erro ao buscar usuário:', err);
       setError(err);
       setUser(null);
+      // ✅ Limpar isLoggedIn em caso de erro
+      localStorage.removeItem("isLoggedIn");
       return null;
     } finally {
       setLoading(false);

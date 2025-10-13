@@ -25,12 +25,20 @@ import LostPass from "./components/pages/lost-password";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import "./styles/general.css";
 
+
+
 // Componente de redirecionamento
 function RedirectToCadastro() {
   useEffect(() => {
-    window.location.href = "/cadastro";
+    const inLogged = localStorage.getItem("isLoggedIn");
+    console.log(inLogged);
+    if (inLogged) {
+      window.location.href = "/";
+    } else {
+      window.location.href = "/cadastro";
+    }
   }, []);
-  
+
   return null;
 }
 
@@ -40,9 +48,8 @@ function ProtectedRoute({ children, user }) {
   const location = useLocation();
 
   useEffect(() => {
-   
     // ✅ Se não estiver logado e tentar acessar /bem-vindo, redirecionar para /login
-    if (!user && location.pathname === '/bem-vindo') {
+    if (!user && location.pathname === "/bem-vindo") {
       navigate("/login", { replace: true });
       return;
     }
@@ -78,10 +85,13 @@ function AppContent() {
 
   useEffect(() => {
     const currentPath = window.location.pathname;
-    
-    if (currentPath === '/cadastro-associado' || currentPath === '/cadastro-paciente') {
+
+    if (
+      currentPath === "/cadastro-associado" ||
+      currentPath === "/cadastro-paciente"
+    ) {
       setHiddenButtons(false);
-    } else if (currentPath === '/login' || currentPath === '/cadastro') {
+    } else if (currentPath === "/login" || currentPath === "/cadastro") {
       setHiddenButtons(false);
     } else {
       // ✅ Para outras páginas, verificar se usuário está autenticado
@@ -113,9 +123,10 @@ function AppContent() {
   }
 
   // ✅ Determinar se deve mostrar layout completo baseado no usuário ou página pública
-  const shouldShowFullLayout = user || 
-    window.location.pathname === '/cadastro-associado' || 
-    window.location.pathname === '/cadastro-paciente';
+  const shouldShowFullLayout =
+    user ||
+    window.location.pathname === "/cadastro-associado" ||
+    window.location.pathname === "/cadastro-paciente";
 
   return (
     <Router>
@@ -123,7 +134,10 @@ function AppContent() {
         {hiddenLogin && (
           <div>
             <Routes>
-              <Route path="/iniciar-cadastro" element={<RedirectToCadastro />} />
+              <Route
+                path="/iniciar-cadastro"
+                element={<RedirectToCadastro />}
+              />
               <Route path="/nova-senha" element={<LostPass />} />
             </Routes>
           </div>
@@ -206,12 +220,12 @@ function AppContent() {
           <div>
             {window.innerWidth > 600 && (
               <div className="wrapper">
-                        <span>
-                          <Menu />
-                        </span>
-                        <div className="sidebar">
-                          <Sidebar />
-                        </div>
+                <span>
+                  <Menu />
+                </span>
+                <div className="sidebar">
+                  <Sidebar />
+                </div>
                 <div className="content">
                   <Routes>
                     <Route path="/" element={<Home />} />,

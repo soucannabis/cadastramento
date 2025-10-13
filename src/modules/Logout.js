@@ -30,6 +30,7 @@ class LogoutService {
     localStorage.removeItem("user_code");
     localStorage.removeItem("user_data");
     localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
 
     // ✅ Limpar sessionStorage
     sessionStorage.clear();
