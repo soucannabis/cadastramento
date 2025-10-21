@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
 import apiRequest from "../../modules/apiRequest";
 import MyLoader from "./elements/loader";
+import frontendLogger from "../../utils/frontendLogger";
 
 function Signup() {
   const [emailInput, setEmailInput] = useState([]);
   const [emailValidate, setEmailValidate] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // ✅ Log de acesso à página
+  useEffect(() => {
+    frontendLogger.logPageAccess("SIGNUP", {
+      page: "Cadastro inicial",
+      step: "Email input",
+    });
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {}, 3000);
@@ -16,33 +25,57 @@ function Signup() {
   const signUp = async (event) => {
     event.preventDefault();
     setIsLoading(true);
-    
+
+    // ✅ Log de início do processo de cadastro
+    frontendLogger.logAction("SIGNUP_START", {
+      email: emailInput,
+      step: "Email validation",
+    });
+
     const validateEmail = !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
       emailInput
     );
 
     if (!validateEmail) {
-        try {
-          // ✅ Verificar se email já existe (tratando erro 401)
-          let emailExists = false;
-          try {
-            const searchEmail = await apiRequest(
-              "/api/directus/search",
-              { query: "/items/Users?filter[email_account][_eq]=" + emailInput },
-              "POST"
-            );
-            emailExists = searchEmail.data;
-          } catch (searchError) {
-            // ✅ Se der 401, assumir que email não existe e continuar
-            emailExists = false;
-          }
+      try {
+        // ✅ Verificar se email já existe (tratando erro 401)
+        let emailExists = false;
+        let canCreateAccount = true;
 
-          if (emailExists) {
-            setErrorEmail(true);
-            setTimeout(() => {
-              setErrorEmail(false);
-            }, 5000);
-          } else {
+        try {
+          const searchEmail = await apiRequest(
+            "/api/directus/search",
+            {
+              query:
+                "/items/Users?filter[email_account][_eq]=" +
+                emailInput +
+                "&filter[associate_status][_neq]=0",
+            },
+            "POST"
+          );
+          emailExists = searchEmail.data;
+          // ✅ Se email existe, verificar associate_status
+          if (emailExists && emailExists.email_account) {
+            // ✅ Se associate_status != 0, não permitir criar novo cadastro
+            if (
+              emailExists.associate_status &&
+              emailExists.associate_status !== 0
+            ) {
+              canCreateAccount = false;
+            }
+          }
+        } catch (searchError) {
+          // ✅ Se der 401, assumir que email não existe e continuar
+          emailExists = false;
+          canCreateAccount = true;
+        }
+
+        if (emailExists && emailExists.email_account && !canCreateAccount) {
+          setErrorEmail(true);
+          setTimeout(() => {
+            setErrorEmail(false);
+          }, 5000);
+        } else {
           const userData = await apiRequest(
             "/api/directus/create-user",
             {
@@ -52,25 +85,26 @@ function Signup() {
             },
             "POST"
           );
-          
-          
-            if (userData.data) {
-              
-              // ✅ Verificar se o backend já autenticou automaticamente
-              try {
-                const authCheck = await apiRequest("/api/auth/me", "", "GET");
-                
-                if (authCheck.success && authCheck.user) {
-                  // ✅ Usuário autenticado, pode buscar dados reais
-                  window.location.assign("/bem-vindo");
-                  return;
-                }
-              } catch (authError) {
-                console.log('❌ Usuário não autenticado via cookie:', authError.response?.status);
+
+          if (userData.data) {
+            // ✅ Verificar se o backend já autenticou automaticamente
+            try {
+              const authCheck = await apiRequest("/api/auth/me", "", "GET");
+
+              if (authCheck.success && authCheck.user) {
+                // ✅ Usuário autenticado, pode buscar dados reais
+                window.location.assign("/bem-vindo");
+                return;
               }
-              }
+            } catch (authError) {
+              console.log(
+                "❌ Usuário não autenticado via cookie:",
+                authError.response?.status
+              );
             }
-        } catch (error) {
+          }
+        }
+      } catch (error) {
         // ✅ Se der erro, mostrar mensagem de erro mas não redirecionar
         setErrorEmail(true);
         setTimeout(() => {
@@ -94,14 +128,14 @@ function Signup() {
 
   return (
     <div className="signup-form-container">
-      <div className="signup-form-content">      
+      <div className="signup-form-content">
         <h1>Faça seu cadastro</h1>
         <h6 style={{ color: "#fff", marginBottom: "30px" }}>
           Para iniciar seu cadastro, insira seu e-mail pessoal.
         </h6>
         {errorEmail && (
           <div className="alert alert-danger" role="alert">
-            Este endereço de e-mail já está sendo usado.
+            Este endereço de e-mail já possui um cadastro ativo.
           </div>
         )}
 
@@ -129,13 +163,19 @@ function Signup() {
             onClick={signUp}
             className="btn btn-primary btn-lg btn-signup"
             disabled={isLoading}
-            style={{ 
+            style={{
               opacity: isLoading ? 0.7 : 1,
-              cursor: isLoading ? 'not-allowed' : 'pointer'
+              cursor: isLoading ? "not-allowed" : "pointer",
             }}
           >
             {isLoading ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <MyLoader size={10} color="#ffffff" />
                 <span style={{ marginLeft: "10px" }}>Processando...</span>
               </div>
