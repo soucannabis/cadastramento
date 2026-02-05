@@ -296,8 +296,7 @@ const FileUploadComponent = () => {
 
         await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" }).then(response => {
           if (response) {
-            fileId = response.id;
-           // setButtonMsg(true);
+            fileId = response.data.id;
             return fileId;
           } else {
             setdocError(true);
@@ -359,7 +358,7 @@ const FileUploadComponent = () => {
         )}
         {rgProof && (
           <div className="document-send">
-            <Form.Label className="label-upload send-ok">✅ Comprovante de identidade enviado</Form.Label>
+            <Form.Label className="label-upload send-ok">✅ Documento de identidade enviado</Form.Label>
           </div>
         )}
 
@@ -387,7 +386,7 @@ const FileUploadComponent = () => {
         {rg_patient_proof && (
           <div className="document-send">
             <Form.Label hidden={visible} className="label-upload send-ok">
-              Documento de Identidade enviado
+            ✅ Documento de identidade enviado
             </Form.Label>
           </div>
         )}
