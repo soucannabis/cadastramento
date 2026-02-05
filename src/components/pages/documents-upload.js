@@ -248,9 +248,12 @@ const FileUploadComponent = () => {
           await apiRequest("/api/directus/update", { userId: user.id, formData: { status: "proofs" } }, "POST");
 
           const createContract = await apiRequest("/api/docuseal/create-contract", userData, "POST");
-          setGenerateContract(import.meta.env.VITE_DOCUSEAL_URL + "/s/" + (await createContract[0].slug));
+          const contractUrl =
+            createContract?.[0]?.embed_src ||
+            (import.meta.env.VITE_DOCUSEAL_URL + "/s/" + (await createContract[0].slug));
+          setGenerateContract(contractUrl);
 
-          const bodyRequest = { contract: import.meta.env.VITE_DOCUSEAL_URL + "/s/" + (await createContract[0].slug) };
+          const bodyRequest = { contract: contractUrl };
           await apiRequest("/api/directus/update", { userId: user.id, formData: bodyRequest }, "POST");
 
           setRgProof(true);
