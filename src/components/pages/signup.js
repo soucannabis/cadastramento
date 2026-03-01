@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import apiRequest from "../../modules/apiRequest";
 import MyLoader from "./elements/loader";
 import frontendLogger from "../../utils/frontendLogger";
+import { setBvid, getBvid } from "../../utils/bvidStorage";
 
 function Signup() {
+  const [searchParams] = useSearchParams();
   const [emailInput, setEmailInput] = useState([]);
   const [emailValidate, setEmailValidate] = useState(false);
   const [errorEmail, setErrorEmail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Salva bvid da URL no localStorage por 7 dias (ex.: /cadastro?bvid=LAURA17208223)
+  useEffect(() => {
+    const bvidFromUrl = searchParams.get("bvid");
+    if (bvidFromUrl) {
+      setBvid(bvidFromUrl);
+    }
+  }, [searchParams]);
 
   // ✅ Log de acesso à página
   useEffect(() => {
@@ -76,13 +87,18 @@ function Signup() {
             setErrorEmail(false);
           }, 5000);
         } else {
+          const payload = {
+            email_account: emailInput,
+            associate_status: 0,
+            status: "signup",
+          };
+          const savedBvid = getBvid();
+          if (savedBvid) {
+            payload.bvid = savedBvid;
+          }
           const userData = await apiRequest(
             "/api/directus/create-user",
-            {
-              email_account: emailInput,
-              associate_status: 0,
-              status: "signup",
-            },
+            payload,
             "POST"
           );
 
