@@ -42,7 +42,7 @@ function MultipleFiles() {
         if (fileName[1] == "jpg" || fileName[1] == "jpeg" || fileName[1] == "png" || fileName[1] == "gif" || fileName[1] == "pdf") {
           setisLoadingButton(true);
 
-          var nameArchive = archiveName + "." + fileName[1]
+          var nameArchive = archiveName + user.name_associate + "-" + user.lastname_associate + "-" + user.user_code + "." + fileName[1];
           nameArchive = nameArchive.replace(/\s/g, '');
           nameArchive = nameArchive.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
           nameArchive = nameArchive.replace(/ç/g, 'c');
@@ -54,7 +54,7 @@ function MultipleFiles() {
     
           await apiRequest("/api/directus/files?filename=" + nameArchive + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" })
             .then(response => {
-              fileId = response.id;
+              fileId = response.data.id;
               return fileId;
             })
             .catch(error => {

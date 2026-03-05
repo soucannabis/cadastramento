@@ -59,7 +59,7 @@ function MedicalAppointment() {
 
       await apiRequest("/api/directus/files?filename=" + nameFile + "&folder=" + userFolder, formData, "POST", { "Content-Type": "multipart/form-data" })
         .then(response => {
-          fileId = response.id;
+          fileId = response.data.id;
           return fileId;
         })
         .catch(error => {
