@@ -71,7 +71,7 @@ function MultipleFiles() {
           document.querySelector("#nameDocument").value = "";
           setFileName(false)
 
-          document.querySelector("#nameDocument").className = "col-12 d-flex  select-namefile";
+          document.querySelector("#nameDocument").className = "form-input input-login select-namefile";
 
           const countOptions = document.querySelector("#nameDocument")
 
@@ -92,7 +92,7 @@ function MultipleFiles() {
         }
       }
     } else {
-      document.querySelector("#nameDocument").className = "col-12 d-flex  select-namefile input-empty";
+      document.querySelector("#nameDocument").className = "form-input input-login select-namefile input-empty";
       setErrorNamefile(true)
       setTimeout(() => {
         setErrorNamefile(false)

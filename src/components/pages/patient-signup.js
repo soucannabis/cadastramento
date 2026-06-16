@@ -6,6 +6,8 @@ import GenderInput from "../forms/GenderInput";
 import NationalityInput from "../forms/NationalityInput";
 import AlertError from "../forms/AlertError";
 import LabelInfo from "../pages/elements/labelInfo";
+import Modal from "react-bootstrap/Modal";
+import Ciap2Select from "../forms/CIAP2Select";
 import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
 const AssociateSignUp = () => {
@@ -21,8 +23,13 @@ const AssociateSignUp = () => {
   const [emptyFields, setEmptyFields] = useState([]);
   const [emptyFieldsMessage, setEmptyFieldsMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ciapError, setCiapError] = useState(false);
+  const [showTreatmentModal, setShowTreatmentModal] = useState(false);
+  const [counterTratmentOptions, setCounterTratment] = useState(false);
+  const [counterCheck, setCounterCheck] = useState(false);
   const handleClose = () => setShowPopup(false);
   const handleShow = () => setShowPopup(true);
+  const handleCloseTreatmentModal = () => setShowTreatmentModal(false);
 
   // ✅ Remover referência ao localStorage - usar dados do usuário autenticado
   const codeUser = user?.user_code;
@@ -63,6 +70,8 @@ const AssociateSignUp = () => {
     state: null,
     cep: null,
     mobile_number: null,
+    reason_treatment: null,
+    reason_treatment_text: null,
     associate_status: 9,
   };
 
@@ -79,12 +88,34 @@ const AssociateSignUp = () => {
   formData.email = user.email_account;
   formData.mobile_number = user.mobile_number;
 
+  useEffect(() => {
+    if (
+      formData.reason_treatment &&
+      formData.reason_treatment.length > 10
+    ) {
+      setCounterCheck(true);
+    } else {
+      setCounterCheck(false);
+    }
+  }, [formData.reason_treatment]);
+
   const handleChangeInput = event => {
     // Atualiza o campo específico no localStorage
     updateField(event.target.name, event.target.value);
   };
 
+  const handleSelectionChange = (event) => {
+    const value = Array.isArray(event) ? event : event.target?.value || event;
+    updateField("reason_treatment", value);
+  };
 
+  function counter() {
+    setCounterTratment(true);
+  }
+
+  function scrollDown() {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 
   const handleChoice = choice => {
     handleClose();
@@ -133,16 +164,32 @@ const AssociateSignUp = () => {
                      if (key != "complement") {
              emptyFieldsArray.push(key);
            }
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "complement" && key != "mobile_number") {
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "complement" && key != "mobile_number" && key != "reason_treatment") {
             document.querySelector("#" + key).className = "form-input input-login input-empty";
           }
         } else {
-          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "mobile_number" && key != "complement") {
+          if (key != "mobile_number" && key != "status" && key != "responsable_type" && key != "associate_status" && key != "email" && key != "mobile_number" && key != "complement" && key != "reason_treatment") {
             document.querySelector("#" + key).className = "form-input input-login";
           }
         }
+      }
 
-
+      if (
+        !formData.reason_treatment ||
+        formData.reason_treatment.length < 1
+      ) {
+        const selectTreatment = document.querySelector(".select-treatment");
+        if (selectTreatment) {
+          selectTreatment.className = "form-input input-login select-treatment input-empty";
+        }
+        if (emptyFieldsArray.length === 1 && emptyFieldsArray.includes("reason_treatment")) {
+          setShowTreatmentModal(true);
+        }
+      } else {
+        const selectTreatment = document.querySelector(".select-treatment");
+        if (selectTreatment) {
+          selectTreatment.className = "select-treatment form-input input-login";
+        }
       }
     }
 
@@ -220,7 +267,9 @@ const AssociateSignUp = () => {
         neighborhood: "bairro",
         city: "cidade",
         state: "estado",
-        cep: "CEP"
+        cep: "CEP",
+        reason_treatment: "motivo do tratamento",
+        reason_treatment_text: "motivo do tratamento com suas palavras"
       };
 
       let translatedFields = [];
@@ -248,6 +297,18 @@ const AssociateSignUp = () => {
       return; // Para a execução aqui
     }
 
+    if (
+      formData.reason_treatment &&
+      formData.reason_treatment.length > 10
+    ) {
+      setCiapError(true);
+      setTimeout(() => {
+        setCiapError(false);
+      }, 6000);
+      setIsSubmitting(false);
+      return;
+    }
+
     // Se não há campos vazios, continua com o envio
     setFieldsError(false);
     formData.responsable_code = codeUser;
@@ -264,7 +325,42 @@ const AssociateSignUp = () => {
   };
 
   return (
-    <div>  
+    <div>
+      {counterTratmentOptions && (
+        <div
+          className="fixed-div"
+          style={
+            !counterCheck
+              ? { backgroundColor: "" }
+              : { backgroundColor: "red", color: "white" }
+          }
+        >
+          <div style={{ textAlign: "center" }}>
+            Você pode selecionar até <b>10</b> motivos
+            {formData.reason_treatment ? (
+              <h5 style={{ marginTop: "7px" }}>
+                {formData.reason_treatment.length}/10
+              </h5>
+            ) : (
+              <h5>0/10</h5>
+            )}
+            <a className="btn btn-primary btn-sm" onClick={scrollDown}>
+              Continuar{" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-arrow-down-circle-fill"
+                viewBox="0 0 16 16"
+              >
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={updateUser} className="form-container ">
         <h1 className="sub-title">Cadastro do Paciente</h1>
         <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', padding: '0 10px' }} >
@@ -516,7 +612,55 @@ const AssociateSignUp = () => {
               id="cep" 
               name="cep"
             />
-          </div>     
+          </div>
+
+          <br></br>
+          <br></br>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="reason_treatment">
+              Motivo principal para o tratamento
+            </label>
+            <p style={{ color: "#fff", fontStyle: "italic" }}>
+              Os dados deste campo são de acordo com o CIAP2 (Classificação
+              Internacional de Atenção Primária){" "}
+              <a
+                style={{ color: "#fff", fontWeight: "bold" }}
+                href="https://saude.campinas.sp.gov.br/sistemas/esus/guia_CIAP2.pdf"
+                target="_blank"
+              >
+                Saiba Mais
+              </a>
+            </p>
+            <p style={{ color: "#fff", fontStyle: "italic" }}>
+              No campo abaixo, pesquise pelo motivo do tratamento e selecione
+              uma ou mais opções.
+            </p>
+            <Ciap2Select
+              handleChange={handleSelectionChange}
+              id="reason_treatment"
+              className="form-input input-login select-treatment"
+              value={formData.reason_treatment}
+              name="reason_treatment"
+              counterCheck={counter}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label" htmlFor="reason_treatment_text">
+              Descreva com suas palavras o motivo do seu tratamento{" "}
+              <LabelInfo
+                message="Informe com suas palavras os motivos do seu tratamento"
+                id="trattxt"
+              />
+            </label>
+            <textarea
+              onChange={handleChangeInput}
+              onBlur={handleChangeInput}
+              value={formData.reason_treatment_text || ""}
+              id="reason_treatment_text"
+              name="reason_treatment_text"
+            />
+          </div>
           
           <button 
             className="btn btn-success btn-lg btn-float-right" 
@@ -549,8 +693,13 @@ const AssociateSignUp = () => {
           <br></br>
         </div>
         
-        {fieldsError && !cpfError && !cpfNotValid && 
+        {fieldsError && !ciapError && !cpfError && !cpfNotValid && 
          <AlertError message="Você precisa preencher os seguintes campos: " emptyFields={emptyFieldsMessage} />}
+        {ciapError && (
+          <div className="alert2">
+            <AlertError message="Você marcou mais que 10 motivos para seu tratamento." />
+          </div>
+        )}
         {cpfError && (
           <div className="alert2">
             <AlertError message="O CPF precisa estar completo" />
@@ -567,6 +716,28 @@ const AssociateSignUp = () => {
           </div>
         )}
       </form>
+
+      <Modal show={showTreatmentModal} onHide={handleCloseTreatmentModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Campo Obrigatório</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <img src="/Screenshot_4.png" width="90%" alt="Exemplo do campo CIAP2" />
+          <br></br>
+          <br></br>
+          <p>O campo <strong>"Motivo principal para o tratamento"</strong> é obrigatório.</p>
+          <p>Você pode pesquisar por um motivo ou clicar em uma das Opções Gerais para escolher uma ou mais opções.</p>
+          <p>Esse campo é padronizado com o CIAP2 (Classificação Internacional de Atenção Primária) e nos ajuda a padronizar os motivos de tratamento de nossos associados.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            className="btn btn-primary"
+            onClick={handleCloseTreatmentModal}
+          >
+            Entendi
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

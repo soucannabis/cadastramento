@@ -270,6 +270,19 @@ const FileUploadComponent = () => {
     }
   };
 
+  const hasPatient = user?.responsable_type === "another";
+  const contractUrl = generateContract || user?.contract;
+  const canSignTerm = rgProof && (!hasPatient || rg_patient_proof);
+
+  const handleSignTermClick = (event) => {
+    if (!canSignTerm) {
+      event.preventDefault();
+      return;
+    }
+
+    startStatusMonitoring();
+  };
+
   const handlePatientFileChange = async event => {
     const file = event.target.files[0];
 
@@ -390,6 +403,55 @@ const FileUploadComponent = () => {
             </Form.Label>
           </div>
         )}
+
+        {hasPatient && rgProof && (
+          <>
+            {!rg_patient_proof && (
+              <p
+                style={{
+                  color: "#fff",
+                  textAlign: "center",
+                  fontSize: "16px",
+                  marginTop: "10px",
+                  marginBottom: "15px",
+                  padding: "0 15px",
+                }}
+              >
+                Envie o documento de identidade do paciente para poder assinar o termo e dar continuidade ao cadastro.
+              </p>
+            )}
+            {canSignTerm ? (
+              <a
+                className="label-upload assign-term"
+                target="_blank"
+                rel="noreferrer"
+                href={contractUrl}
+                onClick={handleSignTermClick}
+                style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}
+              >
+                <span style={{ fontSize: "18px" }}>✍️</span>
+                Assinar Termo de Responsabilidade
+              </a>
+            ) : (
+              <span
+                className="label-upload assign-term disabled"
+                aria-disabled="true"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  justifyContent: "center",
+                  opacity: 0.7,
+                  cursor: "not-allowed",
+                }}
+              >
+                <span style={{ fontSize: "18px" }}>✍️</span>
+                Assinar Termo de Responsabilidade
+              </span>
+            )}
+          </>
+        )}
+
         <br></br>
         {import.meta.env.VITE_ASSOCIATION_NAME =="Sou Cannabis" && (
         <div style={{ textAlign: 'center', color: '#fff' }}>
@@ -399,17 +461,19 @@ const FileUploadComponent = () => {
         </div>
         )}
         <br></br>
-                 <a 
-           className="label-upload assign-term" 
-           target="_blank" 
-           href={generateContract || user.contract} 
-           hidden={!rgProof}
-           onClick={startStatusMonitoring}
-           style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}
-         >
-           <span style={{ fontSize: '18px' }}>✍️</span>
-           Assinar Termo de Responsabilidade
-         </a>
+        {!hasPatient && rgProof && (
+          <a
+            className="label-upload assign-term"
+            target="_blank"
+            rel="noreferrer"
+            href={contractUrl}
+            onClick={handleSignTermClick}
+            style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}
+          >
+            <span style={{ fontSize: "18px" }}>✍️</span>
+            Assinar Termo de Responsabilidade
+          </a>
+        )}
         {isMonitoringStatus && (
           <div style={{ textAlign: 'center', marginTop: '10px' }}>
             <p style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>

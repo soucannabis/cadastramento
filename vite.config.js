@@ -18,7 +18,7 @@ export default defineConfig({
     'import.meta.env.VITE_SERVER_PORT': JSON.stringify(process.env.VITE_SERVER_PORT || '8055'),
     'import.meta.env.VITE_SERVER_URL': JSON.stringify(process.env.VITE_SERVER_URL || 'http://localhost:8055'),
     'import.meta.env.VITE_URL': JSON.stringify(process.env.VITE_URL || ''),
-    'import.meta.env.VITE_CONTACT_URL': JSON.stringify(process.env.VITE_CONTACT_URL || ''),
+    'import.meta.env.VITE_CONTACT_URL': JSON.stringify(process.env.VITE_CONTACT_URL || 'https://soucannabis.ong.br/receba-nosso-suporte/'),
     'import.meta.env.VITE_WELCOME_TEXT': JSON.stringify(process.env.VITE_WELCOME_TEXT || 'na Associação Sou Cannabis'),
     'import.meta.env.WDS_SOCKET_PORT': JSON.stringify(process.env.WDS_SOCKET_PORT || '0'),
   },

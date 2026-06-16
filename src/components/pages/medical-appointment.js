@@ -10,6 +10,11 @@ import Resizer from "react-image-file-resizer";
 
 function MedicalAppointment() {
   const [medicalPrescrption, setMedicalPrescrption] = useState(false);
+  const [user, setUser] = useState({});
+  const [prescription, setPrescription] = useState(false);
+  const [fileError, setFileError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [signupMessage, setSignupMessage] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -24,11 +29,14 @@ function MedicalAppointment() {
     })();
   }, []);
 
-  const [user, setUser] = useState({});
-  const [prescription, setPrescription] = useState(false);
-  const [fileError, setFileError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [signupMessage, setSignupMessage] = useState(false);
+  useEffect(() => {
+    if (!prescription) return;
+
+    const uploadButton = document.getElementById("prescription-upload-button");
+    if (uploadButton) {
+      uploadButton.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [prescription]);
 
   if (user.associate_status > 5) {
     window.location.assign("/");
@@ -87,17 +95,6 @@ function MedicalAppointment() {
 
   const medicalAppointmentYes = async () => {
     setPrescription(true);
-    
-    // Aguarda o componente ser renderizado e então rola até o prescription-container
-    setTimeout(() => {
-      const prescriptionContainer = document.getElementById('prescription-container');
-      if (prescriptionContainer) {
-        prescriptionContainer.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }
-    }, 100);
   };
 
   const medicalAppointmentNo = async () => {
@@ -110,21 +107,23 @@ function MedicalAppointment() {
   }
 
   return (
-    <div>
-      <form className="form-container">
+    <div className="form-container">
+      <form>
         <h1>Você já tem uma Prescrição?</h1>
         <br></br>
         <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 10%" }}>Você pode se associar a SouCannabis sem ter uma receita e usufruir de diversos serviços oferecidos pela associação.  <br></br>Porém, para ter acesso aos remédios é necessário que você tenha uma receita. <br></br> <br></br> Qual é a sua situação neste momento?</p>
         <br></br>
         <div className="form-control options-container">
-          <input type="radio" className="btn-check" onClick={medicalAppointmentYes} name="resposable" id="btnradio1" value="yes"></input>
-          <label className="btn btn-outline-primary radio-input" htmlFor="btnradio1">
+          <label
+            className={`btn btn-outline-primary radio-input${prescription ? " active" : ""}`}
+            onClick={medicalAppointmentYes}
+          >
             📋 ENVIAR UMA RECEITA
           </label>
-          <label className="btn btn-outline-primary radio-input" onClick={medicalAppointmentNo} htmlFor="btnradio2">
+          <label className="btn btn-outline-primary radio-input" onClick={medicalAppointmentNo}>
            📅 AGENDAR UMA CONSULTA
           </label>
-          <label className="btn btn-outline-primary radio-input" onClick={aprove} htmlFor="btnradio3">
+          <label className="btn btn-outline-primary radio-input" onClick={aprove}>
             ✅ CONCLUIR O CADASTRO SEM RECEITA
           </label>
         </div>
@@ -134,7 +133,7 @@ function MedicalAppointment() {
         <div id="prescription-container">
           <h1 className="sub-title">Envie sua receita aqui: </h1>
           <Form>
-            <Form.Group controlId="formFile1">
+            <Form.Group controlId="formFile1" id="prescription-upload-button">
               <Form.Label className="label-upload" hidden={medicalPrescrption}>
                 {isLoading && (
                   <span className="loading-text">
@@ -149,7 +148,7 @@ function MedicalAppointment() {
             </Form.Group>
           </Form>
           <br></br>
-          <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 20%" }}>Após enviar sua receita você pode enviar arquivos que complementem a sua receita, como laudos médicos e exames.</p>
+          <p style={{ color: "#fff", textAlign: "center", fontSize: "20px", padding: "0 10%" }}>Após enviar sua receita você pode enviar arquivos que complementem a sua receita, como laudos médicos e exames.</p>
           <MultipleFiles />
 
           <br></br>

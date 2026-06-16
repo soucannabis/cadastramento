@@ -99,6 +99,24 @@ h1.sub-title {
   margin:20px 0;
 }
 
+.form-container label.label-upload {
+  margin: 0 auto 20px;
+}
+
+.form-container label.radio-input {
+  font-weight: 600;
+}
+
+.options-container .btn-outline-primary.radio-input:hover {
+  color: #fff;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+#prescription-container {
+  margin-top: 50px;
+}
+
 .form-container textarea {
   width: 100%;
   padding: 0.5rem;
@@ -185,12 +203,16 @@ h1.sub-title {
 }
 
 .select-namefile {
-  width: 30% !important;
+  width: 380px !important;
+  max-width: 90%;
+  display: block;
   text-align: center;
-  height: 50px;
-  margin: 20px 0 40px;
+  text-align-last: center;
+  height: 45px;
+  margin: 20px auto 40px;
   border-radius: 10px;
-  padding: 0 !important
+  padding: 0 1rem !important;
+  font-size: 15px;
 }
 
 ul.listPages {
@@ -352,7 +374,7 @@ label.label-upload.send-ok.form-label:hover {
 .label-upload:hover {
   box-shadow: 3px 3px 5px #000;
   cursor: pointer;
-  color: #fff;
+  color: #000;
 }
 
 a.label-upload {
@@ -786,8 +808,11 @@ input.option-checkbox {
   }
 
   select#nameDocument {
-    width: 200px !important;
-    font-size: 12px;
+    width: 85% !important;
+    max-width: 380px;
+    font-size: 15px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   p.loading-text {
