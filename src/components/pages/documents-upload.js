@@ -291,12 +291,17 @@ const FileUploadComponent = () => {
   };
 
   const hasPatient = user?.responsable_type === "another";
+  const proofOfAddressButtonLabel = hasPatient
+    ? "Comprovante de endereço do paciente"
+    : "Comprovante de endereço";
   const contractUrl = generateContract || user?.contract;
   const canSignTerm =
     rgProof && proof_of_address && (!hasPatient || rg_patient_proof) && !!contractUrl && !isGeneratingContract;
 
   const missingDocuments = [];
-  if (!proof_of_address) missingDocuments.push("o comprovante de endereço");
+  if (!proof_of_address) {
+    missingDocuments.push(hasPatient ? "o comprovante de endereço do paciente" : "o comprovante de endereço");
+  }
   if (hasPatient && !rg_patient_proof) missingDocuments.push("o documento de identidade do paciente");
 
   const handleSignTermClick = (event) => {
@@ -334,8 +339,16 @@ const FileUploadComponent = () => {
   return (
     <div className="justify-content-center">
       <h1 style={{ paddingTop: "10px" }}>Envie seus Documentos</h1>
-      <h2 style={{ textAlign: "center" }}>Clique nos botões para enviar uma foto do seu documento de identidade e do seu comprovante de endereço.</h2>
-      <h2 style={{ textAlign: "center" }}>Você pode enviar a parte de trás do seu RG ou seu CNH, e um comprovante de endereço recente (conta de água, luz, telefone...).</h2>
+      <h2 style={{ textAlign: "center" }}>
+        {hasPatient
+          ? "Clique nos botões para enviar uma foto do seu documento de identidade e do comprovante de endereço do paciente."
+          : "Clique nos botões para enviar uma foto do seu documento de identidade e do seu comprovante de endereço."}
+      </h2>
+      <h2 style={{ textAlign: "center" }}>
+        {hasPatient
+          ? "Você pode enviar a parte de trás do seu RG ou seu CNH, e um comprovante de endereço recente do paciente (conta de água, luz, telefone...)."
+          : "Você pode enviar a parte de trás do seu RG ou seu CNH, e um comprovante de endereço recente (conta de água, luz, telefone...)."}
+      </h2>
       <h2 style={{ textAlign: "center" }}>O termo de responsabilidade será gerado após o envio dos dois documentos.</h2>
       <br></br>
       <div className="">
@@ -379,7 +392,7 @@ const FileUploadComponent = () => {
                 {!isLoadingAddress && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', width: '100%' }}>
                     <span style={{ fontSize: '18px' }}>🏠</span>
-                    Comprovante de endereço
+                    {proofOfAddressButtonLabel}
                   </span>
                 )}
               </Form.Label>
@@ -389,7 +402,7 @@ const FileUploadComponent = () => {
         )}
         {proof_of_address && (
           <div className="document-send">
-            <Form.Label className="label-upload send-ok">✅ Comprovante de endereço enviado</Form.Label>
+            <Form.Label className="label-upload send-ok">✅ {proofOfAddressButtonLabel} enviado</Form.Label>
           </div>
         )}
 
