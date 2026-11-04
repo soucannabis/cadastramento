@@ -22,6 +22,7 @@ import Home from "./components/pages/home";
 import MedicalAppointment from "./components/pages/medical-appointment";
 import Welcome from "./components/pages/welcome";
 import LostPass from "./components/pages/lost-password";
+import UpdatePetData from "./components/pages/update-pet-data";
 import { UserProvider, useUser } from "./contexts/UserContext";
 import "./styles/general.css";
 
@@ -64,6 +65,7 @@ function ProtectedRoute({ children, user }) {
         "/nova-senha",
         "/loja",
         "/seu-cadastro",
+        "/atualizar-dados-pet",
       ].includes(location.pathname)
     ) {
       navigate("/login", { replace: true });
@@ -119,6 +121,17 @@ function AppContent() {
         <img src="logo.svg" width="5%" className="logo-load" />
         <p className="loading-text">carregando...</p>
       </div>
+    );
+  }
+
+  // ✅ Página pública de atualização dos dados do pet (acesso por ?ac=<uuid> na URL)
+  if (window.location.pathname === "/atualizar-dados-pet") {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/atualizar-dados-pet" element={<UpdatePetData />} />
+        </Routes>
+      </Router>
     );
   }
 
