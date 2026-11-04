@@ -9,6 +9,11 @@ import AlertError from "../forms/AlertError";
 import Modal from "react-bootstrap/Modal";
 import PhoneInputs from "../forms/PhoneNumberInput";
 import Ciap2Select from "../forms/CIAP2Select";
+import PetDataInputs, {
+  PET_REQUIRED_FIELDS,
+  getMissingPetFields,
+  buildPetDataPayload,
+} from "../forms/PetDataInputs";
 import { useFormLocalStorage } from "../../hooks/useLocalStorage";
 
 const AssociateSignUp = () => {
@@ -30,9 +35,11 @@ const AssociateSignUp = () => {
   const [phoneError, setPhoneError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTreatmentModal, setShowTreatmentModal] = useState(false);
+  const [petMissingFields, setPetMissingFields] = useState([]);
   // Dados iniciais do formulário
   const initialFormData = {
     responsable_type: null,
+    pet_data: null,
     name_associate: null,
     lastname_associate: null,
     birthday_associate: null,
@@ -173,6 +180,8 @@ const AssociateSignUp = () => {
     var fieldsNames = [];   
 
     for (let key in formData) {      
+      // pet_data é tratado à parte (validação própria abaixo)
+      if (key === "pet_data") continue;
       if (formData.hasOwnProperty(key)) {
         if (
           formData[key] == null ||
@@ -226,7 +235,23 @@ const AssociateSignUp = () => {
       }
     }
 
+    // Validação dos campos do pet (somente quando o tipo é pet)
+    if (formData.responsable_type === "pet") {
+      const missingPet = getMissingPetFields(formData.pet_data);
+      setPetMissingFields(missingPet);
+      missingPet.forEach((key) => {
+        emptyFields.push(`pet_${key}`);
+        fieldsNames.push(`pet_${key}`);
+      });
+    } else {
+      setPetMissingFields([]);
+    }
+
     const translations = {
+      pet_especie: PET_REQUIRED_FIELDS.especie,
+      pet_raca: PET_REQUIRED_FIELDS.raca,
+      pet_idade: PET_REQUIRED_FIELDS.idade,
+      pet_sexo: PET_REQUIRED_FIELDS.sexo,
       responsable_type: "Tipo de responsável",
       name_associate: "Nome do associado",
       lastname_associate: "Sobrenome do associado",
@@ -370,6 +395,11 @@ const AssociateSignUp = () => {
         status: "registered",
         log: "Registered OK",
       };
+      if (formData.responsable_type === "pet") {
+        cleanFormData.pet_data = buildPetDataPayload(formData.pet_data);
+      } else {
+        delete cleanFormData.pet_data;
+      }
 
       if (
         cleanFormData.reason_treatment &&
@@ -430,6 +460,8 @@ const AssociateSignUp = () => {
           status: "formerror",
           log: { formError: { emptyFields: emptyFields } },
         };
+        // Não grava pet_data parcial no Directus; só vai no envio válido
+        delete cleanFormDataWithError.pet_data;
 
         const response = await apiRequest(
           "/api/directus/update",
@@ -641,6 +673,14 @@ const AssociateSignUp = () => {
             </span>
           </label>
         </div>
+
+        {formData.responsable_type === "pet" && (
+          <PetDataInputs
+            value={formData.pet_data}
+            onChange={(petData) => updateField("pet_data", petData)}
+            missingFields={petMissingFields}
+          />
+        )}
 
         <br></br>
         <div>
