@@ -3,6 +3,8 @@ import apiRequest from "../../modules/apiRequest";
 import PetDataInputs, {
   PET_REQUIRED_FIELDS,
   getMissingPetFields,
+  getMissingTreatmentReason,
+  PET_TREATMENT_REASON_LABEL,
   buildPetDataPayload,
 } from "../forms/PetDataInputs";
 
@@ -47,14 +49,21 @@ const UpdatePetData = () => {
     event.preventDefault();
     setSubmitError("");
 
-    const missing = getMissingPetFields(petData);
+    const missing = [
+      ...getMissingPetFields(petData),
+      ...getMissingTreatmentReason(petData),
+    ];
     setMissingFields(missing);
     if (missing.length > 0) {
       const el = document.getElementById(`pet_${missing[0]}`);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       setSubmitError(
         "Preencha os campos obrigatórios: " +
-          missing.map((k) => PET_REQUIRED_FIELDS[k]).join(", ")
+          missing.map((k) =>
+          k === "motivo_tratamento"
+            ? PET_TREATMENT_REASON_LABEL
+            : PET_REQUIRED_FIELDS[k]
+        ).join(", ")
       );
       return;
     }

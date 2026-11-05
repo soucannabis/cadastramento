@@ -22,6 +22,13 @@ export const getMissingPetFields = (petData) => {
   });
 };
 
+// Motivo do tratamento: obrigatório apenas na página de atualização
+export const PET_TREATMENT_REASON_LABEL = "Motivo do tratamento";
+export const getMissingTreatmentReason = (petData) =>
+  String(petData?.motivo_tratamento ?? "").trim() === ""
+    ? ["motivo_tratamento"]
+    : [];
+
 // Monta o JSON final que será gravado em Users.pet_data
 export const buildPetDataPayload = (petData) => {
   const data = petData || {};
@@ -176,10 +183,10 @@ const PetDataInputs = ({
       {showTreatmentReason && (
         <div className="mb-3">
           <label className="form-label" htmlFor="pet_motivo_tratamento">
-            Motivo do tratamento (opcional)
+            Motivo do tratamento
           </label>
           <textarea
-            className="form-input input-login"
+            className={errClass("motivo_tratamento")}
             placeholder="Descreva o motivo do tratamento do pet"
             rows={4}
             id="pet_motivo_tratamento"
