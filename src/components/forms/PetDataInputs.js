@@ -39,10 +39,16 @@ export const buildPetDataPayload = (petData) => {
     sexo: text(data.sexo),
     tipo_produto: text(data.tipo_produto),
     dosagem: text(data.dosagem),
+    motivo_tratamento: text(data.motivo_tratamento),
   };
 };
 
-const PetDataInputs = ({ value, onChange, missingFields = [] }) => {
+const PetDataInputs = ({
+  value,
+  onChange,
+  missingFields = [],
+  showTreatmentReason = false,
+}) => {
   const data = value || {};
 
   const setField = (key, newValue) => {
@@ -166,6 +172,23 @@ const PetDataInputs = ({ value, onChange, missingFields = [] }) => {
           onChange={(e) => setField("dosagem", e.target.value)}
         />
       </div>
+
+      {showTreatmentReason && (
+        <div className="mb-3">
+          <label className="form-label" htmlFor="pet_motivo_tratamento">
+            Motivo do tratamento (opcional)
+          </label>
+          <textarea
+            className="form-input input-login"
+            placeholder="Descreva o motivo do tratamento do pet"
+            rows={4}
+            id="pet_motivo_tratamento"
+            name="pet_motivo_tratamento"
+            value={data.motivo_tratamento || ""}
+            onChange={(e) => setField("motivo_tratamento", e.target.value)}
+          />
+        </div>
+      )}
     </div>
   );
 };

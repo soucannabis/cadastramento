@@ -136,6 +136,7 @@ const UpdatePetData = () => {
               value={petData}
               onChange={setPetData}
               missingFields={missingFields}
+              showTreatmentReason
             />
 
             {submitError && (
